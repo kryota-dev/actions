@@ -53,10 +53,10 @@ Coming soon.
 
 | ワークフロー | トリガー | 説明 |
 |---|---|---|
-| `my_test.yml` | PR, merge_group | actionlint / ls-lint / ghalint / zizmor による品質ゲート |
-| `my_setup_pr.yml` | PR opened | PR 作成者を自動で assignee に設定 |
-| `my_release.yml` | push (main) | tagpr によるリリース管理とメジャータグ更新 |
-| `my_codeql.yml` | PR, push (main), merge_group | CodeQL セキュリティスキャン |
+| `my-test.yml` | PR, merge_group | actionlint / ls-lint / ghalint / zizmor による品質ゲート |
+| `my-setup-pr.yml` | PR opened | PR 作成者を自動で assignee に設定 |
+| `my-release.yml` | push (main) | tagpr によるリリース管理とメジャータグ更新 |
+| `my-codeql.yml` | PR, push (main), merge_group | CodeQL セキュリティスキャン |
 
 ## Development
 

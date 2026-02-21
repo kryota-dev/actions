@@ -1,6 +1,6 @@
 ls:
   .github/workflows:
-    .yml: snake_case
+    .yml: kebab-case
   .github/composite:
     .dir: kebab-case
     .yml: regex:action
