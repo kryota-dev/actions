@@ -22,9 +22,28 @@ jobs:
 
 バージョンはメジャータグ（例: `v1`）または完全なバージョンタグ（例: `v1.0.0`）で指定してください。
 
+### Composite Actions
+
+他のリポジトリから Composite Action を参照する場合は以下の形式を使用します:
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/composite/{action-name}@vX
+    with:
+      # inputs
+```
+
+バージョンはメジャータグ（例: `v1`）または完全なバージョンタグ（例: `v1.0.0`）で指定してください。
+
+> **Reusable Workflows との違い**: Reusable Workflows は `jobs:` レベルで呼び出すのに対し、Composite Actions は `steps:` レベルで呼び出します。Composite Actions は呼び出し元ジョブ内でステップとして実行されるため、より細粒度な再利用が可能です。
+
 ## Available Workflows
 
 ### Reusable Workflows
+
+Coming soon.
+
+### Composite Actions
 
 Coming soon.
 
