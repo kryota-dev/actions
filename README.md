@@ -45,7 +45,76 @@ Coming soon.
 
 ### Composite Actions
 
-Coming soon.
+#### pnpm-setup
+
+Node.js と pnpm のセットアップ、pnpm ストアキャッシュ、依存関係インストールを一括実行します。
+
+**前提条件:** リポジトリルートに `.node-version`・`package.json`・`pnpm-lock.yaml` が存在すること
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/composite/pnpm-setup@v1
+```
+
+---
+
+#### playwright-setup
+
+Playwright ブラウザをキャッシュ付きでインストールします。キャッシュヒット時はダウンロードをスキップします。
+
+**前提条件:** `pnpm-setup` Action（または同等のセットアップ）が先に完了していること
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/composite/pnpm-setup@v1
+  - uses: kryota-dev/actions/.github/composite/playwright-setup@v1
+```
+
+---
+
+#### slack-notify-success
+
+ワークフロー成功時に Slack へ通知します。Slack Bot OAuth Token と `chat.postMessage` API を使用します。
+
+| 入力名 | 必須 | デフォルト値 | 説明 |
+|---|---|---|---|
+| `channel-id` | 必須 | - | Slack チャンネル ID |
+| `bot-oauth-token` | 必須 | - | Slack Bot OAuth Token |
+| `color` | 任意 | `good` | メッセージのカラーバー色 |
+| `mention-user` | 任意 | `''` | メンション対象ユーザー |
+| `title` | 任意 | `workflow execution completed` | メッセージタイトル |
+| `message` | 任意 | 実行ログ URL | メッセージ本文 |
+| `thread-ts` | 任意 | `'null'` | スレッド返信先 timestamp |
+| `reply-broadcast` | 任意 | `'false'` | スレッド返信をチャンネルにもブロードキャストするか |
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/composite/slack-notify-success@v1
+    with:
+      channel-id: ${{ vars.SLACK_CHANNEL_ID }}
+      bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+```
+
+---
+
+#### slack-notify-failure
+
+ワークフロー失敗時に Slack へ通知します。Slack Incoming Webhook URL を使用します（`slack-notify-success` と異なり、チャンネル指定不要）。
+
+| 入力名 | 必須 | デフォルト値 | 説明 |
+|---|---|---|---|
+| `webhook-url` | 必須 | - | Slack Incoming Webhook URL |
+| `color` | 任意 | `danger` | メッセージのカラーバー色 |
+| `mention-user` | 任意 | `''` | メンション対象ユーザー |
+| `title` | 任意 | `workflow failed` | メッセージタイトル |
+| `message` | 任意 | 実行ログ URL | メッセージ本文 |
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/composite/slack-notify-failure@v1
+    with:
+      webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
 
 ### Internal CI Workflows
 
