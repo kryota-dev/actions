@@ -1,0 +1,30 @@
+{
+  "filePath": ".spec-workflow/specs/pat-branch-ruleset/requirements.md",
+  "currentVersion": 3,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-21T07:20:29.180Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771658429178_gcw8ca1y4",
+      "approvalTitle": "Requirements: pat-branch-ruleset"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-21T07:22:35.618Z",
+      "trigger": "revision_requested",
+      "approvalId": "approval_1771658429178_gcw8ca1y4",
+      "approvalTitle": "Requirements: pat-branch-ruleset"
+    },
+    {
+      "version": 3,
+      "filename": "snapshot-003.json",
+      "timestamp": "2026-02-21T07:24:00.884Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771658623163_0zakc7f97",
+      "approvalTitle": "Requirements: pat-branch-ruleset (修正版)"
+    }
+  ]
+}

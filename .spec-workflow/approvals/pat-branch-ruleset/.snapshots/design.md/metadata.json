@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/pat-branch-ruleset/design.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-21T07:28:46.249Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771658926243_vrcf3d0dm",
+      "approvalTitle": "Design: pat-branch-ruleset"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-21T07:33:46.249Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771658926243_vrcf3d0dm",
+      "approvalTitle": "Design: pat-branch-ruleset"
+    }
+  ]
+}
