@@ -1,10 +1,10 @@
 # actions
 
-`kryota-dev/actions` は再利用可能な GitHub Actions Reusable Workflow を一元管理するリポジトリです。
+`kryota-dev/actions` は再利用可能な GitHub Actions（Reusable Workflows および Composite Actions）を一元管理するリポジトリです。
 
 ## Overview
 
-複数のリポジトリで共通して使用する GitHub Actions Workflow を一元管理・公開することで、各リポジトリの CI/CD 設定の重複を排除し、品質と保守性を高めます。
+複数のリポジトリで共通して使用する GitHub Actions（Reusable Workflows および Composite Actions）を一元管理・公開することで、各リポジトリの CI/CD 設定の重複を排除し、品質と保守性を高めます。
 
 ## Usage
 
