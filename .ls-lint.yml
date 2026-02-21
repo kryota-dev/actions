@@ -1,3 +1,6 @@
-ls-lint:
+ls:
   .github/workflows:
     .yml: snake_case
+  .github/composite:
+    .dir: kebab-case
+    .yml: regex:action
