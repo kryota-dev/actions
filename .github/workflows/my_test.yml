@@ -28,6 +28,9 @@ jobs:
         with:
           aqua_version: v2.56.6
 
+      - run: echo "${AQUA_ROOT_DIR:-${HOME}/.local/share/aquaproj-aqua}/bin" >> "$GITHUB_PATH"
+        shell: bash
+
       - name: Run ghalint
         run: ghalint run
         shell: bash
