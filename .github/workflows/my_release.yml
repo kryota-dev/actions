@@ -1,0 +1,48 @@
+name: release
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  tagpr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      tag: ${{ steps.tagpr.outputs.tag }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          token: ${{ secrets.APP_TOKEN }}
+          persist-credentials: false
+
+      - uses: Songmu/tagpr@da82ed6743aec90049892070edd5561335904a9e # v1.17.0
+        id: tagpr
+        env:
+          GITHUB_TOKEN: ${{ secrets.APP_TOKEN }}
+
+  bump_major_tag:
+    needs: tagpr
+    if: needs.tagpr.outputs.tag != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          token: ${{ secrets.APP_TOKEN }}
+          persist-credentials: false
+
+      - name: Update major tag
+        env:
+          TAG: ${{ needs.tagpr.outputs.tag }}
+          GITHUB_TOKEN: ${{ secrets.APP_TOKEN }}
+        run: |
+          MAJOR="${TAG%%.*}"
+          git tag -f "$MAJOR"
+          git push origin "$MAJOR" --force

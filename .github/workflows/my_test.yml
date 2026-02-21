@@ -1,0 +1,46 @@
+name: test
+on:
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+
+      - uses: reviewdog/action-actionlint@0d952c597ef8459f634d7145b0b044a9699e5e43 # v1.71.0
+        with:
+          reporter: github-pr-review
+
+      - uses: ls-lint/action@02e380fe8733d499cbfc9e22276de5085508a5bd # v2.3.1
+
+      - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
+        with:
+          aqua_version: v2.56.6
+
+      - run: echo "${AQUA_ROOT_DIR:-${HOME}/.local/share/aquaproj-aqua}/bin" >> "$GITHUB_PATH"
+        shell: bash
+
+      - name: Run ghalint
+        run: ghalint run
+        shell: bash
+
+      - uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b # v7.3.0
+
+      - name: Run zizmor
+        run: uvx zizmor --format=github .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
