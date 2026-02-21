@@ -42,7 +42,9 @@ jobs:
         env:
           TAG: ${{ needs.tagpr.outputs.tag }}
           GITHUB_TOKEN: ${{ secrets.APP_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git"
           MAJOR="${TAG%%.*}"
           git tag -f "$MAJOR"
           git push origin "$MAJOR" --force
