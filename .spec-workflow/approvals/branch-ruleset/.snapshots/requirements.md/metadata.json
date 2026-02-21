@@ -1,0 +1,30 @@
+{
+  "filePath": ".spec-workflow/specs/branch-ruleset/requirements.md",
+  "currentVersion": 3,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-21T06:32:06.246Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771655526242_1q263yquc",
+      "approvalTitle": "Requirements: branch-ruleset"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-21T06:33:09.900Z",
+      "trigger": "revision_requested",
+      "approvalId": "approval_1771655526242_1q263yquc",
+      "approvalTitle": "Requirements: branch-ruleset"
+    },
+    {
+      "version": 3,
+      "filename": "snapshot-003.json",
+      "timestamp": "2026-02-21T06:42:16.622Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771656036298_iq3q71wmn",
+      "approvalTitle": "Requirements: branch-ruleset (revised)"
+    }
+  ]
+}

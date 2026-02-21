@@ -1,0 +1,56 @@
+# Tasks Document
+
+## Phase 1: ディレクトリ・JSON ファイルの作成
+
+- [x] 1. `.github/rulesets/` ディレクトリと `protect-main.json` の作成
+  - File: `.github/rulesets/protect-main.json`
+  - main ブランチの削除禁止・force push 禁止（non_fast_forward）ルールを定義する JSON ファイルを作成する
+  - `bypass_actors: []`（個人リポジトリではバイパスアクター設定不可）
+  - _Leverage: design.md の Ruleset 1: protect-main の JSON スキーマ_
+  - _Requirements: 1.1, 6.1, 6.2_
+  - _Prompt: Role: GitHub Actions / Infrastructure Engineer | Task: Create `.github/rulesets/protect-main.json` following the JSON schema defined in design.md Ruleset 1. The file must define a ruleset targeting the `main` branch with `deletion` and `non_fast_forward` rules, `enforcement: "active"`, and empty `bypass_actors`. The `.github/rulesets/` directory should be created if it does not exist. | Restrictions: Do not add `id`, `source`, `source_type`, `created_at`, or `updated_at` fields (these are added by GitHub API on import). Keep the JSON minimal and matching the schema exactly. | Success: File is valid JSON, contains correct `target: "branch"`, `conditions.ref_name.include: ["refs/heads/main"]`, and both `deletion` and `non_fast_forward` rules._
+
+- [x] 2. `protect-version-tags.json` の作成
+  - File: `.github/rulesets/protect-version-tags.json`
+  - `v*.*.*` パターンのタグに対して削除禁止・force push 禁止ルールを定義する JSON ファイルを作成する
+  - `target: "tag"`、`conditions.ref_name.include: ["refs/tags/v*.*.*"]`
+  - _Leverage: design.md の Ruleset 2: protect-version-tags の JSON スキーマ_
+  - _Requirements: 4.1, 4.2, 6.1, 6.2_
+  - _Prompt: Role: GitHub Actions / Infrastructure Engineer | Task: Create `.github/rulesets/protect-version-tags.json` following the JSON schema defined in design.md Ruleset 2. The file must define a ruleset targeting tags matching `refs/tags/v*.*.*` with `deletion` and `non_fast_forward` rules, `enforcement: "active"`, and empty `bypass_actors`. Note: GitHub Rulesets use fnmatch with `File::FNM_PATHNAME` flag; `*` matches any string except `/`, including `.`, so `v*.*.*` correctly matches `v1.2.3`. | Restrictions: Do not modify the include pattern — `refs/tags/v*.*.*` is confirmed to work correctly per GitHub fnmatch spec. | Success: File is valid JSON, contains correct `target: "tag"`, `conditions.ref_name.include: ["refs/tags/v*.*.*"]`, and both `deletion` and `non_fast_forward` rules._
+
+- [x] 3. `protect-major-tags.json` の作成
+  - File: `.github/rulesets/protect-major-tags.json`
+  - `v[0-9]*` パターンのタグ（v1, v2, ..., v10 以上）に対して削除禁止のみのルールを定義する JSON ファイルを作成する
+  - `non_fast_forward` ルールは**含めない**（`bump_major_tag` ジョブが force push を必要とするため）
+  - _Leverage: design.md の Ruleset 3: protect-major-tags の JSON スキーマ_
+  - _Requirements: 5.1, 5.2, 6.1, 6.2_
+  - _Prompt: Role: GitHub Actions / Infrastructure Engineer | Task: Create `.github/rulesets/protect-major-tags.json` following the JSON schema defined in design.md Ruleset 3. The file must define a ruleset targeting tags matching `refs/tags/v[0-9]*` with only the `deletion` rule (NOT `non_fast_forward`), `enforcement: "active"`, and empty `bypass_actors`. The `v[0-9]*` pattern covers v1 through v99 and beyond (v10, v11, etc.), correcting the previous `v[0-9]` pattern that only matched single-digit major versions. The `non_fast_forward` rule is intentionally excluded to allow the `bump_major_tag` job to force-push major tags. | Restrictions: MUST NOT include `non_fast_forward` rule. Use `refs/tags/v[0-9]*` (not `refs/tags/v[0-9]`) to support v10 and beyond. | Success: File is valid JSON, contains `target: "tag"`, `conditions.ref_name.include: ["refs/tags/v[0-9]*"]`, exactly one rule of type `deletion`, and `bypass_actors: []`._
+
+## Phase 2: ADR の作成
+
+- [x] 4. ADR `003-branch-ruleset.md` の作成
+  - File: `docs/adr/003-branch-ruleset.md`
+  - `npm run adr:new -- "Branch ruleset"` コマンドを使用して ADR ファイルの雛形を生成し、design.md の ADR 骨子に従って内容を記述する
+  - 既存 ADR（001, 002）のフォーマットに準拠して英語で記述する
+  - _Leverage: docs/adr/001-repository-environment-setup.md（フォーマット参照）、docs/adr/002-replace-pat-with-github-token-for-release.md（フォーマット参照）、design.md の ADR 骨子_
+  - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
+  - _Prompt: Role: Technical Writer / Software Architect | Task: Create ADR `003-branch-ruleset.md` using `npm run adr:new -- "Branch ruleset"` to generate the template, then populate it with content following design.md's ADR骨子 section. The ADR must be written in English following the Context/Decision/Consequences structure. Key content to include: (1) Context: personal repository constraint on bypass actors, tools involved (tagpr, bump_major_tag, Renovate Bot), protection goals. (2) Decision: three rulesets in `.github/rulesets/` — protect-main (deletion + non_fast_forward, no PR requirement due to personal repo constraint), protect-version-tags (deletion + non_fast_forward for v*.*.* tags), protect-major-tags (deletion only for v[0-9]* tags to allow force push by bump_major_tag). (3) Consequences: tagpr flow unaffected, bump_major_tag force push permitted, PR requirement NOT enforced (personal repo limitation), organization migration enables bypass actor configuration. | Restrictions: Write in English. Follow existing ADR format in docs/adr/. Use today's date (2026-02-21). Do not add content beyond what's specified in the design. | Success: File exists at docs/adr/003-branch-ruleset.md, is in English, follows ADR format, accurately describes the three rulesets and the personal repository constraint._
+
+## Phase 3: ルールセットの適用（手動手順）
+
+- [ ] 5. GitHub API へのルールセット適用（手動手順ドキュメント確認）
+  - File: `.github/rulesets/*.json`（適用のみ、ファイル変更なし）
+  - JSON ファイル作成後、`gh api` コマンドでルールセットを GitHub に適用する手動手順を実行する
+  - 適用後に GitHub UI で設定が正しく反映されているか確認する
+  - _Leverage: design.md の変更管理フロー・適用コマンドセクション_
+  - _Requirements: 6.4, 6.5, 6.7_
+  - _Prompt: Role: DevOps Engineer / Repository Administrator | Task: Apply the three ruleset JSON files to the GitHub repository using `gh api` commands as documented in design.md. Steps: (1) Run `gh api repos/kryota-dev/actions/rulesets` to check existing rulesets. (2) For each JSON file, run `gh api repos/kryota-dev/actions/rulesets --method POST --input .github/rulesets/{name}.json`. (3) Verify each ruleset appears in `gh api repos/kryota-dev/actions/rulesets`. (4) Verify via GitHub UI: Settings > Rules > Rulesets that all three rulesets show as Active. | Restrictions: This is a manual step, not automated. Apply rulesets AFTER the JSON files are merged to main via PR. If a 422 error occurs, check the JSON schema. | Success: All three rulesets (protect-main, protect-version-tags, protect-major-tags) are Active in GitHub Settings > Rules > Rulesets, and `gh api` output matches the JSON definitions._
+
+## Phase 4: 動作検証
+
+- [ ] 6. ルールセットの動作検証
+  - File: なし（手動検証）
+  - 適用後のルールセットが design.md の Testing Strategy に記載された期待動作を満たすか確認する
+  - _Leverage: design.md の Testing Strategy セクション（単体検証・統合検証）_
+  - _Requirements: 1.1, 4.1, 4.2, 4.3, 5.1, 5.2_
+  - _Prompt: Role: QA Engineer | Task: Verify the applied rulesets behave as specified in design.md's Testing Strategy section. Perform the following checks: (1) Verify `git push origin --delete main` is rejected by the deletion rule. (2) Verify `git push origin --delete v1.2.3` is rejected. (3) Verify force pushing an existing v*.*.* tag is rejected. (4) Verify creating a new tag (e.g., git tag v9.9.9 && git push origin v9.9.9) is allowed. (5) Verify `git push origin --delete v1` (major tag deletion) is rejected. (6) Verify force pushing v1 (major tag) succeeds (no non_fast_forward rule). (7) Confirm the existing release flow (tagpr + bump_major_tag) still works correctly by observing the next release cycle. | Restrictions: Use test tags (e.g., v9.9.9-test) and clean up after testing. Do not disrupt the production release flow. | Success: All expected behaviors match the Testing Strategy table in design.md. Release flow confirmed unaffected._

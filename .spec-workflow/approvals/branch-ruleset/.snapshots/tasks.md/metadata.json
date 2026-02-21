@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/branch-ruleset/tasks.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-21T07:01:55.496Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771657315494_8c845z4zn",
+      "approvalTitle": "Tasks: branch-ruleset"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-21T07:02:22.812Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771657315494_8c845z4zn",
+      "approvalTitle": "Tasks: branch-ruleset"
+    }
+  ]
+}
