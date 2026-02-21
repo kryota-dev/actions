@@ -1,0 +1,19 @@
+name: setup_pr
+on:
+  pull_request:
+    types: [opened]
+
+permissions: {}
+
+jobs:
+  add_assignee:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Add assignee
+        run: gh pr edit "$PR_URL" --add-assignee "$ACTOR"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          ACTOR: ${{ github.actor }}
