@@ -67,5 +67,6 @@ SHA のピン留めは [ghalint](https://github.com/suzuki-shunsuke/ghalint) と
 
 以下の設定はリポジトリの Web UI または外部サービスで別途対応が必要です:
 
-1. **Renovate Bot のインストール**: [Renovate GitHub App](https://github.com/apps/renovate) をリポジトリにインストール
-2. **Dependabot Alerts の有効化**: Settings > Security > Dependabot alerts を有効化
+1. **`APP_TOKEN` シークレットの設定**: Settings > Secrets and variables > Actions で PAT を追加（`repo` と `workflow` スコープが必要）
+2. **Renovate Bot のインストール**: [Renovate GitHub App](https://github.com/apps/renovate) をリポジトリにインストール
+3. **Dependabot Alerts の有効化**: Settings > Security > Dependabot alerts を有効化

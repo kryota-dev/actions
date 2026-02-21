@@ -21,12 +21,13 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
+          token: ${{ secrets.APP_TOKEN }}
           persist-credentials: false
 
       - uses: Songmu/tagpr@da82ed6743aec90049892070edd5561335904a9e # v1.17.0
         id: tagpr
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.APP_TOKEN }}
 
   bump_major_tag:
     needs: tagpr
@@ -38,12 +39,13 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
+          token: ${{ secrets.APP_TOKEN }}
           persist-credentials: false
 
       - name: Update major tag
         env:
           TAG: ${{ needs.tagpr.outputs.tag }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.APP_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git"
