@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.0.4](https://github.com/kryota-dev/actions/compare/v0.0.3...v0.0.4) - 2026-02-21
+### Other Changes
+- Revert "fix: release workflowのAPP_TOKEN(PAT)をGITHUB_TOKENに置き換え" by @kryota-dev in https://github.com/kryota-dev/actions/pull/16
+- feat: PATベースのブランチルールセット導入 by @kryota-dev in https://github.com/kryota-dev/actions/pull/18
+
 ## [v0.0.3](https://github.com/kryota-dev/actions/compare/v0.0.2...v0.0.3) - 2026-02-21
 ### Other Changes
 - chore(deps): update github/codeql-action action to v4 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/4
