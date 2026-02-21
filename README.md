@@ -1,10 +1,10 @@
 # actions
 
-`kryota-dev/actions` は再利用可能な GitHub Actions Reusable Workflow を一元管理するリポジトリです。
+`kryota-dev/actions` は再利用可能な GitHub Actions（Reusable Workflows および Composite Actions）を一元管理するリポジトリです。
 
 ## Overview
 
-複数のリポジトリで共通して使用する GitHub Actions Workflow を一元管理・公開することで、各リポジトリの CI/CD 設定の重複を排除し、品質と保守性を高めます。
+複数のリポジトリで共通して使用する GitHub Actions（Reusable Workflows および Composite Actions）を一元管理・公開することで、各リポジトリの CI/CD 設定の重複を排除し、品質と保守性を高めます。
 
 ## Usage
 
@@ -22,9 +22,28 @@ jobs:
 
 バージョンはメジャータグ（例: `v1`）または完全なバージョンタグ（例: `v1.0.0`）で指定してください。
 
+### Composite Actions
+
+他のリポジトリから Composite Action を参照する場合は以下の形式を使用します:
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/composite/{action-name}@vX
+    with:
+      # inputs
+```
+
+バージョンはメジャータグ（例: `v1`）または完全なバージョンタグ（例: `v1.0.0`）で指定してください。
+
+> **Reusable Workflows との違い**: Reusable Workflows は `jobs:` レベルで呼び出すのに対し、Composite Actions は `steps:` レベルで呼び出します。Composite Actions は呼び出し元ジョブ内でステップとして実行されるため、より細粒度な再利用が可能です。
+
 ## Available Workflows
 
 ### Reusable Workflows
+
+Coming soon.
+
+### Composite Actions
 
 Coming soon.
 
@@ -34,10 +53,10 @@ Coming soon.
 
 | ワークフロー | トリガー | 説明 |
 |---|---|---|
-| `my_test.yml` | PR, merge_group | actionlint / ls-lint / ghalint / zizmor による品質ゲート |
-| `my_setup_pr.yml` | PR opened | PR 作成者を自動で assignee に設定 |
-| `my_release.yml` | push (main) | tagpr によるリリース管理とメジャータグ更新 |
-| `my_codeql.yml` | PR, push (main), merge_group | CodeQL セキュリティスキャン |
+| `my-test.yml` | PR, merge_group | actionlint / ls-lint / ghalint / zizmor による品質ゲート |
+| `my-setup-pr.yml` | PR opened | PR 作成者を自動で assignee に設定 |
+| `my-release.yml` | push (main) | tagpr によるリリース管理とメジャータグ更新 |
+| `my-codeql.yml` | PR, push (main), merge_group | CodeQL セキュリティスキャン |
 
 ## Development
 
