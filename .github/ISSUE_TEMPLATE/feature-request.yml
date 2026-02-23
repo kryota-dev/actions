@@ -1,0 +1,55 @@
+name: 機能要望
+description: 新しい Reusable Workflow や Composite Action の追加・改善を提案する
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        機能要望ありがとうございます。以下の情報を記入してください。
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 種別
+      options:
+        - 新しい Reusable Workflow の追加
+        - 新しい Composite Action の追加
+        - 既存の Workflow / Action の改善
+        - その他
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 概要
+      description: 実現したいことを記述してください
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: 背景・動機
+      description: なぜこの機能が必要か、どのようなユースケースがあるかを記述してください
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 提案する実装
+      description: 具体的な実装案があれば記述してください
+      render: yaml
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 代替案
+      description: 検討した代替案があれば記述してください
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 補足情報
+      description: その他の関連情報があれば記述してください
