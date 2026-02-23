@@ -41,7 +41,91 @@ steps:
 
 ### Reusable Workflows
 
-Coming soon.
+#### codeql-analysis
+
+CodeQL によるセキュリティスキャンを実行します。
+
+| 入力名 | 必須 | デフォルト値 | 説明 |
+|---|---|---|---|
+| `languages` | 任意 | `'["actions"]'` | スキャン対象言語の JSON 配列 |
+
+```yaml
+jobs:
+  codeql:
+    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v1
+
+  # 言語を指定する場合
+  codeql-js:
+    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v1
+    with:
+      languages: '["javascript", "typescript"]'
+```
+
+---
+
+#### tagpr-release
+
+[tagpr](https://github.com/Songmu/tagpr) によるリリース管理とメジャータグ更新を実行します。
+
+**前提条件:** リポジトリルートに `.tagpr` 設定ファイルが存在すること、`APP_TOKEN` シークレットが設定されていること
+
+| シークレット名 | 必須 | 説明 |
+|---|---|---|
+| `app-token` | 必須 | tagpr 用 PAT（`repo` と `workflow` スコープが必要） |
+
+| 出力名 | 説明 |
+|---|---|
+| `tag` | tagpr が生成したバージョンタグ（リリースなしの場合は空文字列） |
+
+```yaml
+jobs:
+  release:
+    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v1
+    secrets:
+      app-token: ${{ secrets.APP_TOKEN }}
+```
+
+---
+
+#### auto-assign-pr
+
+PR 作成者を自動的に assignee に設定します。入力パラメータは不要です（`github` コンテキストから情報を取得します）。
+
+```yaml
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  auto-assign:
+    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
+```
+
+---
+
+#### actions-lint
+
+GitHub Actions ワークフローの品質ゲート（actionlint / ls-lint / ghalint / zizmor）を実行します。
+
+**前提条件:** リポジトリルートに `.ls-lint.yml` と `aqua.yaml`（ghalint 定義含む）が存在すること
+
+| 入力名 | 必須 | デフォルト値 | 説明 |
+|---|---|---|---|
+| `aqua-version` | 任意 | `v2.56.6` | aqua のバージョン |
+| `reviewdog-reporter` | 任意 | `github-pr-review` | reviewdog のレポーター種別 |
+
+```yaml
+jobs:
+  lint:
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v1
+
+  # パラメータをカスタマイズする場合
+  lint-custom:
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v1
+    with:
+      aqua-version: "v2.60.0"
+      reviewdog-reporter: "github-check"
+```
 
 ### Composite Actions
 

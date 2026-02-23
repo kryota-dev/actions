@@ -1,0 +1,62 @@
+name: tagpr Release
+
+on:
+  workflow_call:
+    secrets:
+      app-token:
+        description: "Personal Access Token for tagpr (requires 'repo' and 'workflow' scopes)"
+        required: true
+    outputs:
+      tag:
+        description: "The version tag created by tagpr (empty if no release)"
+        value: ${{ jobs.tagpr.outputs.tag }}
+
+concurrency:
+  group: ${{ github.workflow }}-release
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  tagpr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      tag: ${{ steps.tagpr.outputs.tag }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          token: ${{ secrets.app-token }}
+          persist-credentials: false
+
+      - uses: Songmu/tagpr@da82ed6743aec90049892070edd5561335904a9e # v1.17.0
+        id: tagpr
+        env:
+          GITHUB_TOKEN: ${{ secrets.app-token }}
+
+  bump_major_tag:
+    needs: tagpr
+    if: needs.tagpr.outputs.tag != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          token: ${{ secrets.app-token }}
+          persist-credentials: false
+
+      - name: Update major tag
+        env:
+          TAG: ${{ needs.tagpr.outputs.tag }}
+          GITHUB_TOKEN: ${{ secrets.app-token }}
+          REPO: ${{ github.repository }}
+        run: |
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git"
+          MAJOR="${TAG%%.*}"
+          git tag -f "$MAJOR"
+          git push origin "$MAJOR" --force
