@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.0.6](https://github.com/kryota-dev/actions/compare/v0.0.5...v0.0.6) - 2026-02-23
+### New Features
+- docs: PR テンプレートと Issue テンプレートを追加 by @kryota-dev in https://github.com/kryota-dev/actions/pull/32
+### Other Changes
+- feat: 4つの Reusable Workflows を作成し内部 CI をラッパー化 by @kryota-dev in https://github.com/kryota-dev/actions/pull/26
+- chore(deps): update actions/setup-node action to v6 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/25
+- chore(deps): update actions/cache action to v5 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/24
+- chore: プロジェクトツーリングファイルの追加と renovate.json5 の移動 by @kryota-dev in https://github.com/kryota-dev/actions/pull/29
+- rename: .github/composite を .github/actions にリネームしドキュメント体系を構築 by @kryota-dev in https://github.com/kryota-dev/actions/pull/31
+- fix(auto-assign-pr): Bot PR でのワークフロー失敗を防止 by @kryota-dev in https://github.com/kryota-dev/actions/pull/33
+
 ## [v0.0.5](https://github.com/kryota-dev/actions/compare/v0.0.4...v0.0.5) - 2026-02-21
 ### Other Changes
 - feat: Composite Actions サポートの基盤整備 by @kryota-dev in https://github.com/kryota-dev/actions/pull/19
