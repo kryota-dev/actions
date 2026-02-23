@@ -2,7 +2,13 @@
 name: Auto Assign PR
 
 on:
-  workflow_call: {}
+  workflow_call:
+    inputs:
+      bot-assignees:
+        description: 'Comma-separated list of users/teams to assign for bot PRs (empty = skip)'
+        required: false
+        type: string
+        default: ''
 
 permissions: {}
 
@@ -13,9 +19,42 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - name: Add assignee
+      - name: Check if actor is a bot
+        id: check-bot
+        run: |
+          if [[ "$ACTOR" == *"[bot]" ]]; then
+            echo "is_bot=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::Actor '$ACTOR' is a bot"
+          else
+            echo "is_bot=false" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          ACTOR: ${{ github.actor }}
+
+      - name: Assign PR creator (human)
+        if: steps.check-bot.outputs.is_bot == 'false'
         run: gh pr edit "$PR_URL" --add-assignee "$ACTOR"
         env:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
+          ACTOR: ${{ github.actor }}
+
+      - name: Assign bot-assignees (bot with assignees specified)
+        if: steps.check-bot.outputs.is_bot == 'true' && inputs.bot-assignees != ''
+        run: |
+          IFS=',' read -ra ASSIGNEES <<< "$BOT_ASSIGNEES"
+          for assignee in "${ASSIGNEES[@]}"; do
+            trimmed=$(echo "$assignee" | xargs)
+            echo "Assigning '$trimmed' to PR"
+            gh pr edit "$PR_URL" --add-assignee "$trimmed"
+          done
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          BOT_ASSIGNEES: ${{ inputs.bot-assignees }}
+
+      - name: Skip assignment (bot without assignees)
+        if: steps.check-bot.outputs.is_bot == 'true' && inputs.bot-assignees == ''
+        run: echo "::notice::Skipping assignment for bot actor '$ACTOR' (no bot-assignees specified)"
+        env:
           ACTOR: ${{ github.actor }}
