@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1771869167027_k8sjf0y5a",
+  "approvalId": "approval_1771868908836_yvlzl44x4",
+  "approvalTitle": "Requirements: Bot ユーザー PR でのアサインスキップ",
+  "version": 2,
+  "timestamp": "2026-02-23T17:52:47.027Z",
+  "trigger": "revision_requested",
+  "status": "pending",
+  "content": "# Requirements Document\n\n## Introduction\n\n`auto-assign-pr.yml` Reusable Workflow は PR 作成者を自動的にアサインするワークフローだが、Bot ユーザー（Renovate Bot 等）が作成した PR で `gh pr edit --add-assignee` が失敗する。Bot ユーザーは GitHub 上でアサインできないため、Bot による PR の場合はアサイン処理をスキップする必要がある。\n\n関連 Issue: [#28](https://github.com/kryota-dev/actions/issues/28)\n\n## Alignment with Product Vision\n\nこのリポジトリは再利用可能な GitHub Actions を一元管理・公開するもの。外部リポジトリから呼び出される Reusable Workflow が Bot PR で失敗すると、呼び出し元の CI 全体に悪影響を与える。Bot PR でのスキップ対応は、ワークフローの堅牢性向上に直結する。\n\n## Requirements\n\n### Requirement 1: Bot ユーザーの PR でアサイン処理をスキップ\n\n**User Story:** リポジトリの管理者として、Bot ユーザーが作成した PR でワークフローが失敗しないようにしたい。CI パイプライン全体が不必要にブロックされることを防ぐためである。\n\n#### Acceptance Criteria\n\n1. WHEN Bot ユーザー（`github.actor` が `[bot]` で終わるユーザー）が PR を作成する THEN `auto-assign-pr.yml` SHALL アサイン処理をスキップし、正常終了すること\n2. WHEN Bot ユーザーの PR でアサインがスキップされた場合 THEN ワークフローのログに SHALL スキップした旨が出力されること\n3. WHEN `github.actor_type` が `Bot` の場合 THEN `auto-assign-pr.yml` SHALL アサイン処理をスキップすること\n\n### Requirement 2: 通常ユーザーの PR でのアサイン動作を維持\n\n**User Story:** リポジトリの管理者として、通常ユーザーが作成した PR では引き続き自動アサインが動作してほしい。PR レビュープロセスを効率化するためである。\n\n#### Acceptance Criteria\n\n1. WHEN 通常ユーザー（Human）が PR を作成する THEN `auto-assign-pr.yml` SHALL 従来通り PR 作成者をアサインすること\n2. IF `github.actor_type` が `User` の場合 THEN `auto-assign-pr.yml` SHALL `gh pr edit --add-assignee` を実行すること\n\n## Non-Functional Requirements\n\n### Code Architecture and Modularity\n- **Single Responsibility Principle**: Bot 判定ロジックはワークフロー内のステップとして完結させる\n- **Modular Design**: `auto-assign-pr.yml` 内で完結し、他のワークフローに影響を与えない\n- **Clear Interfaces**: `workflow_call` のインターフェースは変更しない（後方互換性維持）\n\n### Performance\n- Bot 判定は `github.actor` の文字列チェックまたは `github.actor_type` のコンテキスト変数で行い、追加の API 呼び出しを避ける\n\n### Security\n- 既存の permissions（`pull-requests: write`）の範囲内で実装する。新たな権限は不要\n- SHA ピン留めルールは引き続き遵守する\n\n### Reliability\n- Bot 判定に複数の方法（`github.actor_type == 'Bot'` および `github.actor` が `[bot]` で終わる）を組み合わせ、確実にスキップする\n- 判定ロジックの誤りで通常ユーザーの PR がスキップされないようにする\n\n### Usability\n- ワークフロー利用者は特別な設定変更なく恩恵を受けられる（`workflow_call` のインターフェース変更なし）\n",
+  "fileStats": {
+    "size": 3538,
+    "lines": 54,
+    "lastModified": "2026-02-23T17:48:22.395Z"
+  },
+  "comments": []
+}

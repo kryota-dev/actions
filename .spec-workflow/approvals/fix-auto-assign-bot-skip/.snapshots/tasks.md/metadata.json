@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/fix-auto-assign-bot-skip/tasks.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-23T18:01:35.781Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771869695778_powbyftuf",
+      "approvalTitle": "Tasks: Bot PR アサインスキップ実装タスク一覧"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-23T18:01:47.247Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771869695778_powbyftuf",
+      "approvalTitle": "Tasks: Bot PR アサインスキップ実装タスク一覧"
+    }
+  ]
+}

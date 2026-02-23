@@ -1,0 +1,30 @@
+{
+  "filePath": ".spec-workflow/specs/fix-auto-assign-bot-skip/requirements.md",
+  "currentVersion": 3,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-23T17:48:28.841Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771868908836_yvlzl44x4",
+      "approvalTitle": "Requirements: Bot ユーザー PR でのアサインスキップ"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-23T17:52:47.027Z",
+      "trigger": "revision_requested",
+      "approvalId": "approval_1771868908836_yvlzl44x4",
+      "approvalTitle": "Requirements: Bot ユーザー PR でのアサインスキップ"
+    },
+    {
+      "version": 3,
+      "filename": "snapshot-003.json",
+      "timestamp": "2026-02-23T17:53:56.698Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771869213045_eoo79ofvl",
+      "approvalTitle": "Requirements v2: Bot PR アサインスキップ + 代替アサイン先指定"
+    }
+  ]
+}
