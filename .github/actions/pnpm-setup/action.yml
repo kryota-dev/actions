@@ -1,3 +1,4 @@
+# Documentation: .github/actions/docs/pnpm-setup.md
 name: Setup pnpm
 description: Setup Node.js and pnpm, and install dependencies
 

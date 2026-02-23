@@ -5,7 +5,7 @@ When a task is completed, verify the following:
 ## Before Committing
 1. **SHA Pinning**: All `uses:` directives use full 40-char SHA with tag comment
 2. **Naming**: All new files follow kebab-case convention
-3. **Composite Actions**: Placed in `.github/composite/{name}/action.yml`, NOT in workflows/
+3. **Composite Actions**: Placed in `.github/actions/{name}/action.yml`, NOT in workflows/
 4. **ls-lint**: Run `ls-lint` to verify naming conventions
 5. **actionlint**: Run `aqua exec -- actionlint` to verify workflow syntax
 6. **ghalint**: Run `aqua exec -- ghalint run` and `aqua exec -- ghalint run-action` for security policy
@@ -18,7 +18,7 @@ When a task is completed, verify the following:
 - CodeQL
 
 ## If Adding a New Composite Action
-1. Create directory: `.github/composite/{action-name}/`
+1. Create directory: `.github/actions/{action-name}/`
 2. Create file: `action.yml` inside that directory
 3. Update README.md with usage documentation
 4. Ensure ls-lint rules cover the new directory structure

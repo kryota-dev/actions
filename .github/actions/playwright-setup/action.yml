@@ -1,3 +1,4 @@
+# Documentation: .github/actions/docs/playwright-setup.md
 name: Setup Playwright
 description: Setup Playwright browsers with caching
 

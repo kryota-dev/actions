@@ -28,6 +28,6 @@ docs/adr/               # Architecture Decision Records
 
 ## Key Directories
 - `.github/workflows/` — Reusable Workflows (workflow_call) + Internal CI thin wrappers (my-* prefix). actionlint scans this
-- `.github/composite/` — Composite Actions (actionlint does NOT scan this, by design)
+- `.github/actions/` — Composite Actions (actionlint does NOT scan this, by design)
 - `.github/rulesets/` — Repository protection rules as JSON
 - `docs/adr/` — Architecture Decision Records (English)
