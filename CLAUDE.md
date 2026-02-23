@@ -29,14 +29,14 @@ bash .claude/skills/manage-rulesets/scripts/manage-rulesets.sh export  # GitHub 
 ### ディレクトリ構成
 
 - `.github/workflows/` — 外部公開用 Reusable Workflows + 内部 CI ワークフロー（`my-` プレフィックス）
-- `.github/composite/{action-name}/action.yml` — 外部公開用 Composite Actions
+- `.github/actions/{action-name}/action.yml` — 外部公開用 Composite Actions
 - `.github/rulesets/` — ブランチ・タグ保護ルール（JSON、`manage-rulesets` スクリプトで GitHub と同期）
 - `docs/adr/` — Architecture Decision Records
 
 ### Reusable Workflows と Composite Actions の使い分け
 
 - **Reusable Workflows**（`.github/workflows/`）: `jobs:` レベルで呼び出し。別ジョブとして実行される。`workflow_call` トリガーを持つ
-- **Composite Actions**（`.github/composite/`）: `steps:` レベルで呼び出し。呼び出し元ジョブ内のステップとして実行される
+- **Composite Actions**（`.github/actions/`）: `steps:` レベルで呼び出し。呼び出し元ジョブ内のステップとして実行される
 
 ### 内部 CI の薄いラッパーパターン
 
@@ -85,7 +85,7 @@ ghalint と zizmor が CI で自動検証。Renovate Bot（`helpers:pinGitHubAct
 
 ### actionlint と Composite Actions の非互換
 
-actionlint は `action.yml` をサポートしない。Composite Actions は `.github/composite/` に配置することで actionlint の対象外となる。`.github/workflows/` には絶対に置かないこと。
+actionlint は `action.yml` をサポートしない。Composite Actions は `.github/actions/` に配置することで actionlint の対象外となる。`.github/workflows/` には絶対に置かないこと。
 
 ### CI 品質ゲート
 

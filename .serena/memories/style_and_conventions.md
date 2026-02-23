@@ -17,7 +17,7 @@ Enforced by ghalint and zizmor in CI. Renovate Bot auto-updates SHA pins.
 
 ## File Placement
 - Workflows → `.github/workflows/`
-- Composite Actions → `.github/composite/{action-name}/action.yml`
+- Composite Actions → `.github/actions/{action-name}/action.yml`
 - NEVER place `action.yml` under `.github/workflows/` (actionlint incompatibility)
 
 ## ADR

@@ -1,3 +1,4 @@
+# Documentation: .github/actions/docs/slack-notify-success.md
 name: Post Message to Slack - Success
 description: Post a message to Slack when the workflow succeeds
 
