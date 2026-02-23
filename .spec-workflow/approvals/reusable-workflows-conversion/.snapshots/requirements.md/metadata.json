@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/reusable-workflows-conversion/requirements.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-23T15:37:13.415Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771861033411_tpzt92sbk",
+      "approvalTitle": "Requirements: 4つの内部CIワークフローをReusable Workflowsに変換"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-23T15:38:16.789Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771861033411_tpzt92sbk",
+      "approvalTitle": "Requirements: 4つの内部CIワークフローをReusable Workflowsに変換"
+    }
+  ]
+}

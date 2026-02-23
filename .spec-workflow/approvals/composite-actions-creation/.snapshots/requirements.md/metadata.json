@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/composite-actions-creation/requirements.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-21T10:01:28.744Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771668088735_zvrorme90",
+      "approvalTitle": "Requirements: composite-actions-creation"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-21T10:13:00.877Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771668088735_zvrorme90",
+      "approvalTitle": "Requirements: composite-actions-creation"
+    }
+  ]
+}

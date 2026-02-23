@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/composite-actions-support/design.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-21T09:19:50.910Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771665590907_wgma5utk5",
+      "approvalTitle": "Design: composite-actions-support"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-21T09:20:42.077Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771665590907_wgma5utk5",
+      "approvalTitle": "Design: composite-actions-support"
+    }
+  ]
+}
