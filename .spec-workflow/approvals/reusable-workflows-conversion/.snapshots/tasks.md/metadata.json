@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/reusable-workflows-conversion/tasks.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-23T15:58:33.029Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771862313025_b5a2hwawq",
+      "approvalTitle": "Tasks: 5つの実装タスク（Reusable Workflow作成 + ラッパー化 + README更新）"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-23T15:58:38.409Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771862313025_b5a2hwawq",
+      "approvalTitle": "Tasks: 5つの実装タスク（Reusable Workflow作成 + ラッパー化 + README更新）"
+    }
+  ]
+}

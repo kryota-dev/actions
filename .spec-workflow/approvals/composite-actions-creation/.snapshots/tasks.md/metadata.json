@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/composite-actions-creation/tasks.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-21T10:23:42.470Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771669422468_1hbmmz8pb",
+      "approvalTitle": "Tasks: composite-actions-creation"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-21T10:37:12.792Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771669422468_1hbmmz8pb",
+      "approvalTitle": "Tasks: composite-actions-creation"
+    }
+  ]
+}
