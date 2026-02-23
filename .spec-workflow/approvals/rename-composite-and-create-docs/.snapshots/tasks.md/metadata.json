@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/rename-composite-and-create-docs/tasks.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-02-23T17:07:00.628Z",
+      "trigger": "initial",
+      "approvalId": "approval_1771866420626_2glo4h3ij",
+      "approvalTitle": "Tasks: 8タスク（リネーム・参照更新・ドキュメント作成・README整理）"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-02-23T17:07:17.854Z",
+      "trigger": "approved",
+      "approvalId": "approval_1771866420626_2glo4h3ij",
+      "approvalTitle": "Tasks: 8タスク（リネーム・参照更新・ドキュメント作成・README整理）"
+    }
+  ]
+}

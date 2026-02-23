@@ -1,3 +1,4 @@
+# Documentation: .github/workflows/docs/codeql-analysis.md
 name: CodeQL Analysis
 
 on:
