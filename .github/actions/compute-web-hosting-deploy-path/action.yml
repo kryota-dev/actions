@@ -1,0 +1,83 @@
+# Documentation: .github/actions/docs/compute-web-hosting-deploy-path.md
+name: Compute Web Hosting Deploy Path
+description: Compute web hosting deploy path and production flag from github context and inputs
+
+inputs:
+  base-path-prefix:
+    description: 'Project-specific path prefix (e.g. /<your-project>)'
+    required: false
+    default: ''
+  production-branch:
+    description: 'Production branch name'
+    required: false
+    default: 'main'
+  ref-name:
+    description: 'Branch name override (auto-derived from github context when empty)'
+    required: false
+    default: ''
+
+outputs:
+  deploy-path:
+    description: 'Full deploy path (e.g. /<your-project>/_feature/feature-something)'
+    value: ${{ steps.compute.outputs.deploy-path }}
+  is-production:
+    description: 'Whether this is a production deployment (true/false)'
+    value: ${{ steps.compute.outputs.is-production }}
+  ref-name:
+    description: 'Resolved ref name (derived or overridden)'
+    value: ${{ steps.compute.outputs.ref-name }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Compute deploy path
+      id: compute
+      shell: bash
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        HEAD_REF: ${{ github.head_ref }}
+        REF_NAME_CTX: ${{ github.ref_name }}
+        REF_NAME_OVERRIDE: ${{ inputs.ref-name }}
+        BASE_PATH_PREFIX: ${{ inputs.base-path-prefix }}
+        PRODUCTION_BRANCH: ${{ inputs.production-branch }}
+      run: |
+        # 0. Determine ref-name: use override if provided, otherwise derive from github context
+        if [ -n "$REF_NAME_OVERRIDE" ]; then
+          REF_NAME="$REF_NAME_OVERRIDE"
+        elif [ "$EVENT_NAME" = "pull_request" ]; then
+          REF_NAME="$HEAD_REF"
+        else
+          REF_NAME="$REF_NAME_CTX"
+        fi
+
+        # 1. Validate ref-name
+        if [ -z "$REF_NAME" ]; then
+          echo "::error::ref-name is empty. Cannot compute deploy path."
+          exit 1
+        fi
+
+        # 2. Sanitize branch name: replace '/' with '-'
+        SANITIZED_REF=$(echo "$REF_NAME" | tr '/' '-')
+
+        # 3. Determine production status and feature suffix
+        if [ "$REF_NAME" = "$PRODUCTION_BRANCH" ]; then
+          IS_PRODUCTION="true"
+          FEATURE_SUFFIX=""
+        else
+          IS_PRODUCTION="false"
+          FEATURE_SUFFIX="/_feature/${SANITIZED_REF}"
+        fi
+
+        # 4. Compute full deploy path
+        DEPLOY_PATH="${BASE_PATH_PREFIX}${FEATURE_SUFFIX}"
+
+        # 5. Output results
+        echo "deploy-path=${DEPLOY_PATH}" >> "$GITHUB_OUTPUT"
+        echo "is-production=${IS_PRODUCTION}" >> "$GITHUB_OUTPUT"
+        echo "ref-name=${REF_NAME}" >> "$GITHUB_OUTPUT"
+
+        # 6. Log computed values
+        echo "::notice::ref-name: ${REF_NAME}"
+        echo "::notice::sanitized-ref: ${SANITIZED_REF}"
+        echo "::notice::is-production: ${IS_PRODUCTION}"
+        echo "::notice::deploy-path: ${DEPLOY_PATH}"

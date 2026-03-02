@@ -4,18 +4,20 @@
 
 ビルド済みアーティファクトを FTP または rsync で Web ホスティングサーバーにデプロイする Reusable Workflow です。ビルド処理は呼び出し元で行い、本ワークフローはデプロイと通知のみを担当します。PR プレビューデプロイ、本番/開発環境デプロイに対応し、PR コメントおよび Slack 通知を自動投稿します。
 
+デプロイパスと本番判定は `github` コンテキストから自動的に計算されます（内部で `compute-web-hosting-deploy-path` Composite Action を使用）。
+
 ## Inputs
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
 | `deploy-type` | デプロイ方式 (`'ftp'` or `'rsync'`) | Yes | - |
-| `base-path` | デプロイ先のベースパス（呼び出し元で事前計算） | No | `''` |
-| `is-pr` | PR プレビューデプロイかどうか | Yes | - |
-| `home-url` | サイトのホーム URL | No | `''` |
-| `dry-run` | dry-run モード | No | `'false'` |
-| `is-production` | 本番デプロイかどうか | No | `'false'` |
 | `artifact-name` | ダウンロードするビルドアーティファクト名 | Yes | - |
 | `output-dir` | ビルド出力ディレクトリ名 | Yes | - |
+| `base-path-prefix` | プロジェクト固有パスプレフィックス（例: `/<your-project>`） | No | `''` |
+| `home-url` | サイトのホーム URL | No | `''` |
+| `dry-run` | dry-run モード | No | `'false'` |
+| `production-branch` | 本番ブランチ名 | No | `'main'` |
+| `ref-name` | ブランチ名オーバーライド（未指定時は `github` コンテキストから自動導出） | No | `''` |
 
 ## Secrets
 
@@ -33,11 +35,12 @@
 
 ## 動作フロー
 
-1. ビルドアーティファクトのダウンロード（`output-dir` で指定されたディレクトリに展開）
-2. FTP/rsync でデプロイ（Composite Action 経由）
-3. PR コメント投稿（成功/失敗）
-4. Slack 通知（非 PR 時のみ、成功/失敗）
-5. 過去の失敗コメント非表示
+1. デプロイパスの計算（`compute-web-hosting-deploy-path` で `github` コンテキストから自動導出）
+2. ビルドアーティファクトのダウンロード（`output-dir` で指定されたディレクトリに展開）
+3. FTP/rsync でデプロイ（Composite Action 経由）
+4. PR コメント投稿（成功/失敗）
+5. Slack 通知（非 PR 時のみ、成功/失敗）
+6. 過去の失敗コメント非表示
 
 ## 前提条件
 
@@ -49,6 +52,8 @@
 
 ## 使用例
 
+### 基本的な使用例（PR / push）
+
 ```yaml
 jobs:
   build:
@@ -56,7 +61,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
       # ... ビルド処理 ...
       - uses: actions/upload-artifact@v4
         with:
@@ -70,12 +75,12 @@ jobs:
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
     with:
       deploy-type: ${{ vars.DEPLOY_TYPE }}
-      base-path: ${{ needs.build.outputs.base-path }}
-      is-pr: ${{ github.event_name == 'pull_request' }}
+      base-path-prefix: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
+      production-branch: 'main'
       home-url: ${{ vars.HOME_URL || '' }}
       dry-run: ${{ vars.SERVER_DRY_RUN || 'false' }}
-      is-production: ${{ github.ref_name == 'main' && 'true' || 'false' }}
       artifact-name: build-output
+      output-dir: out
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
       server-user: ${{ secrets.SERVER_USER }}
@@ -86,4 +91,49 @@ jobs:
       slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
       slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
       slack-mention-user: ${{ secrets.SLACK_MENTION_USER }}
+```
+
+### repository_dispatch（デフォルトブランチ ≠ 本番ブランチの場合）
+
+```yaml
+  deploy:
+    needs: build
+    permissions:
+      pull-requests: write
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
+    with:
+      deploy-type: ${{ vars.DEPLOY_TYPE }}
+      base-path-prefix: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
+      production-branch: 'main'
+      ref-name: ${{ github.event_name == 'repository_dispatch' && 'main' || '' }}
+      artifact-name: build-output
+      output-dir: out
+    secrets:
+      server-host: ${{ secrets.SERVER_HOST }}
+      # ...
+```
+
+## Migration Guide
+
+### 削除された Inputs
+
+| 旧 Input | 代替 |
+|-----------|------|
+| `is-pr` | 不要（`github.event_name` から自動判定） |
+| `base-path` | `base-path-prefix` に置き換え（フルパスではなくプレフィックスのみ） |
+| `is-production` | 不要（`production-branch` と ref-name から自動判定） |
+
+### 変更例
+
+```yaml
+# Before
+with:
+  is-pr: ${{ github.event_name == 'pull_request' }}
+  base-path: ${{ needs.build.outputs.base-path }}
+  is-production: ${{ needs.build.outputs.is-production }}
+
+# After
+with:
+  base-path-prefix: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
+  production-branch: 'main'
 ```
