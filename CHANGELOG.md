@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.0.7](https://github.com/kryota-dev/actions/compare/v0.0.6...v0.0.7) - 2026-03-02
+### Other Changes
+- chore(deps): update astral-sh/setup-uv action to v7.3.1 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/35
+- chore(deps): update songmu/tagpr action to v1.17.1 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/36
+- feat: Web ホスティング向けデプロイ・アンデプロイ用の Composite Actions と Reusable Workflows を追加 by @kryota-dev in https://github.com/kryota-dev/actions/pull/38
+
 ## [v0.0.6](https://github.com/kryota-dev/actions/compare/v0.0.5...v0.0.6) - 2026-02-23
 ### New Features
 - docs: PR テンプレートと Issue テンプレートを追加 by @kryota-dev in https://github.com/kryota-dev/actions/pull/32
