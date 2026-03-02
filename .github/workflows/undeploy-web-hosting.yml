@@ -13,6 +13,11 @@ on:
         type: string
         required: false
         default: ''
+      production-branch:
+        description: "Production branch name"
+        type: string
+        required: false
+        default: 'main'
       ref-name:
         description: "Branch name override (auto-derived from github context when empty)"
         type: string
@@ -52,6 +57,7 @@ jobs:
         uses: ./.github/actions/compute-web-hosting-deploy-path
         with:
           base-path-prefix: ${{ inputs.base-path-prefix }}
+          production-branch: ${{ inputs.production-branch }}
           ref-name: ${{ inputs.ref-name }}
 
       # --- FTP Delete ---
