@@ -58,13 +58,11 @@ jobs:
 
 ### workflow_dispatch による手動削除
 
+`workflow_dispatch` 実行時にブランチを選択すると、そのブランチ名から削除対象パスが自動計算されます。
+
 ```yaml
 on:
   workflow_dispatch:
-    inputs:
-      branch_name:
-        description: '削除対象のブランチ名'
-        required: true
 
 jobs:
   undeploy:
@@ -75,7 +73,6 @@ jobs:
     with:
       deploy-type: ${{ vars.DEPLOY_TYPE }}
       base-path-prefix: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
-      ref-name: ${{ github.event.inputs.branch_name }}
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
       server-user: ${{ secrets.SERVER_USER }}
