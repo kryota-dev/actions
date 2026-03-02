@@ -93,7 +93,9 @@ jobs:
       slack-mention-user: ${{ secrets.SLACK_MENTION_USER }}
 ```
 
-### repository_dispatch（デフォルトブランチ ≠ 本番ブランチの場合）
+### repository_dispatch
+
+`repository_dispatch` 時は `production-branch` の値が自動適用されるため、`ref-name` の指定は不要です。
 
 ```yaml
   deploy:
@@ -105,12 +107,18 @@ jobs:
       deploy-type: ${{ vars.DEPLOY_TYPE }}
       base-path-prefix: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
       production-branch: 'main'
-      ref-name: ${{ github.event_name == 'repository_dispatch' && 'main' || '' }}
       artifact-name: build-output
       output-dir: out
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
       # ...
+```
+
+staging 環境等で `repository_dispatch` を使用する場合は、`ref-name` でオーバーライドできます:
+
+```yaml
+    with:
+      ref-name: 'develop'  # production-branch ではなく develop を使用
 ```
 
 ## Migration Guide

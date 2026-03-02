@@ -46,6 +46,8 @@ runs:
           REF_NAME="$REF_NAME_OVERRIDE"
         elif [ "$EVENT_NAME" = "pull_request" ]; then
           REF_NAME="$HEAD_REF"
+        elif [ "$EVENT_NAME" = "repository_dispatch" ]; then
+          REF_NAME="$PRODUCTION_BRANCH"
         else
           REF_NAME="$REF_NAME_CTX"
         fi

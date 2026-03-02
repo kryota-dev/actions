@@ -30,7 +30,7 @@
 |-------|--------|------|
 | `pull_request` | `github.head_ref` | PR のソースブランチ名 |
 | `push` | `github.ref_name` | プッシュ先ブランチ名 |
-| `repository_dispatch` | `github.ref_name` | デフォルトブランチ名（注意: 本番ブランチとは限らない） |
+| `repository_dispatch` | `inputs.production-branch` | 本番ブランチ名を自動適用（`ref-name` でオーバーライド可能） |
 | `workflow_dispatch` | `github.ref_name` | 実行元ブランチ名 |
 
 ### パス計算ロジック
@@ -58,7 +58,9 @@ steps:
       production-branch: 'main'
 ```
 
-### repository_dispatch（デフォルトブランチ ≠ 本番ブランチの場合）
+### repository_dispatch
+
+`repository_dispatch` 時は `production-branch` の値が自動適用されるため、`ref-name` の指定は不要です。
 
 ```yaml
 steps:
@@ -68,10 +70,12 @@ steps:
     with:
       base-path-prefix: '/<your-project>'
       production-branch: 'main'
-      ref-name: ${{ github.event_name == 'repository_dispatch' && 'main' || '' }}
 ```
 
-### ref-name オーバーライド（手動 undeploy 等）
+### ref-name オーバーライド（staging 環境・手動 undeploy 等）
+
+`ref-name` を明示的に指定すると、イベント種別に関係なくその値が優先されます。
+staging 環境で `repository_dispatch` を使用する場合などに利用できます。
 
 ```yaml
 steps:
