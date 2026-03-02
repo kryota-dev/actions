@@ -1,8 +1,8 @@
-# deploy-server
+# deploy-web-hosting
 
-> ソースファイル: [`.github/workflows/deploy-server.yml`](../deploy-server.yml)
+> ソースファイル: [`.github/workflows/deploy-web-hosting.yml`](../deploy-web-hosting.yml)
 
-ビルド済みアーティファクトを FTP または rsync でサーバーにデプロイする Reusable Workflow です。ビルド処理は呼び出し元で行い、本ワークフローはデプロイと通知のみを担当します。PR プレビューデプロイ、本番/開発環境デプロイに対応し、PR コメントおよび Slack 通知を自動投稿します。
+ビルド済みアーティファクトを FTP または rsync で Web ホスティングサーバーにデプロイする Reusable Workflow です。ビルド処理は呼び出し元で行い、本ワークフローはデプロイと通知のみを担当します。PR プレビューデプロイ、本番/開発環境デプロイに対応し、PR コメントおよび Slack 通知を自動投稿します。
 
 ## Inputs
 
@@ -67,7 +67,7 @@ jobs:
     needs: build
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/deploy-server.yml@v1
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
     with:
       deploy-type: ${{ vars.DEPLOY_TYPE }}
       base-path: ${{ needs.build.outputs.base-path }}

@@ -1,6 +1,6 @@
-# Documentation: .github/actions/docs/delete-ftp.md
-name: Delete from FTP Server
-description: Delete a directory from an FTP server using lftp with dry-run support
+# Documentation: .github/actions/docs/undeploy-web-hosting-ftp.md
+name: Undeploy from Web Hosting via FTP
+description: Remove a deployed directory from web hosting server using lftp with dry-run support
 
 inputs:
   ftp-server:

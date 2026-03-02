@@ -1,8 +1,8 @@
-# delete-ftp
+# undeploy-web-hosting-ftp
 
-> ソースファイル: [`.github/actions/delete-ftp/action.yml`](../delete-ftp/action.yml)
+> ソースファイル: [`.github/actions/undeploy-web-hosting-ftp/action.yml`](../undeploy-web-hosting-ftp/action.yml)
 
-lftp を使用して FTP サーバー上のディレクトリを削除する Composite Action です。dry-run モードをサポートしています。
+lftp を使用して Web ホスティングサーバー上のデプロイ済みディレクトリを削除する Composite Action です。dry-run モードをサポートしています。
 
 ## Inputs
 
@@ -27,7 +27,7 @@ lftp を使用して FTP サーバー上のディレクトリを削除する Com
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/delete-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@v1
     with:
       ftp-server: ${{ secrets.FTP_SERVER }}
       ftp-username: ${{ secrets.FTP_USERNAME }}

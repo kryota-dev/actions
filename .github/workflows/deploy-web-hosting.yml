@@ -1,5 +1,5 @@
-# Documentation: .github/workflows/docs/deploy-server.md
-name: Deploy to Server
+# Documentation: .github/workflows/docs/deploy-web-hosting.md
+name: Deploy to Web Hosting
 
 on:
   workflow_call:
@@ -94,7 +94,7 @@ jobs:
       # --- FTP Deploy ---
       - name: Deploy via FTP
         if: ${{ inputs.deploy-type == 'ftp' }}
-        uses: ./.github/actions/deploy-ftp
+        uses: ./.github/actions/deploy-web-hosting-ftp
         with:
           base-path: ${{ inputs.base-path }}
           output-dir: ${{ inputs.output-dir }}
@@ -108,7 +108,7 @@ jobs:
       # --- rsync Deploy ---
       - name: Deploy via rsync
         if: ${{ inputs.deploy-type == 'rsync' }}
-        uses: ./.github/actions/deploy-rsync
+        uses: ./.github/actions/deploy-web-hosting-rsync
         with:
           base-path: ${{ inputs.base-path }}
           output-dir: ${{ inputs.output-dir }}

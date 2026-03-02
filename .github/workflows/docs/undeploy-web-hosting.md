@@ -1,8 +1,8 @@
-# delete-server
+# undeploy-web-hosting
 
-> ソースファイル: [`.github/workflows/delete-server.yml`](../delete-server.yml)
+> ソースファイル: [`.github/workflows/undeploy-web-hosting.yml`](../undeploy-web-hosting.yml)
 
-PR プレビュー環境を FTP または rsync で削除する Reusable Workflow です。PR コメントで削除結果を通知し、デプロイ済みコメントの非表示も自動実行します。
+Web ホスティングサーバー上の PR プレビュー環境を FTP または rsync で削除する Reusable Workflow です。PR コメントで削除結果を通知し、デプロイ済みコメントの非表示も自動実行します。
 
 ## Inputs
 
@@ -38,7 +38,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/delete-server.yml@v1
+    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v1
     with:
       deploy-type: ${{ vars.DEPLOY_TYPE }}
       base-path: ${{ format('{0}/_feature/pr-{1}', vars.BASE_PATH || '', github.event.pull_request.number) }}

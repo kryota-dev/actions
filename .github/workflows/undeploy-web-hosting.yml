@@ -1,5 +1,5 @@
-# Documentation: .github/workflows/docs/delete-server.md
-name: Delete Server Deployment
+# Documentation: .github/workflows/docs/undeploy-web-hosting.md
+name: Undeploy from Web Hosting
 
 on:
   workflow_call:
@@ -48,7 +48,7 @@ jobs:
       # --- FTP Delete ---
       - name: Delete via FTP
         if: ${{ inputs.deploy-type == 'ftp' }}
-        uses: ./.github/actions/delete-ftp
+        uses: ./.github/actions/undeploy-web-hosting-ftp
         with:
           ftp-server: ${{ secrets.server-host }}
           ftp-username: ${{ secrets.server-user }}
@@ -59,7 +59,7 @@ jobs:
       # --- rsync Delete ---
       - name: Delete via rsync
         if: ${{ inputs.deploy-type == 'rsync' }}
-        uses: ./.github/actions/delete-rsync
+        uses: ./.github/actions/undeploy-web-hosting-rsync
         with:
           ssh-host: ${{ secrets.server-host }}
           ssh-user: ${{ secrets.server-user }}

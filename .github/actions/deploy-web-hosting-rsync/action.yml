@@ -1,6 +1,6 @@
-# Documentation: .github/actions/docs/deploy-rsync.md
-name: Deploy via rsync
-description: Deploy artifacts via rsync over SSH with dry-run and production mode support
+# Documentation: .github/actions/docs/deploy-web-hosting-rsync.md
+name: Deploy to Web Hosting via rsync
+description: Deploy artifacts to web hosting server via rsync over SSH with dry-run and production mode support
 
 inputs:
   output-dir:

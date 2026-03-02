@@ -1,6 +1,6 @@
-# Documentation: .github/actions/docs/delete-rsync.md
-name: Delete via rsync
-description: Delete a directory on a remote server via rsync over SSH with dry-run support
+# Documentation: .github/actions/docs/undeploy-web-hosting-rsync.md
+name: Undeploy from Web Hosting via rsync
+description: Remove a deployed directory from web hosting server via rsync over SSH with dry-run support
 
 inputs:
   ssh-host:

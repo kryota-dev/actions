@@ -1,6 +1,6 @@
-# Documentation: .github/actions/docs/deploy-ftp.md
-name: Deploy to FTP Server
-description: Deploy artifacts to an FTP server using lftp with dry-run and production mode support
+# Documentation: .github/actions/docs/deploy-web-hosting-ftp.md
+name: Deploy to Web Hosting via FTP
+description: Deploy artifacts to web hosting server using lftp with dry-run and production mode support
 
 inputs:
   output-dir:
