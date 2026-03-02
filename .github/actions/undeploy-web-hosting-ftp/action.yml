@@ -1,0 +1,66 @@
+# Documentation: .github/actions/docs/undeploy-web-hosting-ftp.md
+name: Undeploy from Web Hosting via FTP
+description: Remove a deployed directory from web hosting server using lftp with dry-run support
+
+inputs:
+  ftp-server:
+    description: 'The address of the FTP server'
+    required: true
+  ftp-username:
+    description: 'The username of the FTP server'
+    required: true
+  ftp-password:
+    description: 'The password of the FTP server'
+    required: true
+  target-path:
+    description: 'The target path to delete on the FTP server'
+    required: true
+  dry-run:
+    description: 'Whether to run in dry-run mode (default: false)'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install lftp for web hosting undeploy
+      shell: bash
+      run: |
+        which lftp || sudo apt update && sudo apt install -y lftp
+    - name: Undeploy from web hosting via FTP
+      shell: bash
+      env:
+        FTP_SERVER: ${{ inputs.ftp-server }}
+        FTP_USERNAME: ${{ inputs.ftp-username }}
+        FTP_PASSWORD: ${{ inputs.ftp-password }}
+        TARGET_PATH: ${{ inputs.target-path }}
+        DRY_RUN: ${{ inputs.dry-run }}
+      run: |
+        if [ "$DRY_RUN" = "true" ]; then
+          echo "::notice::DRY RUN MODE: Checking deletion target: ${TARGET_PATH}"
+          if lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" -e"\
+          set ftp:ssl-allow no; \
+          set net:timeout 30; \
+          ls -la ${TARGET_PATH}; \
+          exit"; then
+            echo "::notice::Target directory found and accessible"
+          else
+            echo "::warning::Target directory not found or inaccessible"
+          fi
+          echo "::notice::Would delete: ${TARGET_PATH}"
+          echo "::notice::To actually delete, set dry-run to 'false'"
+        else
+          echo "::notice::Deleting: ${TARGET_PATH}"
+          # Note: SSL disabled due to server configuration compatibility
+          # Consider upgrading to FTPS if server supports it
+          if lftp -u "$FTP_USERNAME","$FTP_PASSWORD" "$FTP_SERVER" -e"\
+          set ftp:ssl-allow no; \
+          set net:timeout 30; \
+          rm -rf ${TARGET_PATH}; \
+          exit"; then
+            echo "::notice::Deletion completed successfully"
+          else
+            echo "::error::FTP deletion failed"
+            exit 1
+          fi
+        fi

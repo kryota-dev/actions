@@ -1,0 +1,103 @@
+# Documentation: .github/actions/docs/deploy-web-hosting-rsync.md
+name: Deploy to Web Hosting via rsync
+description: Deploy artifacts to web hosting server via rsync over SSH with dry-run and production mode support
+
+inputs:
+  output-dir:
+    description: 'The build output directory name'
+    required: true
+  ssh-host:
+    description: 'The SSH server hostname'
+    required: true
+  ssh-user:
+    description: 'The SSH username'
+    required: true
+  ssh-private-key:
+    description: 'The SSH private key'
+    required: true
+  ssh-path:
+    description: 'The target path on the SSH server'
+    required: true
+  base-path:
+    description: 'The base path of the artifact'
+    required: false
+  dry-run:
+    description: 'Whether to run in dry-run mode (default: false)'
+    required: false
+    default: 'false'
+  is-production:
+    description: 'Whether this is a production deployment'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup SSH for web hosting deployment
+      shell: bash
+      env:
+        SSH_PRIVATE_KEY: ${{ inputs.ssh-private-key }}
+        SSH_HOST: ${{ inputs.ssh-host }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+    - name: Deploy to web hosting via rsync
+      shell: bash
+      env:
+        SSH_HOST: ${{ inputs.ssh-host }}
+        SSH_USER: ${{ inputs.ssh-user }}
+        SSH_PATH: ${{ inputs.ssh-path }}
+        BASE_PATH: ${{ inputs.base-path }}
+        OUTPUT_DIR: ${{ inputs.output-dir }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        DEBUG: ${{ runner.debug }}
+        IS_PRODUCTION: ${{ inputs.is-production }}
+      run: |
+        TARGET_PATH="${SSH_PATH}"
+        SOURCE_PATH="./${OUTPUT_DIR}${BASE_PATH}"
+
+        echo "::notice::Deploying via rsync"
+        echo "::notice::Source: ${SOURCE_PATH}"
+        echo "::notice::Target: ${SSH_USER}@${SSH_HOST}:${TARGET_PATH}"
+
+        RSYNC_OPTS="-az --delete"
+
+        if [ "$IS_PRODUCTION" = "true" ]; then
+          echo ".htaccess" > /tmp/rsync-exclude
+          echo "_feature/" >> /tmp/rsync-exclude
+          RSYNC_OPTS="${RSYNC_OPTS} --exclude-from=/tmp/rsync-exclude"
+          echo "::notice::PRODUCTION MODE: Excluding .htaccess and _feature/ directories from deletion"
+        fi
+
+        if [ "$DRY_RUN" = "true" ]; then
+          RSYNC_OPTS="${RSYNC_OPTS} --dry-run"
+          echo "::notice::DRY RUN MODE: Using rsync --dry-run option"
+        fi
+
+        if [ "$DEBUG" = "1" ] || [ "$DRY_RUN" = "true" ]; then
+          RSYNC_OPTS="${RSYNC_OPTS} --verbose"
+          echo "::notice::DEBUG MODE or DRY RUN MODE: Using rsync --verbose option"
+        fi
+
+        if rsync $RSYNC_OPTS \
+          -e "ssh -o StrictHostKeyChecking=no" \
+          "${SOURCE_PATH}/" "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}/"; then
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "::notice::Dry-run completed successfully - no files were actually transferred"
+            echo "::notice::To actually deploy, set dry-run to 'false'"
+          else
+            echo "::notice::Deployment completed successfully"
+          fi
+        else
+          echo "::error::rsync command failed"
+          exit 1
+        fi
+
+    - name: Cleanup SSH keys
+      if: always()
+      shell: bash
+      run: |
+        rm -f ~/.ssh/id_rsa

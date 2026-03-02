@@ -12,7 +12,7 @@
     },
     "deepwiki": {
       "command": "npx",
-      "args": ["mcp-remote", "https://mcp.deepwiki.com/sse"]
+      "args": ["mcp-remote", "https://mcp.deepwiki.com/mcp"]
     },
     "serena": {
       "type": "stdio",

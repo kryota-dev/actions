@@ -1,0 +1,89 @@
+# Documentation: .github/actions/docs/undeploy-web-hosting-rsync.md
+name: Undeploy from Web Hosting via rsync
+description: Remove a deployed directory from web hosting server via rsync over SSH with dry-run support
+
+inputs:
+  ssh-host:
+    description: 'The SSH server hostname'
+    required: true
+  ssh-user:
+    description: 'The SSH username'
+    required: true
+  ssh-private-key:
+    description: 'The SSH private key'
+    required: true
+  target-path:
+    description: 'The target path to delete on the remote server'
+    required: true
+  dry-run:
+    description: 'Whether to run in dry-run mode (default: false)'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup SSH for web hosting undeploy
+      shell: bash
+      env:
+        SSH_PRIVATE_KEY: ${{ inputs.ssh-private-key }}
+        SSH_HOST: ${{ inputs.ssh-host }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+
+    - name: Undeploy from web hosting via rsync
+      shell: bash
+      env:
+        SSH_HOST: ${{ inputs.ssh-host }}
+        SSH_USER: ${{ inputs.ssh-user }}
+        TARGET_PATH: ${{ inputs.target-path }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        DEBUG: ${{ runner.debug }}
+      run: |
+        echo "::notice::Deleting via rsync: ${TARGET_PATH}"
+
+        RSYNC_OPTS="-az --delete"
+
+        if [ "$DRY_RUN" = "true" ]; then
+          RSYNC_OPTS="${RSYNC_OPTS} --dry-run"
+          echo "::notice::DRY RUN MODE: Using rsync --dry-run option"
+        fi
+
+        if [ "$DEBUG" = "1" ] || [ "$DRY_RUN" = "true" ]; then
+          RSYNC_OPTS="${RSYNC_OPTS} --verbose"
+          echo "::notice::DEBUG MODE or DRY RUN MODE: Using rsync --verbose option"
+        fi
+
+        # Create empty directory to sync with target (effectively deleting all contents)
+        mkdir -p ./empty_dir
+
+        # Sync empty directory with target to delete all contents
+        # RSYNC_OPTS contains multiple flags, word splitting is intentional
+        # shellcheck disable=SC2086
+        if rsync $RSYNC_OPTS \
+          -e "ssh -o StrictHostKeyChecking=no" \
+          ./empty_dir/ "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}/"; then
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "::notice::Dry-run completed successfully - directory would be deleted"
+            echo "::notice::To actually delete, set dry-run to 'false'"
+          else
+            echo "::notice::Deletion completed successfully"
+            # Remove parent directory if it became empty
+            ssh -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" "rmdir '${TARGET_PATH}' 2>/dev/null || true"
+          fi
+        else
+          echo "::error::rsync deletion failed"
+          rm -rf ./empty_dir
+          exit 1
+        fi
+
+        rm -rf ./empty_dir
+
+    - name: Cleanup SSH keys
+      if: always()
+      shell: bash
+      run: |
+        rm -f ~/.ssh/id_rsa

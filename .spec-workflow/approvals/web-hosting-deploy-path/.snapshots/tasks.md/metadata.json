@@ -1,0 +1,22 @@
+{
+  "filePath": ".spec-workflow/specs/web-hosting-deploy-path/tasks.md",
+  "currentVersion": 2,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-03-02T15:36:18.974Z",
+      "trigger": "initial",
+      "approvalId": "approval_1772465778971_y1th4piwv",
+      "approvalTitle": "Tasks: デプロイパス計算共通化のタスク分解"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-03-02T15:36:45.252Z",
+      "trigger": "approved",
+      "approvalId": "approval_1772465778971_y1th4piwv",
+      "approvalTitle": "Tasks: デプロイパス計算共通化のタスク分解"
+    }
+  ]
+}
