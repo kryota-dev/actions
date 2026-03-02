@@ -33,7 +33,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup SSH
+    - name: Setup SSH for web hosting deployment
       shell: bash
       env:
         SSH_PRIVATE_KEY: ${{ inputs.ssh-private-key }}
@@ -44,7 +44,7 @@ runs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
 
-    - name: Deploy via rsync
+    - name: Deploy to web hosting via rsync
       shell: bash
       env:
         SSH_HOST: ${{ inputs.ssh-host }}
@@ -96,7 +96,7 @@ runs:
           exit 1
         fi
 
-    - name: Cleanup SSH
+    - name: Cleanup SSH keys
       if: always()
       shell: bash
       run: |

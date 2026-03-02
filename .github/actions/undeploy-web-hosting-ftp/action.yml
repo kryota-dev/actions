@@ -23,11 +23,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Install lftp
+    - name: Install lftp for web hosting undeploy
       shell: bash
       run: |
         which lftp || sudo apt update && sudo apt install -y lftp
-    - name: Delete from FTP Server
+    - name: Undeploy from web hosting via FTP
       shell: bash
       env:
         FTP_SERVER: ${{ inputs.ftp-server }}
