@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.0.8](https://github.com/kryota-dev/actions/compare/v0.0.7...v0.0.8) - 2026-03-03
+### Other Changes
+- fix: Reusable Workflow 内のローカルアクション参照を絶対参照に変更 by @Copilot in https://github.com/kryota-dev/actions/pull/40
+
 ## [v0.0.7](https://github.com/kryota-dev/actions/compare/v0.0.6...v0.0.7) - 2026-03-02
 ### Other Changes
 - chore(deps): update astral-sh/setup-uv action to v7.3.1 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/35
