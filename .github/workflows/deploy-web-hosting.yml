@@ -135,17 +135,15 @@ jobs:
         env:
           DEPLOY_URL: ${{ inputs.home-url }}${{ steps.compute-path.outputs.deploy-path }}/
           RESULT_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          DEPLOY_METHOD: ${{ inputs.deploy-type == 'ftp' && 'FTP' || inputs.deploy-type == 'rsync' && 'rsync' || 'Server' }}
         with:
           header: deploy-pr-preview-success
           message: |
-            ## ${{ inputs.dry-run == 'true' && '[DRY_RUN] ' || '' }}Deployed to Server via ${{ env.DEPLOY_METHOD }} (Preview)
+            ## ${{ inputs.dry-run == 'true' && '🏜️ [Dry Run] ' || '✅ ' }}Deployed to Web Hosting (Preview)
 
-            **Method**: ${{ env.DEPLOY_METHOD }}
             **URL**: ${{ inputs.dry-run == 'true' && env.RESULT_URL || env.DEPLOY_URL }}
 
             > [!NOTE]
-            > Deployed content will be deleted after merging.
+            > This preview will be automatically removed after merging.
 
       - name: Comment on PR (Deploy Failure)
         if: ${{ failure() && github.event_name == 'pull_request' }}
@@ -154,11 +152,10 @@ jobs:
           header: deploy-failed
           hide_and_recreate: true
           message: |
-            ## Deploy failed
+            ## ❌ Deploy to Web Hosting Failed
 
             > [!CAUTION]
-            > Please check the build logs for details.
-            > URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            > Check the [build logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
 
       # --- Slack Notifications ---
       - name: Notify Slack (Deploy Success)
@@ -167,8 +164,8 @@ jobs:
         with:
           channel-id: ${{ secrets.slack-channel-id }}
           bot-oauth-token: ${{ secrets.slack-bot-oauth-token }}
-          title: 'Deploy succeeded'
-          message: 'URL: ${{ inputs.home-url }}${{ steps.compute-path.outputs.deploy-path }}'
+          title: 'Web Hosting deploy succeeded'
+          message: '${{ inputs.home-url }}${{ steps.compute-path.outputs.deploy-path }}/'
 
       - name: Notify Slack (Deploy Failure)
         if: ${{ failure() && github.event_name != 'pull_request' && steps.check-slack.outputs.failure-enabled == 'true' }}
@@ -176,7 +173,7 @@ jobs:
         with:
           webhook-url: ${{ secrets.slack-webhook-url }}
           mention-user: ${{ secrets.slack-mention-user }}
-          title: 'Deploy failed'
+          title: 'Web Hosting deploy failed'
 
       # --- Hide Previous Failed Comments ---
       - name: Hide previous deploy failure comments
