@@ -1,62 +1,62 @@
-name: バグ報告
-description: Reusable Workflow や Composite Action の不具合を報告する
+name: Bug Report
+description: Report a bug in a Reusable Workflow or Composite Action
 labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        バグ報告ありがとうございます。以下の情報を記入してください。
+        Thank you for reporting a bug. Please fill in the following information.
 
   - type: input
     id: action-name
     attributes:
-      label: 対象の Action / Workflow
-      description: 不具合が発生している Action または Workflow の名前
-      placeholder: "例: actions-lint.yml, pnpm-setup"
+      label: Affected Action / Workflow
+      description: Name of the Action or Workflow where the bug occurs
+      placeholder: "e.g.: actions-lint.yml, pnpm-setup"
     validations:
       required: true
 
   - type: input
     id: version
     attributes:
-      label: バージョン
-      description: 使用しているバージョン（タグまたは SHA）
-      placeholder: "例: v0.0.5"
+      label: Version
+      description: The version you are using (tag or SHA)
+      placeholder: "e.g.: v0.0.5"
     validations:
       required: true
 
   - type: textarea
     id: description
     attributes:
-      label: 発生している問題
-      description: 何が起きているかを具体的に記述してください
+      label: Current Behavior
+      description: Describe what is happening in detail
     validations:
       required: true
 
   - type: textarea
     id: expected
     attributes:
-      label: 期待する動作
-      description: 本来どのように動作すべきかを記述してください
+      label: Expected Behavior
+      description: Describe how it should work
     validations:
       required: true
 
   - type: textarea
     id: reproduce
     attributes:
-      label: 再現手順
-      description: 問題を再現するためのワークフロー設定や手順を記述してください
+      label: Steps to Reproduce
+      description: Provide the workflow configuration or steps to reproduce the issue
       render: yaml
 
   - type: textarea
     id: logs
     attributes:
-      label: エラーログ
-      description: GitHub Actions の実行ログからエラー部分を貼り付けてください
+      label: Error Logs
+      description: Paste the error portion from the GitHub Actions run logs
       render: shell
 
   - type: textarea
     id: additional
     attributes:
-      label: 補足情報
-      description: その他の関連情報があれば記述してください
+      label: Additional Context
+      description: Add any other relevant information

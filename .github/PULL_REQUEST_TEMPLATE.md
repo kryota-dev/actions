@@ -1,5 +1,3 @@
-**English** | [日本語](PULL_REQUEST_TEMPLATE.ja.md)
-
 ## Summary
 
 <!-- Briefly describe what this PR changes -->
