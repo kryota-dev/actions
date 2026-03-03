@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -19,9 +19,9 @@ aqua exec -- ghalint run          # Workflow security verification
 aqua exec -- ghalint run-action   # Composite Action security verification
 
 # Ruleset management (.github/rulesets/*.json ↔ GitHub API)
-bash .claude/skills/manage-rulesets/scripts/manage-rulesets.sh apply   # Apply local JSON to GitHub
-bash .claude/skills/manage-rulesets/scripts/manage-rulesets.sh diff    # Diff between local and GitHub
-bash .claude/skills/manage-rulesets/scripts/manage-rulesets.sh export  # Export GitHub settings to local
+bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh apply   # Apply local JSON to GitHub
+bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh diff    # Diff between local and GitHub
+bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh export  # Export GitHub settings to local
 ```
 
 ## Architecture
@@ -90,6 +90,7 @@ actionlint does not support `action.yml`. Composite Actions are placed in `.gith
 ### CI Quality Gates
 
 The following are automatically run on PRs:
+
 - **actionlint**: Workflow syntax check (reviewdog integration)
 - **ls-lint**: File naming convention check
 - **ghalint**: SHA pinning and security policy verification
