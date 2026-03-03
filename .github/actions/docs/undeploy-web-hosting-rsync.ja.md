@@ -1,3 +1,5 @@
+[English](undeploy-web-hosting-rsync.md) | **日本語**
+
 # undeploy-web-hosting-rsync
 
 rsync over SSH で Web ホスティングサーバーからデプロイ済みディレクトリを削除する Composite Action。dry-run モードに対応。

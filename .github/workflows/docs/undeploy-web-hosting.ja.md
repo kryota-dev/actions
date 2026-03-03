@@ -1,3 +1,5 @@
+[English](undeploy-web-hosting.md) | **日本語**
+
 # Undeploy from Web Hosting
 
 Web ホスティングサーバー上のフィーチャー環境を FTP または rsync で削除するワークフロー

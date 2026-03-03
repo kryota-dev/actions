@@ -1,3 +1,5 @@
+[English](deploy-web-hosting.md) | **日本語**
+
 # Deploy to Web Hosting
 
 ビルド済みアーティファクトを FTP または rsync で Web ホスティングサーバーにデプロイするワークフロー

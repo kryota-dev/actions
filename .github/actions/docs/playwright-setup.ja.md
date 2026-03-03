@@ -1,3 +1,5 @@
+[English](playwright-setup.md) | **日本語**
+
 # playwright-setup
 
 Playwright ブラウザのセットアップをキャッシュ付きで行う Composite Action。

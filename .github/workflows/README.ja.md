@@ -1,30 +1,32 @@
+[English](README.md) | **日本語**
+
 # Reusable Workflows
 
 ## 品質ゲート
 
 | Workflow | Description |
 |----------|-------------|
-| [actions-lint](docs/actions-lint.md) | GitHub Actions の品質ゲート（actionlint / ls-lint / ghalint / zizmor） |
-| [codeql-analysis](docs/codeql-analysis.md) | CodeQL セキュリティスキャン |
+| [actions-lint](docs/actions-lint.ja.md) | GitHub Actions の品質ゲート（actionlint / ls-lint / ghalint / zizmor） |
+| [codeql-analysis](docs/codeql-analysis.ja.md) | CodeQL セキュリティスキャン |
 
 ## PR 管理
 
 | Workflow | Description |
 |----------|-------------|
-| [auto-assign-pr](docs/auto-assign-pr.md) | PR 作成者の自動 assignee 設定 |
+| [auto-assign-pr](docs/auto-assign-pr.ja.md) | PR 作成者の自動 assignee 設定 |
 
 ## リリース
 
 | Workflow | Description |
 |----------|-------------|
-| [tagpr-release](docs/tagpr-release.md) | tagpr リリース管理とメジャータグ更新 |
+| [tagpr-release](docs/tagpr-release.ja.md) | tagpr リリース管理とメジャータグ更新 |
 
 ## デプロイ
 
 | Workflow | Description |
 |----------|-------------|
-| [deploy-web-hosting](docs/deploy-web-hosting.md) | FTP / rsync で Web ホスティングサーバーにデプロイ |
-| [undeploy-web-hosting](docs/undeploy-web-hosting.md) | FTP / rsync で Web ホスティングサーバーからフィーチャー環境を削除 |
+| [deploy-web-hosting](docs/deploy-web-hosting.ja.md) | FTP / rsync で Web ホスティングサーバーにデプロイ |
+| [undeploy-web-hosting](docs/undeploy-web-hosting.ja.md) | FTP / rsync で Web ホスティングサーバーからフィーチャー環境を削除 |
 
 ## Usage
 

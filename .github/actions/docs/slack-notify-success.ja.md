@@ -1,3 +1,5 @@
+[English](slack-notify-success.md) | **日本語**
+
 # slack-notify-success
 
 ワークフロー成功時に Slack へメッセージを投稿する Composite Action。

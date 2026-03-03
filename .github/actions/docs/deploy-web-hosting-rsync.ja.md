@@ -1,3 +1,5 @@
+[English](deploy-web-hosting-rsync.md) | **日本語**
+
 # deploy-web-hosting-rsync
 
 rsync over SSH でビルド成果物を Web ホスティングサーバーにデプロイする Composite Action。dry-run モードと本番モードに対応。

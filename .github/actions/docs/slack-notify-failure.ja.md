@@ -1,3 +1,5 @@
+[English](slack-notify-failure.md) | **日本語**
+
 # slack-notify-failure
 
 ワークフロー失敗時に Slack へメッセージを投稿する Composite Action。

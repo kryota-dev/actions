@@ -1,3 +1,5 @@
+[English](codeql-analysis.md) | **日本語**
+
 # CodeQL Analysis
 
 CodeQL によるセキュリティスキャンワークフロー

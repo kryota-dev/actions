@@ -1,3 +1,5 @@
+[English](PULL_REQUEST_TEMPLATE.md) | **日本語**
+
 ## 概要
 
 <!-- この PR で何を変更したかを簡潔に記述してください -->

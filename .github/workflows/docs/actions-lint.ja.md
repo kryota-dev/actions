@@ -1,3 +1,5 @@
+[English](actions-lint.md) | **日本語**
+
 # Actions Lint
 
 GitHub Actions の品質ゲートワークフロー

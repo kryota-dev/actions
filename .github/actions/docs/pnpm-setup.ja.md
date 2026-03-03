@@ -1,3 +1,5 @@
+[English](pnpm-setup.md) | **日本語**
+
 # pnpm-setup
 
 Node.js と pnpm のセットアップ、および依存関係のインストールを行う Composite Action。

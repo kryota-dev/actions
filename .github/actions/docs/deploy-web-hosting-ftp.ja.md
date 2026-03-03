@@ -1,3 +1,5 @@
+[English](deploy-web-hosting-ftp.md) | **日本語**
+
 # deploy-web-hosting-ftp
 
 lftp を使用してビルド成果物を Web ホスティングサーバーに FTP デプロイする Composite Action。dry-run モードと本番モードに対応。

@@ -1,3 +1,5 @@
+[English](tagpr-release.md) | **日本語**
+
 # tagpr Release
 
 tagpr によるリリース管理とメジャータグ更新ワークフロー

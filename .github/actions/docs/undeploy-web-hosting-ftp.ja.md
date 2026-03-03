@@ -1,3 +1,5 @@
+[English](undeploy-web-hosting-ftp.md) | **日本語**
+
 # undeploy-web-hosting-ftp
 
 lftp を使用して Web ホスティングサーバーからデプロイ済みディレクトリを削除する Composite Action。dry-run モードに対応。

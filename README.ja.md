@@ -1,3 +1,5 @@
+[English](README.md) | **日本語**
+
 # actions
 
 `kryota-dev/actions` は再利用可能な GitHub Actions（Reusable Workflows および Composite Actions）を一元管理するリポジトリです。
@@ -39,9 +41,9 @@ steps:
 
 ## Available Workflows & Actions
 
-- **[Reusable Workflows](.github/workflows/README.md)** — 外部公開用ワークフローの一覧と使い方
-- **[Composite Actions](.github/actions/README.md)** — 外部公開用アクションの一覧と使い方
-- **[Internal CI Workflows](.github/workflows/README.md#internal-ci-workflows)** — このリポジトリの内部 CI ワークフロー
+- **[Reusable Workflows](.github/workflows/README.ja.md)** — 外部公開用ワークフローの一覧と使い方
+- **[Composite Actions](.github/actions/README.ja.md)** — 外部公開用アクションの一覧と使い方
+- **[Internal CI Workflows](.github/workflows/README.ja.md#internal-ci-workflows)** — このリポジトリの内部 CI ワークフロー
 
 ## Development
 

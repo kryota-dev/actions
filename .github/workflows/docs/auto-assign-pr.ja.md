@@ -1,3 +1,5 @@
+[English](auto-assign-pr.md) | **日本語**
+
 # Auto Assign PR
 
 PR 作成者を自動的に assignee として設定するワークフロー

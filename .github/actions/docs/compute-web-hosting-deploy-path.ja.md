@@ -1,3 +1,5 @@
+[English](compute-web-hosting-deploy-path.md) | **日本語**
+
 # compute-web-hosting-deploy-path
 
 GitHub コンテキストと inputs からデプロイパスと本番フラグを計算する Composite Action。
