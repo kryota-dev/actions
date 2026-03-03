@@ -1,32 +1,10 @@
-# codeql-analysis
+# CodeQL Analysis
 
-> ソースファイル: [`.github/workflows/codeql-analysis.yml`](../codeql-analysis.yml)
+CodeQL によるセキュリティスキャンワークフロー
 
-CodeQL によるセキュリティスキャンを実行する Reusable Workflow です。指定された言語に対して静的解析を行い、脆弱性を検出します。
+> Source: [`.github/workflows/codeql-analysis.yml`](../codeql-analysis.yml)
 
-## トリガー
-
-`workflow_call`
-
-## Inputs
-
-| 入力名 | 型 | 必須 | デフォルト値 | 説明 |
-|---|---|---|---|---|
-| `languages` | `string` | 任意 | `'["actions"]'` | スキャン対象言語の JSON 配列（例: `'["javascript", "typescript"]'`） |
-
-## Permissions
-
-| 権限 | レベル | 用途 |
-|---|---|---|
-| `actions` | `read` | ワークフロー情報の読み取り |
-| `contents` | `read` | リポジトリのチェックアウト |
-| `security-events` | `write` | セキュリティアラートの書き込み |
-
-## 前提条件
-
-- リポジトリで GitHub Advanced Security が有効であること（public リポジトリではデフォルトで有効）
-
-## 使用例
+## Usage
 
 ```yaml
 jobs:
@@ -36,9 +14,45 @@ jobs:
       contents: read
       security-events: write
     uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v1
+    with:
+      # languages - 分析対象の言語の JSON 配列
+      # Optional (default: '["actions"]')
+      languages: '["actions"]'
+```
 
-  # 言語を指定する場合
-  codeql-js:
+## Inputs
+
+| Name | Description | Required | Default |
+|------|-------------|----------|---------|
+| `languages` | 分析対象の言語の JSON 配列（例: `'["javascript", "typescript"]'`） | No | `'["actions"]'` |
+
+## Permissions
+
+| Permission | Level | Purpose |
+|------------|-------|---------|
+| `actions` | `read` | CodeQL 分析の実行に必要 |
+| `contents` | `read` | リポジトリのチェックアウト |
+| `security-events` | `write` | CodeQL 分析結果のアップロード |
+
+## Examples
+
+### 基本的な使い方
+
+```yaml
+jobs:
+  codeql:
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v1
+```
+
+### 応用例
+
+```yaml
+jobs:
+  codeql:
     permissions:
       actions: read
       contents: read
@@ -47,3 +61,15 @@ jobs:
     with:
       languages: '["javascript", "typescript"]'
 ```
+
+## Behavior
+
+1. `actions/checkout@v6` でリポジトリをチェックアウト（`persist-credentials: false`）
+2. `github/codeql-action/init@v4.32.4` で CodeQL を初期化（`languages` は matrix の言語を使用）
+3. `github/codeql-action/analyze@v4.32.4` で CodeQL 分析を実行
+
+`languages` input の JSON 配列から matrix strategy により言語ごとにジョブを並列実行する。
+
+<!-- ## Migration Guide -->
+
+<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->

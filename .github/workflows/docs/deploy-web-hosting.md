@@ -1,147 +1,202 @@
-# deploy-web-hosting
+# Deploy to Web Hosting
 
-> ソースファイル: [`.github/workflows/deploy-web-hosting.yml`](../deploy-web-hosting.yml)
+ビルド済みアーティファクトを FTP または rsync で Web ホスティングサーバーにデプロイするワークフロー
 
-ビルド済みアーティファクトを FTP または rsync で Web ホスティングサーバーにデプロイする Reusable Workflow です。ビルド処理は呼び出し元で行い、本ワークフローはデプロイと通知のみを担当します。PR プレビューデプロイ、本番/開発環境デプロイに対応し、PR コメントおよび Slack 通知を自動投稿します。
+> Source: [`.github/workflows/deploy-web-hosting.yml`](../deploy-web-hosting.yml)
 
-デプロイパスと本番判定は `github` コンテキストから自動的に計算されます（内部で `compute-web-hosting-deploy-path` Composite Action を使用）。
+## Usage
+
+```yaml
+jobs:
+  deploy:
+    permissions:
+      pull-requests: write
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
+    with:
+      # deploy-type - デプロイ方法（'ftp' または 'rsync'）
+      # Required
+      deploy-type: 'ftp'
+
+      # artifact-name - ダウンロードするビルドアーティファクトの名前
+      # Required
+      artifact-name: 'build-output'
+
+      # output-dir - ビルド出力ディレクトリ名
+      # Required
+      output-dir: 'dist'
+
+      # base-path-prefix - プロジェクト固有のパスプレフィックス（例: '/<your-project>'）
+      # Optional (default: '')
+      base-path-prefix: ''
+
+      # home-url - サイトのホーム URL
+      # Optional (default: '')
+      home-url: ''
+
+      # dry-run - ドライランモード
+      # Optional (default: 'false')
+      dry-run: 'false'
+
+      # production-branch - 本番ブランチ名
+      # Optional (default: 'main')
+      production-branch: 'main'
+
+      # ref-name - ブランチ名の上書き（空の場合は github context から自動取得）
+      # Optional (default: '')
+      ref-name: ''
+    secrets:
+      # server-host - デプロイ先サーバーのホスト名
+      # Required
+      server-host: ${{ secrets.SERVER_HOST }}
+
+      # server-user - デプロイ先サーバーのユーザー名
+      # Required
+      server-user: ${{ secrets.SERVER_USER }}
+
+      # server-path - デプロイ先サーバーのパス
+      # Required
+      server-path: ${{ secrets.SERVER_PATH }}
+
+      # server-password - デプロイ先サーバーのパスワード（FTP 使用時に必要）
+      # Optional
+      server-password: ${{ secrets.SERVER_PASSWORD }}
+
+      # ssh-private-key - SSH 秘密鍵（rsync 使用時に必要）
+      # Optional
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # slack-channel-id - Slack 通知先チャンネル ID
+      # Optional
+      slack-channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+
+      # slack-bot-oauth-token - Slack Bot の OAuth トークン
+      # Optional
+      slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+
+      # slack-webhook-url - Slack Incoming Webhook URL
+      # Optional
+      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      # slack-mention-user - Slack で失敗時にメンションするユーザー
+      # Optional
+      slack-mention-user: ${{ secrets.SLACK_MENTION_USER }}
+```
 
 ## Inputs
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
-| `deploy-type` | デプロイ方式 (`'ftp'` or `'rsync'`) | Yes | - |
-| `artifact-name` | ダウンロードするビルドアーティファクト名 | Yes | - |
+| `deploy-type` | デプロイ方法（`'ftp'` または `'rsync'`） | Yes | - |
+| `artifact-name` | ダウンロードするビルドアーティファクトの名前 | Yes | - |
 | `output-dir` | ビルド出力ディレクトリ名 | Yes | - |
-| `base-path-prefix` | プロジェクト固有パスプレフィックス（例: `/<your-project>`） | No | `''` |
+| `base-path-prefix` | プロジェクト固有のパスプレフィックス（例: `'/<your-project>'`） | No | `''` |
 | `home-url` | サイトのホーム URL | No | `''` |
-| `dry-run` | dry-run モード | No | `'false'` |
+| `dry-run` | ドライランモード | No | `'false'` |
 | `production-branch` | 本番ブランチ名 | No | `'main'` |
-| `ref-name` | ブランチ名オーバーライド（未指定時は `github` コンテキストから自動導出） | No | `''` |
+| `ref-name` | ブランチ名の上書き（空の場合は github context から自動取得） | No | `''` |
 
 ## Secrets
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `server-host` | サーバーホスト | Yes |
-| `server-user` | サーバーユーザー | Yes |
-| `server-password` | FTP パスワード | No |
-| `ssh-private-key` | SSH 秘密鍵 | No |
-| `server-path` | サーバー上のパス | Yes |
-| `slack-channel-id` | Slack チャンネル ID | No |
-| `slack-bot-oauth-token` | Slack Bot OAuth トークン | No |
-| `slack-webhook-url` | Slack Webhook URL | No |
-| `slack-mention-user` | Slack メンションユーザー | No |
+| `server-host` | デプロイ先サーバーのホスト名 | Yes |
+| `server-user` | デプロイ先サーバーのユーザー名 | Yes |
+| `server-path` | デプロイ先サーバーのパス | Yes |
+| `server-password` | デプロイ先サーバーのパスワード（FTP 使用時に必要） | No |
+| `ssh-private-key` | SSH 秘密鍵（rsync 使用時に必要） | No |
+| `slack-channel-id` | Slack 通知先チャンネル ID | No |
+| `slack-bot-oauth-token` | Slack Bot の OAuth トークン | No |
+| `slack-webhook-url` | Slack Incoming Webhook URL | No |
+| `slack-mention-user` | Slack で失敗時にメンションするユーザー | No |
 
-## 動作フロー
+## Permissions
 
-1. デプロイパスの計算（`compute-web-hosting-deploy-path` で `github` コンテキストから自動導出）
-2. ビルドアーティファクトのダウンロード（`output-dir` で指定されたディレクトリに展開）
-3. FTP/rsync でデプロイ（Composite Action 経由）
-4. PR コメント投稿（成功/失敗）
-5. Slack 通知（非 PR 時のみ、成功/失敗）
-6. 過去の失敗コメント非表示
+| Permission | Level | Purpose |
+|------------|-------|---------|
+| `pull-requests` | `write` | PR へのデプロイ結果コメント投稿 |
 
-## 前提条件
+## Examples
 
-呼び出し元ワークフローで以下を実施する必要があります：
-
-1. プロジェクトのビルド
-2. ビルド成果物を `actions/upload-artifact` でアップロード
-3. 本ワークフローの `artifact-name` に一致するアーティファクト名を指定
-
-## 使用例
-
-### 基本的な使用例（PR / push）
+### FTP でデプロイする
 
 ```yaml
 jobs:
-  build:
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-      # ... ビルド処理 ...
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build-output
-          path: out/
-
   deploy:
-    needs: build
     permissions:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
     with:
-      deploy-type: ${{ vars.DEPLOY_TYPE }}
-      base-path-prefix: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
-      production-branch: 'main'
-      home-url: ${{ vars.HOME_URL || '' }}
-      dry-run: ${{ vars.SERVER_DRY_RUN || 'false' }}
-      artifact-name: build-output
-      output-dir: out
+      deploy-type: 'ftp'
+      artifact-name: 'build-output'
+      output-dir: 'dist'
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
       server-user: ${{ secrets.SERVER_USER }}
-      server-password: ${{ secrets.SERVER_PASSWORD }}
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       server-path: ${{ secrets.SERVER_PATH }}
+      server-password: ${{ secrets.SERVER_PASSWORD }}
+```
+
+### rsync でデプロイする（Slack 通知付き）
+
+```yaml
+jobs:
+  deploy:
+    permissions:
+      pull-requests: write
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
+    with:
+      deploy-type: 'rsync'
+      artifact-name: 'build-output'
+      output-dir: 'dist'
+      base-path-prefix: '/my-project'
+      home-url: 'https://example.com'
+    secrets:
+      server-host: ${{ secrets.SERVER_HOST }}
+      server-user: ${{ secrets.SERVER_USER }}
+      server-path: ${{ secrets.SERVER_PATH }}
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       slack-channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
       slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
       slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
       slack-mention-user: ${{ secrets.SLACK_MENTION_USER }}
 ```
 
-### repository_dispatch
-
-`repository_dispatch` 時は `production-branch` の値が自動適用されるため、`ref-name` の指定は不要です。
+### ドライランで確認する
 
 ```yaml
+jobs:
   deploy:
-    needs: build
     permissions:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
     with:
-      deploy-type: ${{ vars.DEPLOY_TYPE }}
-      base-path-prefix: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
-      production-branch: 'main'
-      artifact-name: build-output
-      output-dir: out
+      deploy-type: 'rsync'
+      artifact-name: 'build-output'
+      output-dir: 'dist'
+      dry-run: 'true'
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
-      # ...
+      server-user: ${{ secrets.SERVER_USER }}
+      server-path: ${{ secrets.SERVER_PATH }}
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
 
-staging 環境等で `repository_dispatch` を使用する場合は、`ref-name` でオーバーライドできます:
+## Behavior
 
-```yaml
-    with:
-      ref-name: 'develop'  # production-branch ではなく develop を使用
-```
+このワークフローは `deploy` ジョブで構成され、以下の順序で実行されます。
 
-## Migration Guide
+1. `compute-web-hosting-deploy-path` Composite Action でデプロイ先パスを計算
+2. Slack 設定チェック（`slack-channel-id` + `slack-bot-oauth-token` があれば成功通知可能、`slack-webhook-url` があれば失敗通知可能）
+3. `actions/download-artifact@v4.3.0` でビルドアーティファクトをダウンロード
+4. `deploy-type` の値に応じてデプロイを実行
+   - `'ftp'`: `deploy-web-hosting-ftp` Composite Action を使用
+   - `'rsync'`: `deploy-web-hosting-rsync` Composite Action を使用
+5. PR の場合: `marocchino/sticky-pull-request-comment` で成功/失敗コメントを投稿
+6. PR 以外の場合: Slack で成功通知（`slack-notify-success`）/ 失敗通知（`slack-notify-failure`）を送信
+7. PR かつ成功の場合: 過去の失敗コメントを非表示にする
 
-### 削除された Inputs
+## Prerequisites
 
-| 旧 Input | 代替 |
-|-----------|------|
-| `is-pr` | 不要（`github.event_name` から自動判定） |
-| `base-path` | `base-path-prefix` に置き換え（フルパスではなくプレフィックスのみ） |
-| `is-production` | 不要（`production-branch` と ref-name から自動判定） |
-
-### 変更例
-
-```yaml
-# Before
-with:
-  is-pr: ${{ github.event_name == 'pull_request' }}
-  base-path: ${{ needs.build.outputs.base-path }}
-  is-production: ${{ needs.build.outputs.is-production }}
-
-# After
-with:
-  base-path-prefix: ${{ vars.NEXT_PUBLIC_BASE_PATH || '' }}
-  production-branch: 'main'
-```
+- 呼び出し元ワークフローで `actions/upload-artifact` によるビルド成果物のアップロードが完了していること
+- `deploy-type` が `'ftp'` の場合: `server-password` が必要
+- `deploy-type` が `'rsync'` の場合: `ssh-private-key` が必要
