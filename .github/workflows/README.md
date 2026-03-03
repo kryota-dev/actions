@@ -1,15 +1,32 @@
-# Workflows
+# Reusable Workflows
 
-## Reusable Workflows
+## 品質ゲート
 
-| ワークフロー | 説明 |
-|---|---|
+| Workflow | Description |
+|----------|-------------|
 | [actions-lint](docs/actions-lint.md) | GitHub Actions の品質ゲート（actionlint / ls-lint / ghalint / zizmor） |
-| [auto-assign-pr](docs/auto-assign-pr.md) | PR 作成者の自動 assignee 設定 |
 | [codeql-analysis](docs/codeql-analysis.md) | CodeQL セキュリティスキャン |
+
+## PR 管理
+
+| Workflow | Description |
+|----------|-------------|
+| [auto-assign-pr](docs/auto-assign-pr.md) | PR 作成者の自動 assignee 設定 |
+
+## リリース
+
+| Workflow | Description |
+|----------|-------------|
 | [tagpr-release](docs/tagpr-release.md) | tagpr リリース管理とメジャータグ更新 |
 
-## 使い方
+## デプロイ
+
+| Workflow | Description |
+|----------|-------------|
+| [deploy-web-hosting](docs/deploy-web-hosting.md) | FTP / rsync で Web ホスティングサーバーにデプロイ |
+| [undeploy-web-hosting](docs/undeploy-web-hosting.md) | FTP / rsync で Web ホスティングサーバーからフィーチャー環境を削除 |
+
+## Usage
 
 他のリポジトリから Reusable Workflow を呼び出す場合:
 
@@ -29,8 +46,8 @@ jobs:
 
 このリポジトリ自身の品質管理に使用する内部 CI ワークフロー（`my-` プレフィックス）です。各 Reusable Workflow を呼び出す薄いラッパーとして実装されています。
 
-| ワークフロー | トリガー | 呼び出し先 | 説明 |
-|---|---|---|---|
+| Workflow | Trigger | Calls | Description |
+|----------|---------|-------|-------------|
 | my-test.yml | PR, merge_group | actions-lint.yml | 品質ゲート |
 | my-setup-pr.yml | PR opened | auto-assign-pr.yml | 自動 assignee |
 | my-release.yml | push (main) | tagpr-release.yml | リリース管理 |

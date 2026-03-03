@@ -1,105 +1,89 @@
 # compute-web-hosting-deploy-path
 
-> ソースファイル: [`.github/actions/compute-web-hosting-deploy-path/action.yml`](../compute-web-hosting-deploy-path/action.yml)
+GitHub コンテキストと inputs からデプロイパスと本番フラグを計算する Composite Action。
 
-`github` コンテキストからブランチ名を自動導出し、デプロイパスと本番判定を計算する Composite Action です。チェックアウト不要で利用できます。
+> Source: [`.github/actions/compute-web-hosting-deploy-path/action.yml`](../compute-web-hosting-deploy-path/action.yml)
+
+## Usage
+
+```yaml
+- uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
+  with:
+    # base-path-prefix - プロジェクト固有のパスプレフィックス（例: /<your-project>）
+    # Optional (default: '')
+    base-path-prefix: ''
+
+    # production-branch - 本番ブランチ名
+    # Optional (default: 'main')
+    production-branch: 'main'
+
+    # ref-name - ブランチ名の上書き（空の場合は github context から自動導出）
+    # Optional (default: '')
+    ref-name: ''
+```
 
 ## Inputs
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
-| `base-path-prefix` | プロジェクト固有パスプレフィックス（例: `/<your-project>`） | No | `''` |
+| `base-path-prefix` | プロジェクト固有のパスプレフィックス（例: /&lt;your-project&gt;） | No | `''` |
 | `production-branch` | 本番ブランチ名 | No | `'main'` |
-| `ref-name` | ブランチ名オーバーライド（未指定時は `github` コンテキストから自動導出） | No | `''` |
+| `ref-name` | ブランチ名の上書き（空の場合は github context から自動導出） | No | `''` |
 
 ## Outputs
 
 | Name | Description | Example |
 |------|-------------|---------|
-| `deploy-path` | 完全なデプロイパス | `/<your-project>/_feature/feature-something` or `/<your-project>` |
+| `deploy-path` | 完全なデプロイパス | `/my-project`（main ブランチ）、`/my-project/_feature/feat-awesome`（feature ブランチ `feat/awesome`） |
 | `is-production` | 本番デプロイかどうか | `true` or `false` |
-| `ref-name` | 実際に使用されたブランチ名（導出値またはオーバーライド値） | `feature-branch` or `main` |
+| `ref-name` | 解決済みの ref 名（導出または上書き） | `main`、`feat/awesome` |
 
-## 動作
+## Examples
 
-### ref-name の導出
-
-`ref-name` 入力が空の場合、`github` コンテキストから自動的にブランチ名を導出します:
-
-| Event | 導出元 | 説明 |
-|-------|--------|------|
-| `pull_request` | `github.head_ref` | PR のソースブランチ名 |
-| `push` | `github.ref_name` | プッシュ先ブランチ名 |
-| `repository_dispatch` | `inputs.production-branch` | 本番ブランチ名を自動適用（`ref-name` でオーバーライド可能） |
-| `workflow_dispatch` | `github.ref_name` | 実行元ブランチ名 |
-
-### パス計算ロジック
-
-1. ブランチ名の `/` を `-` に置換してサニタイズ（例: `feature/something` → `feature-something`）
-2. ブランチ名が `production-branch` と一致 → `is-production=true`、フィーチャーサフィックスなし
-3. それ以外 → `is-production=false`、`/_feature/{sanitized-branch-name}` を付加
-4. `deploy-path` = `base-path-prefix` + フィーチャーサフィックス
-
-### バリデーション
-
-- ref-name が空文字の場合、エラー終了します
-
-## 使用例
-
-### PR / push デプロイ（自動導出）
+### 基本的な使い方
 
 ```yaml
 steps:
-  - name: Compute deploy path
+  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
     id: compute-path
-    uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
     with:
-      base-path-prefix: '/<your-project>'
-      production-branch: 'main'
+      base-path-prefix: '/my-project'
 ```
 
-### repository_dispatch
-
-`repository_dispatch` 時は `production-branch` の値が自動適用されるため、`ref-name` の指定は不要です。
+### 本番ブランチ名をカスタマイズ
 
 ```yaml
 steps:
-  - name: Compute deploy path
+  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
     id: compute-path
-    uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
     with:
-      base-path-prefix: '/<your-project>'
-      production-branch: 'main'
+      base-path-prefix: '/my-project'
+      production-branch: 'master'
 ```
 
-### ref-name オーバーライド（staging 環境・手動 undeploy 等）
-
-`ref-name` を明示的に指定すると、イベント種別に関係なくその値が優先されます。
-staging 環境で `repository_dispatch` を使用する場合などに利用できます。
+### ref-name を明示的に指定
 
 ```yaml
 steps:
-  - name: Compute deploy path
+  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
     id: compute-path
-    uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
     with:
-      base-path-prefix: '/<your-project>'
-      ref-name: ${{ github.event.inputs.branch_name }}
+      base-path-prefix: '/my-project'
+      ref-name: 'feat/awesome'
 ```
 
-### Outputs の利用
+## Behavior
 
-```yaml
-steps:
-  - name: Compute deploy path
-    id: compute-path
-    uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
-    with:
-      base-path-prefix: '/<your-project>'
+1. ref-name を決定する: `ref-name` input が指定されていればそれを使用する。未指定の場合は `github.event_name` に応じて自動導出する:
+   - `pull_request` の場合: `github.head_ref`
+   - `repository_dispatch` の場合: `production-branch` の値
+   - その他の場合: `github.ref_name`
+2. ref-name が空の場合、エラーで終了する
+3. ブランチ名をサニタイズする: `/` を `-` に置換する
+4. production を判定する: ref-name が `production-branch` と一致すれば `is-production=true` とし、feature suffix は付与しない。一致しなければ `is-production=false` とし、`/_feature/{sanitized-ref}` を feature suffix とする
+5. デプロイパスを計算する: `{base-path-prefix}{feature-suffix}`
+6. 結果を output に設定する
 
-  - name: Use computed values
-    run: |
-      echo "Deploy path: ${{ steps.compute-path.outputs.deploy-path }}"
-      echo "Is production: ${{ steps.compute-path.outputs.is-production }}"
-      echo "Ref name: ${{ steps.compute-path.outputs.ref-name }}"
-```
+<!-- ## Migration Guide -->
+
+<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
