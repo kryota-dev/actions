@@ -1,50 +1,50 @@
 ---
 name: manage-rulesets
-description: GitHub Repository Rulesets の管理（作成・更新・削除・差分確認・エクスポート）。「ルールセット」「rulesets」「ブランチ保護」と言及された際に使用。
+description: Manage GitHub Repository Rulesets (create, update, delete, diff, export). Use when "rulesets" or "branch protection" is mentioned.
 ---
 
-# GitHub Repository Rulesets 管理
+# GitHub Repository Rulesets Management
 
-`.github/rulesets/*.json` と `gh` CLI を使用して GitHub Rulesets を管理する。
+Manage GitHub Rulesets using `.github/rulesets/*.json` and the `gh` CLI.
 
-## 前提
+## Prerequisites
 
-- `gh` CLI 認証済み、リポジトリ管理者権限あり
-- ルールセット JSON は `.github/rulesets/` に配置
+- `gh` CLI authenticated with repository admin permissions
+- Ruleset JSON files placed in `.github/rulesets/`
 
-## 引数 → サブコマンド
+## Arguments → Subcommands
 
-| 引数                            | 動作                                               |
-| ------------------------------- | -------------------------------------------------- |
-| `apply` / `適用` / 引数なし     | 全 JSON を GitHub に適用（既存は更新、新規は作成） |
-| `list` / `一覧`                 | ルールセット一覧を表示                             |
-| `delete <name>` / `削除 <name>` | 指定ルールセットを削除                             |
-| `delete-all` / `全削除`         | 全ルールセットを削除                               |
-| `diff` / `差分`                 | ローカル JSON と GitHub 設定の差分を表示           |
-| `export` / `エクスポート`       | GitHub 設定をローカル JSON にエクスポート          |
+| Argument              | Action                                                    |
+| --------------------- | --------------------------------------------------------- |
+| `apply` / (no args)   | Apply all JSON to GitHub (update existing, create new)   |
+| `list`                | Display list of rulesets                                  |
+| `delete <name>`       | Delete the specified ruleset                              |
+| `delete-all`          | Delete all rulesets                                       |
+| `diff`                | Show diff between local JSON and GitHub settings          |
+| `export`              | Export GitHub settings to local JSON                      |
 
-## 実行方法
+## Execution
 
-スクリプトを実行する。プロジェクトルートから:
+Run the script from the project root:
 
 ```bash
 bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh <subcommand> [args]
 ```
 
-`delete` と `delete-all` は実行前にユーザーへ確認を求めること。
+Prompt the user for confirmation before executing `delete` and `delete-all`.
 
-## API の注意点
+## API Notes
 
-- `evaluate` enforcement は Enterprise プラン限定（free/pro では 422 エラー）。`active` / `disabled` のみ使用可能
-- 同名ルールセットの作成は 422 `Name must be unique` エラー。スクリプトの `apply` は名前で既存を検索し自動で更新に切り替える
-- `diff` で差分が出る場合、GitHub API がデフォルト値（`allowed_merge_methods` 等）を付加するため。`enforcement`, `rules[].type`, `conditions` の差分に着目すること
+- `evaluate` enforcement is Enterprise plan only (returns 422 error on free/pro). Only `active` / `disabled` can be used
+- Creating a ruleset with a duplicate name returns 422 `Name must be unique` error. The `apply` subcommand searches by name and automatically switches to update if a match is found
+- If `diff` shows differences, it may be because the GitHub API adds default values (e.g., `allowed_merge_methods`). Focus on differences in `enforcement`, `rules[].type`, and `conditions`
 
-## 出力形式
+## Output Format
 
-操作完了後、結果をテーブルで報告する:
+After operation completion, report results in a table:
 
 ```
-| ルールセット | 操作 | 結果 |
-|------------|------|------|
-| protect-main | 作成 | OK |
+| Ruleset      | Action  | Result |
+|------------- |---------|--------|
+| protect-main | Created | OK     |
 ```
