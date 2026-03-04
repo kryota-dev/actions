@@ -1,6 +1,8 @@
+**English** | [日本語](slack-notify-success.ja.md)
+
 # slack-notify-success
 
-ワークフロー成功時に Slack へメッセージを投稿する Composite Action。
+A Composite Action for posting a message to Slack on workflow success.
 
 > Source: [`.github/actions/slack-notify-success/action.yml`](../slack-notify-success/action.yml)
 
@@ -17,27 +19,27 @@
     # Required
     bot-oauth-token: ''
 
-    # color - メッセージの色
+    # color - Message color
     # Optional (default: 'good')
     color: 'good'
 
-    # mention-user - メンションするユーザー
+    # mention-user - User to mention
     # Optional (default: '')
     mention-user: ''
 
-    # title - メッセージタイトル
+    # title - Message title
     # Optional (default: 'workflow execution completed')
     title: 'workflow execution completed'
 
-    # message - メッセージ本文
+    # message - Message body
     # Optional (default: 'Execution log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}')
     message: 'Execution log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
 
-    # thread-ts - スレッド返信用のタイムスタンプ
+    # thread-ts - Thread timestamp for replies
     # Optional (default: 'null')
     thread-ts: 'null'
 
-    # reply-broadcast - スレッド返信をチャンネルにもブロードキャストするかどうか
+    # reply-broadcast - Whether to broadcast thread replies to the channel
     # Optional (default: 'false')
     reply-broadcast: 'false'
 ```
@@ -48,18 +50,18 @@
 |------|-------------|----------|---------|
 | `channel-id` | Slack Channel ID | Yes | - |
 | `bot-oauth-token` | Slack Bot OAuth Token | Yes | - |
-| `color` | メッセージの色 | No | `'good'` |
-| `mention-user` | メンションするユーザー | No | `''` |
-| `title` | メッセージタイトル | No | `'workflow execution completed'` |
-| `message` | メッセージ本文 | No | `'Execution log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'` |
-| `thread-ts` | スレッド返信用のタイムスタンプ | No | `'null'` |
-| `reply-broadcast` | スレッド返信をチャンネルにもブロードキャストするかどうか | No | `'false'` |
+| `color` | Message color | No | `'good'` |
+| `mention-user` | User to mention | No | `''` |
+| `title` | Message title | No | `'workflow execution completed'` |
+| `message` | Message body | No | `'Execution log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'` |
+| `thread-ts` | Thread timestamp for replies | No | `'null'` |
+| `reply-broadcast` | Whether to broadcast thread replies to the channel | No | `'false'` |
 
 ## Examples
 
-### 基本的な使い方
+### Basic Usage
 
-必須パラメータのみを指定するシンプルな例。
+A simple example specifying only required parameters.
 
 ```yaml
 steps:
@@ -69,9 +71,9 @@ steps:
       bot-oauth-token: ${{ secrets.SLACK_BOT_TOKEN }}
 ```
 
-### メンション付き通知
+### Notification with Mention
 
-特定のユーザーにメンションして通知する例。
+An example of notifying with a mention to a specific user.
 
 ```yaml
 steps:
@@ -80,12 +82,12 @@ steps:
       channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
       bot-oauth-token: ${{ secrets.SLACK_BOT_TOKEN }}
       mention-user: '<@U0123456789>'
-      title: 'デプロイが完了しました'
+      title: 'Deployment completed'
 ```
 
-### スレッド返信
+### Thread Reply
 
-既存のスレッドに返信として通知し、チャンネルにもブロードキャストする例。
+An example of replying to an existing thread and broadcasting to the channel.
 
 ```yaml
 steps:
@@ -99,18 +101,18 @@ steps:
 
 ## Behavior
 
-1. `mention-user` が指定されている場合、タイトルにメンションを付与する（`*SUCCESS - {mention-user} {title}*`）
-2. リポジトリ名と URL を取得する
-3. `jq` で JSON ペイロードを構築する（channel, attachments with color/author/text）
-4. `thread-ts` が `"null"` でない場合、スレッド返信として送信する（`reply_broadcast` 対応）
-5. `curl` で `https://slack.com/api/chat.postMessage` に POST する（Bearer トークン認証）
-6. レスポンスの `"ok":false` をチェックし、エラー時は exit 1 で失敗する
+1. If `mention-user` is specified, prepend the mention to the title (`*SUCCESS - {mention-user} {title}*`)
+2. Retrieve the repository name and URL
+3. Build the JSON payload with `jq` (channel, attachments with color/author/text)
+4. If `thread-ts` is not `"null"`, send as a thread reply (with `reply_broadcast` support)
+5. POST to `https://slack.com/api/chat.postMessage` via `curl` (Bearer token authentication)
+6. Check the response for `"ok":false` and exit 1 on error
 
 ## Prerequisites
 
-- Slack Bot OAuth Token が必要（`chat:write` スコープ）
-- Slack Channel ID が必要
+- Slack Bot OAuth Token is required (`chat:write` scope)
+- Slack Channel ID is required
 
 <!-- ## Migration Guide -->
 
-<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
+<!-- Uncomment and fill in when there are Breaking Changes -->

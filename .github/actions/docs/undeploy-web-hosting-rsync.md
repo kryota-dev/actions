@@ -1,6 +1,8 @@
+**English** | [日本語](undeploy-web-hosting-rsync.ja.md)
+
 # undeploy-web-hosting-rsync
 
-rsync over SSH で Web ホスティングサーバーからデプロイ済みディレクトリを削除する Composite Action。dry-run モードに対応。
+A Composite Action that removes a deployed directory from a web hosting server via rsync over SSH. Supports dry-run mode.
 
 > Source: [`.github/actions/undeploy-web-hosting-rsync/action.yml`](../undeploy-web-hosting-rsync/action.yml)
 
@@ -9,23 +11,23 @@ rsync over SSH で Web ホスティングサーバーからデプロイ済みデ
 ```yaml
 - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@v1
   with:
-    # ssh-host - SSH サーバーのホスト名
+    # ssh-host - SSH server hostname
     # Required
     ssh-host: ''
 
-    # ssh-user - SSH ユーザー名
+    # ssh-user - SSH username
     # Required
     ssh-user: ''
 
-    # ssh-private-key - SSH 秘密鍵
+    # ssh-private-key - SSH private key
     # Required
     ssh-private-key: ''
 
-    # target-path - リモートサーバー上の削除対象パス
+    # target-path - Target path to delete on the remote server
     # Required
     target-path: ''
 
-    # dry-run - dry-run モードで実行するかどうか
+    # dry-run - Whether to run in dry-run mode
     # Optional (default: 'false')
     dry-run: 'false'
 ```
@@ -34,15 +36,15 @@ rsync over SSH で Web ホスティングサーバーからデプロイ済みデ
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
-| `ssh-host` | SSH サーバーのホスト名 | Yes | - |
-| `ssh-user` | SSH ユーザー名 | Yes | - |
-| `ssh-private-key` | SSH 秘密鍵 | Yes | - |
-| `target-path` | リモートサーバー上の削除対象パス | Yes | - |
-| `dry-run` | dry-run モードで実行するかどうか | No | `'false'` |
+| `ssh-host` | SSH server hostname | Yes | - |
+| `ssh-user` | SSH username | Yes | - |
+| `ssh-private-key` | SSH private key | Yes | - |
+| `target-path` | Target path to delete on the remote server | Yes | - |
+| `dry-run` | Whether to run in dry-run mode | No | `'false'` |
 
 ## Examples
 
-### 基本的な使い方
+### Basic Usage
 
 ```yaml
 steps:
@@ -54,7 +56,7 @@ steps:
       target-path: '/home/user/public_html/_feature/feat-awesome'
 ```
 
-### dry-run モードでの確認
+### Verify with Dry-run
 
 ```yaml
 steps:
@@ -69,18 +71,18 @@ steps:
 
 ## Behavior
 
-1. SSH 鍵をセットアップする（`~/.ssh/id_rsa` に秘密鍵を書き込み、`ssh-keyscan` でホスト鍵を取得）
-2. 空ディレクトリ `./empty_dir` を作成する
-3. `rsync -az --delete` で空ディレクトリをターゲットパスに同期する（実質的にターゲット内の全ファイルを削除）
-4. 通常モードの場合、`rmdir` で空になった親ディレクトリの削除を試行する
-5. dry-run モードの場合、`--dry-run` と `--verbose` フラグを追加する
-6. debug モードの場合、`--verbose` フラグを追加する
-7. 処理完了後（成功・失敗問わず）、SSH 鍵と `empty_dir` をクリーンアップする
+1. Set up the SSH key (write private key to `~/.ssh/id_rsa`, retrieve host key with `ssh-keyscan`)
+2. Create an empty directory `./empty_dir`
+3. Sync the empty directory to the target path using `rsync -az --delete` (effectively deleting all files in the target)
+4. In normal mode, attempt to remove the emptied parent directory with `rmdir`
+5. In dry-run mode, add the `--dry-run` and `--verbose` flags
+6. In debug mode, add the `--verbose` flag
+7. Clean up SSH keys and `empty_dir` after completion (regardless of success or failure)
 
 ## Prerequisites
 
-- SSH サーバーへの接続情報（ホスト名、ユーザー名、秘密鍵）が設定されていること
+- SSH server connection information (hostname, username, private key) must be configured
 
 <!-- ## Migration Guide -->
 
-<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
+<!-- Uncomment and fill in when there are Breaking Changes -->

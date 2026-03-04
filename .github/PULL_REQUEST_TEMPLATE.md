@@ -1,20 +1,20 @@
-## 概要
+## Summary
 
-<!-- この PR で何を変更したかを簡潔に記述してください -->
+<!-- Briefly describe what this PR changes -->
 
-## 変更内容
+## Changes
 
-<!-- 具体的な変更内容を記述してください -->
+<!-- Describe the specific changes -->
 
 -
 
-## 関連 Issue
+## Related Issues
 
-<!-- 関連する Issue がある場合はリンクしてください（例: closes #123） -->
+<!-- Link related issues if any (e.g., closes #123) -->
 
-## チェックリスト
+## Checklist
 
-- [ ] `uses:` は full commit SHA（40文字）でピン留めし、タグをコメントで記載した
-- [ ] ファイル命名規則（kebab-case）に従っている
-- [ ] 必要な `permissions` を最小限で設定した
-- [ ] ローカルで `actionlint` を実行し、エラーがないことを確認した
+- [ ] All `uses:` references are pinned to full commit SHAs (40 characters) with the tag noted in a comment
+- [ ] File naming conventions (kebab-case) are followed
+- [ ] Required `permissions` are set to the minimum necessary
+- [ ] Ran `actionlint` locally and confirmed no errors

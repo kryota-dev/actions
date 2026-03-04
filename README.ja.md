@@ -1,0 +1,78 @@
+[English](README.md) | **日本語**
+
+# actions
+
+`kryota-dev/actions` は再利用可能な GitHub Actions（Reusable Workflows および Composite Actions）を一元管理するリポジトリです。
+
+## Overview
+
+複数のリポジトリで共通して使用する GitHub Actions（Reusable Workflows および Composite Actions）を一元管理・公開することで、各リポジトリの CI/CD 設定の重複を排除し、品質と保守性を高めます。
+
+## Usage
+
+他のリポジトリから Reusable Workflow を参照する場合は以下の形式を使用します:
+
+```yaml
+jobs:
+  example:
+    uses: kryota-dev/actions/.github/workflows/{workflow}.yml@vX
+    with:
+      # inputs
+    secrets:
+      # secrets
+```
+
+バージョンはメジャータグ（例: `v1`）または完全なバージョンタグ（例: `v1.0.0`）で指定してください。
+
+### Composite Actions
+
+他のリポジトリから Composite Action を参照する場合は以下の形式を使用します:
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/actions/{action-name}@vX
+    with:
+      # inputs
+```
+
+バージョンはメジャータグ（例: `v1`）または完全なバージョンタグ（例: `v1.0.0`）で指定してください。
+
+> **Reusable Workflows との違い**: Reusable Workflows は `jobs:` レベルで呼び出すのに対し、Composite Actions は `steps:` レベルで呼び出します。Composite Actions は呼び出し元ジョブ内でステップとして実行されるため、より細粒度な再利用が可能です。
+
+## Available Workflows & Actions
+
+- **[Reusable Workflows](.github/workflows/README.ja.md)** — 外部公開用ワークフローの一覧と使い方
+- **[Composite Actions](.github/actions/README.ja.md)** — 外部公開用アクションの一覧と使い方
+- **[Internal CI Workflows](.github/workflows/README.ja.md#internal-ci-workflows)** — このリポジトリの内部 CI ワークフロー
+
+## Development
+
+### ADR (Architecture Decision Records)
+
+設計上の意思決定は ADR として `docs/adr/` に記録します。
+
+新しい ADR を作成する場合:
+
+```bash
+npm run adr:new -- "ADR のタイトル"
+```
+
+ADR の一覧は [docs/adr/](docs/adr/) を参照してください。
+
+### Workflow Security Policy
+
+全ての `uses:` 指定は **full commit SHA（40文字）** でピン留めされます:
+
+```yaml
+uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+```
+
+SHA のピン留めは [ghalint](https://github.com/suzuki-shunsuke/ghalint) と [zizmor](https://github.com/zizmorcore/zizmor) により CI で自動検証され、[Renovate Bot](https://docs.renovatebot.com/) により自動更新されます。
+
+## Manual Setup Required
+
+以下の設定はリポジトリの Web UI または外部サービスで別途対応が必要です:
+
+1. **`APP_TOKEN` シークレットの設定**: Settings > Secrets and variables > Actions で PAT を追加（`repo` と `workflow` スコープが必要）
+2. **Renovate Bot のインストール**: [Renovate GitHub App](https://github.com/apps/renovate) をリポジトリにインストール
+3. **Dependabot Alerts の有効化**: Settings > Security > Dependabot alerts を有効化

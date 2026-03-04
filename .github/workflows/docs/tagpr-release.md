@@ -1,6 +1,8 @@
+**English** | [日本語](tagpr-release.ja.md)
+
 # tagpr Release
 
-tagpr によるリリース管理とメジャータグ更新ワークフロー
+Release management and major tag update workflow using tagpr
 
 > Source: [`.github/workflows/tagpr-release.yml`](../tagpr-release.yml)
 
@@ -14,7 +16,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v1
     secrets:
-      # app-token - tagpr 用の Personal Access Token（'repo' と 'workflow' スコープが必要）
+      # app-token - Personal Access Token for tagpr (requires 'repo' and 'workflow' scopes)
       # Required
       app-token: ${{ secrets.APP_TOKEN }}
 ```
@@ -27,24 +29,24 @@ None
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `app-token` | tagpr 用の Personal Access Token（`repo` と `workflow` スコープが必要） | Yes |
+| `app-token` | Personal Access Token for tagpr (requires `repo` and `workflow` scopes) | Yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| `tag` | tagpr が作成したバージョンタグ（リリースがない場合は空） |
+| `tag` | Version tag created by tagpr (empty if no release) |
 
 ## Permissions
 
 | Permission | Level | Purpose |
 |------------|-------|---------|
-| `contents` | `write` | tagpr によるタグ作成・プッシュおよびメジャータグの強制更新 |
-| `pull-requests` | `write` | tagpr によるリリース PR の作成・更新 |
+| `contents` | `write` | Tag creation/push by tagpr and force-updating major tags |
+| `pull-requests` | `write` | Creating/updating release PRs by tagpr |
 
 ## Examples
 
-### 基本的な使い方
+### Basic Usage
 
 ```yaml
 jobs:
@@ -57,7 +59,7 @@ jobs:
       app-token: ${{ secrets.APP_TOKEN }}
 ```
 
-### リリース後に後続ジョブを実行する
+### Running follow-up jobs after release
 
 ```yaml
 jobs:
@@ -79,25 +81,25 @@ jobs:
 
 ## Behavior
 
-このワークフローは `tagpr` ジョブと `bump_major_tag` ジョブの2つで構成されます。
+This workflow consists of two jobs: `tagpr` and `bump_major_tag`.
 
 **Concurrency**: `group: {workflow}-release` / `cancel-in-progress: false`
 
-### tagpr ジョブ
+### tagpr Job
 
-1. `actions/checkout@v6` でリポジトリをチェックアウト（token: `app-token`、`persist-credentials: false`）
-2. `Songmu/tagpr@v1.17.1` を実行してリリース PR の作成・マージ・タグ付けを行う（`GITHUB_TOKEN: app-token`）
-3. リリースされた場合はバージョンタグを `tag` output として出力（リリースがなければ空）
+1. Check out the repository with `actions/checkout@v6` (token: `app-token`, `persist-credentials: false`)
+2. Run `Songmu/tagpr@v1.17.1` to create/merge release PRs and tag releases (`GITHUB_TOKEN: app-token`)
+3. If a release is made, output the version tag as the `tag` output (empty if no release)
 
-### bump_major_tag ジョブ
+### bump_major_tag Job
 
-`tagpr` ジョブの完了後、タグが作成された場合（`tag != ''`）のみ実行されます。
+Runs only after the `tagpr` job completes and a tag was created (`tag != ''`).
 
-1. `actions/checkout@v6` でリポジトリをチェックアウト（token: `app-token`、`persist-credentials: false`）
-2. タグからメジャーバージョンを抽出（例: `v1.2.3` → `v1`）
-3. `git tag -f` でメジャータグを更新し、`git push --force` でリモートに反映
+1. Check out the repository with `actions/checkout@v6` (token: `app-token`, `persist-credentials: false`)
+2. Extract the major version from the tag (e.g., `v1.2.3` → `v1`)
+3. Update the major tag with `git tag -f` and push to remote with `git push --force`
 
 ## Prerequisites
 
-- GitHub App Token または Personal Access Token（`repo` + `workflow` スコープ）が必要
-- `.tagpr` 設定ファイルがリポジトリに存在すること
+- GitHub App Token or Personal Access Token (requires `repo` + `workflow` scopes)
+- `.tagpr` configuration file must exist in the repository

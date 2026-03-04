@@ -1,6 +1,8 @@
+**English** | [日本語](deploy-web-hosting-ftp.ja.md)
+
 # deploy-web-hosting-ftp
 
-lftp を使用してビルド成果物を Web ホスティングサーバーに FTP デプロイする Composite Action。dry-run モードと本番モードに対応。
+A Composite Action that deploys build artifacts to a web hosting server via FTP using lftp. Supports dry-run and production modes.
 
 > Source: [`.github/actions/deploy-web-hosting-ftp/action.yml`](../deploy-web-hosting-ftp/action.yml)
 
@@ -9,35 +11,35 @@ lftp を使用してビルド成果物を Web ホスティングサーバーに 
 ```yaml
 - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
   with:
-    # output-dir - ビルド出力ディレクトリ名
+    # output-dir - Build output directory name
     # Required
     output-dir: ''
 
-    # ftp-server - FTP サーバーのアドレス
+    # ftp-server - FTP server address
     # Required
     ftp-server: ''
 
-    # ftp-username - FTP サーバーのユーザー名
+    # ftp-username - FTP server username
     # Required
     ftp-username: ''
 
-    # ftp-password - FTP サーバーのパスワード
+    # ftp-password - FTP server password
     # Required
     ftp-password: ''
 
-    # ftp-path - FTP サーバーのパス
+    # ftp-path - FTP server path
     # Required
     ftp-path: ''
 
-    # base-path - アーティファクトのベースパス
+    # base-path - Base path for artifacts
     # Optional
     base-path: ''
 
-    # dry-run - dry-run モードで実行するかどうか
+    # dry-run - Whether to run in dry-run mode
     # Optional (default: 'false')
     dry-run: 'false'
 
-    # is-production - 本番デプロイかどうか
+    # is-production - Whether this is a production deploy
     # Optional (default: 'false')
     is-production: 'false'
 ```
@@ -46,18 +48,18 @@ lftp を使用してビルド成果物を Web ホスティングサーバーに 
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
-| `output-dir` | ビルド出力ディレクトリ名 | Yes | - |
-| `ftp-server` | FTP サーバーのアドレス | Yes | - |
-| `ftp-username` | FTP サーバーのユーザー名 | Yes | - |
-| `ftp-password` | FTP サーバーのパスワード | Yes | - |
-| `ftp-path` | FTP サーバーのパス | Yes | - |
-| `base-path` | アーティファクトのベースパス | No | - |
-| `dry-run` | dry-run モードで実行するかどうか | No | `'false'` |
-| `is-production` | 本番デプロイかどうか | No | `'false'` |
+| `output-dir` | Build output directory name | Yes | - |
+| `ftp-server` | FTP server address | Yes | - |
+| `ftp-username` | FTP server username | Yes | - |
+| `ftp-password` | FTP server password | Yes | - |
+| `ftp-path` | FTP server path | Yes | - |
+| `base-path` | Base path for artifacts | No | - |
+| `dry-run` | Whether to run in dry-run mode | No | `'false'` |
+| `is-production` | Whether this is a production deploy | No | `'false'` |
 
 ## Examples
 
-### 基本的な使い方
+### Basic Usage
 
 ```yaml
 steps:
@@ -70,7 +72,7 @@ steps:
       ftp-path: '/public_html'
 ```
 
-### dry-run モードでの確認
+### Verify with Dry-run
 
 ```yaml
 steps:
@@ -84,7 +86,7 @@ steps:
       dry-run: 'true'
 ```
 
-### 本番デプロイ（base-path 指定あり）
+### Production Deploy (with base-path)
 
 ```yaml
 steps:
@@ -101,18 +103,18 @@ steps:
 
 ## Behavior
 
-1. lftp をインストールする
-2. ソースパス `./{output-dir}{base-path}` を構築する
-3. dry-run モードの場合、FTP サーバーへの接続テストを実行し、ファイル一覧のみを表示する
-4. 通常モードの場合、`mirror --reverse --delete` コマンドでローカルからリモートへファイルを同期する
-5. production モードの場合、`.htaccess` と `_feature/` を同期対象から除外する
-6. `runner.debug` が有効な場合、lftp のデバッグフラグ `-d` を有効化する
+1. Install lftp
+2. Build the source path `./{output-dir}{base-path}`
+3. In dry-run mode, test the connection to the FTP server and only display the file listing
+4. In normal mode, sync files from local to remote using the `mirror --reverse --delete` command
+5. In production mode, exclude `.htaccess` and `_feature/` from sync targets
+6. If `runner.debug` is enabled, enable the lftp debug flag `-d`
 
 ## Prerequisites
 
-- デプロイ対象のビルド成果物が `output-dir` に存在すること
-- FTP サーバーへの接続情報（サーバーアドレス、ユーザー名、パスワード）が設定されていること
+- Build artifacts must exist in the `output-dir`
+- FTP server connection information (server address, username, password) must be configured
 
 <!-- ## Migration Guide -->
 
-<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
+<!-- Uncomment and fill in when there are Breaking Changes -->

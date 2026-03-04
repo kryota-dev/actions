@@ -1,14 +1,16 @@
+**English** | [日本語](README.ja.md)
+
 # actions
 
-`kryota-dev/actions` は再利用可能な GitHub Actions（Reusable Workflows および Composite Actions）を一元管理するリポジトリです。
+`kryota-dev/actions` is a repository that centrally manages reusable GitHub Actions (Reusable Workflows and Composite Actions).
 
 ## Overview
 
-複数のリポジトリで共通して使用する GitHub Actions（Reusable Workflows および Composite Actions）を一元管理・公開することで、各リポジトリの CI/CD 設定の重複を排除し、品質と保守性を高めます。
+This repository centrally manages and publishes GitHub Actions (Reusable Workflows and Composite Actions) commonly used across multiple repositories, eliminating CI/CD configuration duplication and improving quality and maintainability.
 
 ## Usage
 
-他のリポジトリから Reusable Workflow を参照する場合は以下の形式を使用します:
+To reference a Reusable Workflow from another repository, use the following format:
 
 ```yaml
 jobs:
@@ -20,11 +22,11 @@ jobs:
       # secrets
 ```
 
-バージョンはメジャータグ（例: `v1`）または完全なバージョンタグ（例: `v1.0.0`）で指定してください。
+Specify the version using a major tag (e.g., `v1`) or a full version tag (e.g., `v1.0.0`).
 
 ### Composite Actions
 
-他のリポジトリから Composite Action を参照する場合は以下の形式を使用します:
+To reference a Composite Action from another repository, use the following format:
 
 ```yaml
 steps:
@@ -33,44 +35,44 @@ steps:
       # inputs
 ```
 
-バージョンはメジャータグ（例: `v1`）または完全なバージョンタグ（例: `v1.0.0`）で指定してください。
+Specify the version using a major tag (e.g., `v1`) or a full version tag (e.g., `v1.0.0`).
 
-> **Reusable Workflows との違い**: Reusable Workflows は `jobs:` レベルで呼び出すのに対し、Composite Actions は `steps:` レベルで呼び出します。Composite Actions は呼び出し元ジョブ内でステップとして実行されるため、より細粒度な再利用が可能です。
+> **Difference from Reusable Workflows**: Reusable Workflows are called at the `jobs:` level, while Composite Actions are called at the `steps:` level. Composite Actions run as steps within the calling job, enabling more fine-grained reuse.
 
 ## Available Workflows & Actions
 
-- **[Reusable Workflows](.github/workflows/README.md)** — 外部公開用ワークフローの一覧と使い方
-- **[Composite Actions](.github/actions/README.md)** — 外部公開用アクションの一覧と使い方
-- **[Internal CI Workflows](.github/workflows/README.md#internal-ci-workflows)** — このリポジトリの内部 CI ワークフロー
+- **[Reusable Workflows](.github/workflows/README.md)** — List and usage of publicly available workflows
+- **[Composite Actions](.github/actions/README.md)** — List and usage of publicly available actions
+- **[Internal CI Workflows](.github/workflows/README.md#internal-ci-workflows)** — Internal CI workflows for this repository
 
 ## Development
 
 ### ADR (Architecture Decision Records)
 
-設計上の意思決定は ADR として `docs/adr/` に記録します。
+Design decisions are recorded as ADRs in `docs/adr/`.
 
-新しい ADR を作成する場合:
+To create a new ADR:
 
 ```bash
-npm run adr:new -- "ADR のタイトル"
+npm run adr:new -- "ADR title"
 ```
 
-ADR の一覧は [docs/adr/](docs/adr/) を参照してください。
+See [docs/adr/](docs/adr/) for the list of ADRs.
 
 ### Workflow Security Policy
 
-全ての `uses:` 指定は **full commit SHA（40文字）** でピン留めされます:
+All `uses:` references are **pinned to full commit SHAs (40 characters)**:
 
 ```yaml
 uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 ```
 
-SHA のピン留めは [ghalint](https://github.com/suzuki-shunsuke/ghalint) と [zizmor](https://github.com/zizmorcore/zizmor) により CI で自動検証され、[Renovate Bot](https://docs.renovatebot.com/) により自動更新されます。
+SHA pinning is automatically verified in CI by [ghalint](https://github.com/suzuki-shunsuke/ghalint) and [zizmor](https://github.com/zizmorcore/zizmor), and automatically updated by [Renovate Bot](https://docs.renovatebot.com/).
 
 ## Manual Setup Required
 
-以下の設定はリポジトリの Web UI または外部サービスで別途対応が必要です:
+The following settings must be configured separately via the repository's Web UI or external services:
 
-1. **`APP_TOKEN` シークレットの設定**: Settings > Secrets and variables > Actions で PAT を追加（`repo` と `workflow` スコープが必要）
-2. **Renovate Bot のインストール**: [Renovate GitHub App](https://github.com/apps/renovate) をリポジトリにインストール
-3. **Dependabot Alerts の有効化**: Settings > Security > Dependabot alerts を有効化
+1. **`APP_TOKEN` secret**: Add a PAT in Settings > Secrets and variables > Actions (requires `repo` and `workflow` scopes)
+2. **Renovate Bot installation**: Install [Renovate GitHub App](https://github.com/apps/renovate) on the repository
+3. **Enable Dependabot Alerts**: Enable in Settings > Security > Dependabot alerts

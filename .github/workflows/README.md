@@ -1,34 +1,36 @@
+**English** | [日本語](README.ja.md)
+
 # Reusable Workflows
 
-## 品質ゲート
+## Quality Gates
 
 | Workflow | Description |
 |----------|-------------|
-| [actions-lint](docs/actions-lint.md) | GitHub Actions の品質ゲート（actionlint / ls-lint / ghalint / zizmor） |
-| [codeql-analysis](docs/codeql-analysis.md) | CodeQL セキュリティスキャン |
+| [actions-lint](docs/actions-lint.md) | GitHub Actions quality gate (actionlint / ls-lint / ghalint / zizmor) |
+| [codeql-analysis](docs/codeql-analysis.md) | CodeQL security scanning |
 
-## PR 管理
-
-| Workflow | Description |
-|----------|-------------|
-| [auto-assign-pr](docs/auto-assign-pr.md) | PR 作成者の自動 assignee 設定 |
-
-## リリース
+## PR Management
 
 | Workflow | Description |
 |----------|-------------|
-| [tagpr-release](docs/tagpr-release.md) | tagpr リリース管理とメジャータグ更新 |
+| [auto-assign-pr](docs/auto-assign-pr.md) | Auto-assign PR creator as assignee |
 
-## デプロイ
+## Release
 
 | Workflow | Description |
 |----------|-------------|
-| [deploy-web-hosting](docs/deploy-web-hosting.md) | FTP / rsync で Web ホスティングサーバーにデプロイ |
-| [undeploy-web-hosting](docs/undeploy-web-hosting.md) | FTP / rsync で Web ホスティングサーバーからフィーチャー環境を削除 |
+| [tagpr-release](docs/tagpr-release.md) | tagpr release management and major tag update |
+
+## Deploy
+
+| Workflow | Description |
+|----------|-------------|
+| [deploy-web-hosting](docs/deploy-web-hosting.md) | Deploy to web hosting server via FTP / rsync |
+| [undeploy-web-hosting](docs/undeploy-web-hosting.md) | Remove feature environment from web hosting server via FTP / rsync |
 
 ## Usage
 
-他のリポジトリから Reusable Workflow を呼び出す場合:
+To call a Reusable Workflow from another repository:
 
 ```yaml
 jobs:
@@ -40,15 +42,15 @@ jobs:
       # secrets
 ```
 
-各ワークフローの inputs / secrets / permissions の詳細は上記リンク先のドキュメントを参照してください。
+See the linked documentation above for details on each workflow's inputs / secrets / permissions.
 
 ## Internal CI Workflows
 
-このリポジトリ自身の品質管理に使用する内部 CI ワークフロー（`my-` プレフィックス）です。各 Reusable Workflow を呼び出す薄いラッパーとして実装されています。
+Internal CI workflows (with `my-` prefix) used for quality management of this repository itself. They are implemented as thin wrappers that call the Reusable Workflows via `uses:`.
 
 | Workflow | Trigger | Calls | Description |
 |----------|---------|-------|-------------|
-| my-test.yml | PR, merge_group | actions-lint.yml | 品質ゲート |
-| my-setup-pr.yml | PR opened | auto-assign-pr.yml | 自動 assignee |
-| my-release.yml | push (main) | tagpr-release.yml | リリース管理 |
-| my-codeql.yml | PR, push (main), merge_group | codeql-analysis.yml | セキュリティスキャン |
+| my-test.yml | PR, merge_group | actions-lint.yml | Quality gate |
+| my-setup-pr.yml | PR opened | auto-assign-pr.yml | Auto assignee |
+| my-release.yml | push (main) | tagpr-release.yml | Release management |
+| my-codeql.yml | PR, push (main), merge_group | codeql-analysis.yml | Security scanning |

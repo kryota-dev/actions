@@ -1,6 +1,8 @@
+**English** | [日本語](playwright-setup.ja.md)
+
 # playwright-setup
 
-Playwright ブラウザのセットアップをキャッシュ付きで行う Composite Action。
+A Composite Action for setting up Playwright browsers with caching.
 
 > Source: [`.github/actions/playwright-setup/action.yml`](../playwright-setup/action.yml)
 
@@ -16,7 +18,7 @@ None
 
 ## Examples
 
-### 基本的な使い方
+### Basic Usage
 
 ```yaml
 steps:
@@ -27,15 +29,15 @@ steps:
 
 ## Behavior
 
-1. `pnpm exec playwright --version` を実行して Playwright のバージョンを取得する（`sed 's/Version //'` でパース）
-2. `actions/cache@v5.0.3` を使用して Playwright ブラウザをキャッシュする（パス: `~/.cache/ms-playwright`、キー: `{os}-playwright-{version}`）
-3. キャッシュヒットしなかった場合のみ `pnpm exec playwright install --with-deps` を実行してブラウザをインストールする
+1. Get the Playwright version by running `pnpm exec playwright --version` (parsed with `sed 's/Version //'`)
+2. Cache Playwright browsers using `actions/cache@v5.0.3` (path: `~/.cache/ms-playwright`, key: `{os}-playwright-{version}`)
+3. Only install browsers with `pnpm exec playwright install --with-deps` if the cache was not hit
 
 ## Prerequisites
 
-- `pnpm-setup` アクションが事前に実行されていること（`pnpm exec` を使用するため）
-- プロジェクトの依存関係に Playwright が含まれていること
+- The `pnpm-setup` action must have been run beforehand (uses `pnpm exec`)
+- Playwright must be included in the project's dependencies
 
 <!-- ## Migration Guide -->
 
-<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
+<!-- Uncomment and fill in when there are Breaking Changes -->

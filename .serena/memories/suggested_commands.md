@@ -30,13 +30,13 @@ aqua exec -- ghalint run-action
 
 ```bash
 # Apply local JSON rulesets to GitHub
-bash .claude/skills/manage-rulesets/scripts/manage-rulesets.sh apply
+bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh apply
 
 # Show diff between local JSON and GitHub settings
-bash .claude/skills/manage-rulesets/scripts/manage-rulesets.sh diff
+bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh diff
 
 # Export GitHub settings to local JSON
-bash .claude/skills/manage-rulesets/scripts/manage-rulesets.sh export
+bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh export
 ```
 
 ## System Utilities (Darwin/macOS)
@@ -50,7 +50,9 @@ find      # Find files
 ```
 
 ## Release Process
+
 Releases are fully automated via tagpr:
+
 1. tagpr creates a release PR with CHANGELOG updates
 2. Merging to main auto-creates semantic version tags
 3. `bump_major_tag` job updates major tags (v1, v2, etc.)

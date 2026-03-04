@@ -1,6 +1,8 @@
+**English** | [日本語](slack-notify-failure.ja.md)
+
 # slack-notify-failure
 
-ワークフロー失敗時に Slack へメッセージを投稿する Composite Action。
+A Composite Action for posting a message to Slack on workflow failure.
 
 > Source: [`.github/actions/slack-notify-failure/action.yml`](../slack-notify-failure/action.yml)
 
@@ -13,19 +15,19 @@
     # Required
     webhook-url: ''
 
-    # color - メッセージの色
+    # color - Message color
     # Optional (default: 'danger')
     color: 'danger'
 
-    # mention-user - メンションするユーザー
+    # mention-user - User to mention
     # Optional (default: '')
     mention-user: ''
 
-    # title - メッセージタイトル
+    # title - Message title
     # Optional (default: 'workflow failed')
     title: 'workflow failed'
 
-    # message - メッセージ本文
+    # message - Message body
     # Optional (default: 'Execution log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}')
     message: 'Execution log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
 ```
@@ -35,16 +37,16 @@
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
 | `webhook-url` | Slack Incoming Webhook URL | Yes | - |
-| `color` | メッセージの色 | No | `'danger'` |
-| `mention-user` | メンションするユーザー | No | `''` |
-| `title` | メッセージタイトル | No | `'workflow failed'` |
-| `message` | メッセージ本文 | No | `'Execution log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'` |
+| `color` | Message color | No | `'danger'` |
+| `mention-user` | User to mention | No | `''` |
+| `title` | Message title | No | `'workflow failed'` |
+| `message` | Message body | No | `'Execution log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'` |
 
 ## Examples
 
-### 基本的な使い方
+### Basic Usage
 
-必須パラメータのみを指定するシンプルな例。
+A simple example specifying only required parameters.
 
 ```yaml
 steps:
@@ -53,9 +55,9 @@ steps:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
 
-### メンション付き通知
+### Notification with Mention
 
-特定のユーザーにメンションして通知する例。
+An example of notifying with a mention to a specific user.
 
 ```yaml
 steps:
@@ -63,34 +65,34 @@ steps:
     with:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
       mention-user: '<@U0123456789>'
-      title: 'デプロイが失敗しました'
+      title: 'Deployment failed'
 ```
 
-### カスタムメッセージ
+### Custom Message
 
-メッセージ本文をカスタマイズする例。
+An example of customizing the message body.
 
 ```yaml
 steps:
   - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
     with:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-      title: 'CI テストが失敗しました'
-      message: 'ブランチ: ${{ github.ref_name }} / コミット: ${{ github.sha }}'
+      title: 'CI tests failed'
+      message: 'Branch: ${{ github.ref_name }} / Commit: ${{ github.sha }}'
 ```
 
 ## Behavior
 
-1. `mention-user` が指定されている場合、タイトルにメンションを付与する（`*FAILURE - {mention-user} {title}*`）
-2. リポジトリ名と URL を取得する
-3. `jq` で JSON ペイロードを構築する（attachments with color/author/text）
-4. `curl --fail` で Webhook URL に POST する
-5. 失敗時は exit 1 で失敗する
+1. If `mention-user` is specified, prepend the mention to the title (`*FAILURE - {mention-user} {title}*`)
+2. Retrieve the repository name and URL
+3. Build the JSON payload with `jq` (attachments with color/author/text)
+4. POST to the Webhook URL via `curl --fail`
+5. Exit 1 on failure
 
 ## Prerequisites
 
-- Slack Incoming Webhook URL が必要
+- Slack Incoming Webhook URL is required
 
 <!-- ## Migration Guide -->
 
-<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
+<!-- Uncomment and fill in when there are Breaking Changes -->

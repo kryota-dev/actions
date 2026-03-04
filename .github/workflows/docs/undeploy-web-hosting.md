@@ -1,6 +1,8 @@
+**English** | [日本語](undeploy-web-hosting.ja.md)
+
 # Undeploy from Web Hosting
 
-Web ホスティングサーバー上のフィーチャー環境を FTP または rsync で削除するワークフロー
+Workflow to remove feature environments from a web hosting server via FTP or rsync
 
 > Source: [`.github/workflows/undeploy-web-hosting.yml`](../undeploy-web-hosting.yml)
 
@@ -14,43 +16,43 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v1
     with:
-      # deploy-type - デプロイ方法（'ftp' または 'rsync'）
+      # deploy-type - Deployment method ('ftp' or 'rsync')
       # Required
       deploy-type: 'ftp'
 
-      # base-path-prefix - プロジェクト固有のパスプレフィックス（例: '/<your-project>'）
+      # base-path-prefix - Project-specific path prefix (e.g., '/<your-project>')
       # Optional (default: '')
       base-path-prefix: ''
 
-      # production-branch - 本番ブランチ名
+      # production-branch - Production branch name
       # Optional (default: 'main')
       production-branch: 'main'
 
-      # ref-name - ブランチ名の上書き（空の場合は github context から自動取得）
+      # ref-name - Branch name override (auto-detected from github context if empty)
       # Optional (default: '')
       ref-name: ''
 
-      # dry-run - ドライランモード
+      # dry-run - Dry-run mode
       # Optional (default: 'false')
       dry-run: 'false'
     secrets:
-      # server-host - デプロイ先サーバーのホスト名
+      # server-host - Deployment server hostname
       # Required
       server-host: ${{ secrets.SERVER_HOST }}
 
-      # server-user - デプロイ先サーバーのユーザー名
+      # server-user - Deployment server username
       # Required
       server-user: ${{ secrets.SERVER_USER }}
 
-      # server-path - デプロイ先サーバーのパス
+      # server-path - Deployment server path
       # Required
       server-path: ${{ secrets.SERVER_PATH }}
 
-      # server-password - デプロイ先サーバーのパスワード（FTP 使用時に必要）
+      # server-password - Deployment server password (required for FTP)
       # Optional
       server-password: ${{ secrets.SERVER_PASSWORD }}
 
-      # ssh-private-key - SSH 秘密鍵（rsync 使用時に必要）
+      # ssh-private-key - SSH private key (required for rsync)
       # Optional
       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
@@ -59,32 +61,32 @@ jobs:
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
-| `deploy-type` | デプロイ方法（`'ftp'` または `'rsync'`） | Yes | - |
-| `base-path-prefix` | プロジェクト固有のパスプレフィックス（例: `'/<your-project>'`） | No | `''` |
-| `production-branch` | 本番ブランチ名 | No | `'main'` |
-| `ref-name` | ブランチ名の上書き（空の場合は github context から自動取得） | No | `''` |
-| `dry-run` | ドライランモード | No | `'false'` |
+| `deploy-type` | Deployment method (`'ftp'` or `'rsync'`) | Yes | - |
+| `base-path-prefix` | Project-specific path prefix (e.g., `'/<your-project>'`) | No | `''` |
+| `production-branch` | Production branch name | No | `'main'` |
+| `ref-name` | Branch name override (auto-detected from github context if empty) | No | `''` |
+| `dry-run` | Dry-run mode | No | `'false'` |
 
 ## Secrets
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `server-host` | デプロイ先サーバーのホスト名 | Yes |
-| `server-user` | デプロイ先サーバーのユーザー名 | Yes |
-| `server-path` | デプロイ先サーバーのパス | Yes |
-| `server-password` | デプロイ先サーバーのパスワード（FTP 使用時に必要） | No |
-| `ssh-private-key` | SSH 秘密鍵（rsync 使用時に必要） | No |
+| `server-host` | Deployment server hostname | Yes |
+| `server-user` | Deployment server username | Yes |
+| `server-path` | Deployment server path | Yes |
+| `server-password` | Deployment server password (required for FTP) | No |
+| `ssh-private-key` | SSH private key (required for rsync) | No |
 
 ## Permissions
 
 | Permission | Level | Purpose |
 |------------|-------|---------|
-| `contents` | `read` | リポジトリのチェックアウト |
-| `pull-requests` | `write` | PR への削除結果コメント投稿 |
+| `contents` | `read` | Repository checkout |
+| `pull-requests` | `write` | Posting removal result comments on PRs |
 
 ## Examples
 
-### FTP でフィーチャー環境を削除する
+### Remove feature environment via FTP
 
 ```yaml
 jobs:
@@ -102,7 +104,7 @@ jobs:
       server-password: ${{ secrets.SERVER_PASSWORD }}
 ```
 
-### rsync でフィーチャー環境を削除する（パスプレフィックス付き）
+### Remove feature environment via rsync (with path prefix)
 
 ```yaml
 jobs:
@@ -121,7 +123,7 @@ jobs:
       ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
 
-### ドライランで確認する
+### Verify with dry-run
 
 ```yaml
 jobs:
@@ -142,16 +144,16 @@ jobs:
 
 ## Behavior
 
-このワークフローは `delete` ジョブで構成され、以下の順序で実行されます。
+This workflow consists of a `delete` job and executes in the following order:
 
-1. `compute-web-hosting-deploy-path` Composite Action で削除対象パスを計算
-2. `deploy-type` の値に応じて削除を実行
-   - `'ftp'`: `undeploy-web-hosting-ftp` Composite Action を使用
-   - `'rsync'`: `undeploy-web-hosting-rsync` Composite Action を使用
-3. PR の場合: `marocchino/sticky-pull-request-comment` で成功/失敗コメントを投稿
-4. 成功の場合: 過去の失敗コメントを非表示にし、過去のデプロイ成功コメントも非表示にする
+1. Compute the target removal path using the `compute-web-hosting-deploy-path` Composite Action
+2. Execute removal based on the `deploy-type` value
+   - `'ftp'`: Uses the `undeploy-web-hosting-ftp` Composite Action
+   - `'rsync'`: Uses the `undeploy-web-hosting-rsync` Composite Action
+3. For PRs: Post success/failure comments via `marocchino/sticky-pull-request-comment`
+4. On success: Hide previous failure comments and previous deploy success comments
 
 ## Prerequisites
 
-- `deploy-type` が `'ftp'` の場合: `server-password` が必要
-- `deploy-type` が `'rsync'` の場合: `ssh-private-key` が必要
+- For `deploy-type` `'ftp'`: `server-password` is required
+- For `deploy-type` `'rsync'`: `ssh-private-key` is required

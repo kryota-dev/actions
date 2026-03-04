@@ -1,6 +1,8 @@
+**English** | [日本語](auto-assign-pr.ja.md)
+
 # Auto Assign PR
 
-PR 作成者を自動的に assignee として設定するワークフロー
+Workflow to automatically assign the PR creator as assignee
 
 > Source: [`.github/workflows/auto-assign-pr.yml`](../auto-assign-pr.yml)
 
@@ -13,7 +15,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
     with:
-      # bot-assignees - Bot PR 時に割り当てるユーザー/チームのカンマ区切りリスト（空 = スキップ）
+      # bot-assignees - Comma-separated list of users/teams to assign for Bot PRs (empty = skip)
       # Optional (default: '')
       bot-assignees: ''
 ```
@@ -22,17 +24,17 @@ jobs:
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
-| `bot-assignees` | Bot PR 時に割り当てるユーザー/チームのカンマ区切りリスト（空 = スキップ） | No | `''` |
+| `bot-assignees` | Comma-separated list of users/teams to assign for Bot PRs (empty = skip) | No | `''` |
 
 ## Permissions
 
 | Permission | Level | Purpose |
 |------------|-------|---------|
-| `pull-requests` | `write` | `gh pr edit --add-assignee` による assignee の設定 |
+| `pull-requests` | `write` | Setting assignees via `gh pr edit --add-assignee` |
 
 ## Examples
 
-### 基本的な使い方
+### Basic Usage
 
 ```yaml
 jobs:
@@ -42,7 +44,7 @@ jobs:
     uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
 ```
 
-### 応用例
+### Advanced Usage
 
 ```yaml
 jobs:
@@ -56,11 +58,11 @@ jobs:
 
 ## Behavior
 
-1. `github.actor` が `*[bot]` パターンに一致するかチェックし、Bot かどうかを判定
-2. 人間の場合: `gh pr edit --add-assignee` で PR 作成者を assignee に設定
-3. Bot かつ `bot-assignees` が指定されている場合: カンマ区切りで各ユーザーを assignee に設定
-4. Bot かつ `bot-assignees` が未指定の場合: スキップ（ログ出力のみ）
+1. Check if `github.actor` matches the `*[bot]` pattern to determine if it's a Bot
+2. For humans: Set the PR creator as assignee via `gh pr edit --add-assignee`
+3. For Bots with `bot-assignees` specified: Set each user from the comma-separated list as assignee
+4. For Bots without `bot-assignees`: Skip (log output only)
 
 <!-- ## Migration Guide -->
 
-<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
+<!-- Uncomment and fill in when there are Breaking Changes -->

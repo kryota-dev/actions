@@ -1,6 +1,8 @@
+**English** | [日本語](pnpm-setup.ja.md)
+
 # pnpm-setup
 
-Node.js と pnpm のセットアップ、および依存関係のインストールを行う Composite Action。
+A Composite Action for setting up Node.js and pnpm, and installing dependencies.
 
 > Source: [`.github/actions/pnpm-setup/action.yml`](../pnpm-setup/action.yml)
 
@@ -16,7 +18,7 @@ None
 
 ## Examples
 
-### 基本的な使い方
+### Basic Usage
 
 ```yaml
 steps:
@@ -26,18 +28,18 @@ steps:
 
 ## Behavior
 
-1. `pnpm/action-setup@v4.2.0` を使用して pnpm をインストールする（`package.json` を参照、`run_install: false`）
-2. `actions/setup-node@v6.2.0` を使用して Node.js をインストールする（`.node-version` ファイルからバージョンを取得、`cache: 'pnpm'`）
-3. `pnpm store path --silent` を実行して pnpm ストアのパスを取得する
-4. `actions/cache@v5.0.3` を使用して pnpm ストアをキャッシュする（キー: `{os}-pnpm-store-{hash(pnpm-lock.yaml)}`）
-5. `pnpm install` を実行して依存関係をインストールする
+1. Install pnpm using `pnpm/action-setup@v4.2.0` (references `package.json`, `run_install: false`)
+2. Install Node.js using `actions/setup-node@v6.2.0` (reads version from `.node-version` file, `cache: 'pnpm'`)
+3. Get the pnpm store path by running `pnpm store path --silent`
+4. Cache the pnpm store using `actions/cache@v5.0.3` (key: `{os}-pnpm-store-{hash(pnpm-lock.yaml)}`)
+5. Install dependencies by running `pnpm install`
 
 ## Prerequisites
 
-- リポジトリに `package.json` が存在すること
-- リポジトリに `.node-version` ファイルが存在すること
-- リポジトリに `pnpm-lock.yaml` が存在すること
+- `package.json` must exist in the repository
+- `.node-version` file must exist in the repository
+- `pnpm-lock.yaml` must exist in the repository
 
 <!-- ## Migration Guide -->
 
-<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
+<!-- Uncomment and fill in when there are Breaking Changes -->
