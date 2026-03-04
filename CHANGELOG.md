@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.0.9](https://github.com/kryota-dev/actions/compare/v0.0.8...v0.0.9) - 2026-03-04
+### Other Changes
+- fix: deploy/undeploy ワークフローの PR コメント・Slack メッセージを最適化 by @kryota-dev in https://github.com/kryota-dev/actions/pull/42
+- docs: Composite Actions と Reusable Workflows のドキュメントを改善 by @kryota-dev in https://github.com/kryota-dev/actions/pull/44
+- docs(i18n): translate all documentation to English by @kryota-dev in https://github.com/kryota-dev/actions/pull/45
+
 ## [v0.0.8](https://github.com/kryota-dev/actions/compare/v0.0.7...v0.0.8) - 2026-03-03
 ### Other Changes
 - fix: Reusable Workflow 内のローカルアクション参照を絶対参照に変更 by @Copilot in https://github.com/kryota-dev/actions/pull/40
