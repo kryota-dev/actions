@@ -10,7 +10,7 @@ A repository for centrally managing and publishing reusable GitHub Actions (Reus
 
 ```bash
 # Create a new ADR (Architecture Decision Record)
-npm run adr:new -- "ADR title"
+make adr title="ADR title"
 
 # Lint (auto-run in CI; run locally via aqua)
 aqua exec -- actionlint           # Workflow syntax check

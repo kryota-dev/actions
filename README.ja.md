@@ -54,7 +54,7 @@ steps:
 新しい ADR を作成する場合:
 
 ```bash
-npm run adr:new -- "ADR のタイトル"
+make adr title="ADR のタイトル"
 ```
 
 ADR の一覧は [docs/adr/](docs/adr/) を参照してください。
