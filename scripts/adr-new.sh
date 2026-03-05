@@ -39,7 +39,7 @@ update_readme() {
   local filename=$3
 
   # Add entry to README if not already present
-  if ! grep -q "\[${num}\. ${title}\]" "${ADR_DIR}/README.md" 2>/dev/null; then
+  if ! grep -Fq "[${num}. ${title}]" "${ADR_DIR}/README.md" 2>/dev/null; then
     # Insert before the last line (empty line)
     local entry="* [${num}. ${title}](${filename})"
     if [[ -f "${ADR_DIR}/README.md" ]]; then
@@ -73,8 +73,11 @@ main() {
 
   # Create ADR file from template or use default
   if [[ -f "$TEMPLATE_FILE" ]]; then
+    local escaped_title="${title//\\/\\\\}"
+    escaped_title="${escaped_title//&/\\&}"
+    escaped_title="${escaped_title//\//\\/}"
     sed -e "s/{{NUMBER}}/${next_num}/g" \
-        -e "s/{{TITLE}}/${title}/g" \
+        -e "s/{{TITLE}}/${escaped_title}/g" \
         -e "s/{{DATE}}/${current_date}/g" \
         "$TEMPLATE_FILE" > "$filepath"
   else

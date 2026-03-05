@@ -51,7 +51,7 @@ The script provides only the essential functionality needed (creating new ADRs),
 
 - All 9 npm audit vulnerabilities are eliminated
 - No external dependencies to maintain or monitor for vulnerabilities
-- Simpler, more transparent implementation (60 lines of Bash vs. complex npm dependency tree)
+- Simpler, more transparent implementation (a single Bash script vs. complex npm dependency tree)
 - Faster execution (no npm package loading overhead)
 - Easy to customize for repository-specific needs
 
