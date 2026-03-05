@@ -54,7 +54,7 @@ Design decisions are recorded as ADRs in `docs/adr/`.
 To create a new ADR:
 
 ```bash
-npm run adr:new -- "ADR title"
+make adr title="ADR title"
 ```
 
 See [docs/adr/](docs/adr/) for the list of ADRs.

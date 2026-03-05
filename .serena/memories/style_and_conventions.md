@@ -23,7 +23,7 @@ Enforced by ghalint and zizmor in CI. Renovate Bot auto-updates SHA pins.
 ## ADR
 - Written in English
 - Stored in `docs/adr/` with 3-digit numbering (001, 003, 004, ...)
-- Created via `npm run adr:new -- "title"`
+- Created via `make adr title="title"`
 
 ## Language
 - README, CHANGELOG, commit messages: Japanese

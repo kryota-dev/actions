@@ -64,7 +64,8 @@ The script provides only the essential functionality needed (creating new ADRs),
 
 ### Migration Impact
 
-- Update `package.json`: Change `adr:new` script to call `bash scripts/adr-new.sh`
-- Update documentation: AGENTS.md, README.md
+- Delete `package.json` and `package-lock.json`: No npm dependencies remain
+- Add `Makefile` with `adr` target as the new entry point
+- Update documentation: AGENTS.md, README.md, copilot-instructions.md
 - All existing ADR files remain compatible (no format changes)
-- Developers use `npm run adr:new -- "Title"` as before (same interface)
+- Developers use `make adr title="Title"` (simplified interface, no npm required)

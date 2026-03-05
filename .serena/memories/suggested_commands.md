@@ -4,7 +4,7 @@
 
 ```bash
 # Create a new ADR (Architecture Decision Record)
-npm run adr:new -- "ADR title"
+make adr title="ADR title"
 ```
 
 ## Linting Commands (CI runs these automatically)
