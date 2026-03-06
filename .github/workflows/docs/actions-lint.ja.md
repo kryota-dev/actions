@@ -26,9 +26,9 @@ jobs:
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
 | `reviewdog-reporter` | actionlint のレポータータイプ（github-pr-review, github-check 等） | No | `'github-pr-review'` |
-| `actionlint-config` | actionlint 設定ファイルのパス（デフォルト: `.github/actionlint.yaml` または `.github/actionlint.yml`） | No | `''` |
-| `ls-lint-config` | ls-lint 設定ファイルのパス（デフォルト: `.ls-lint.yml` があればそれを使用、なければ内蔵デフォルト） | No | `''` |
-| `ghalint-config` | ghalint 設定ファイルのパス（デフォルト: `{.github/,.,}ghalint.{yaml,yml}`） | No | `''` |
+| `actionlint-config` | actionlint 設定ファイルのパス（デフォルト: `.github/actionlint.{yaml,yml}`） | No | `''` |
+| `ls-lint-config` | ls-lint 設定ファイルのパス（デフォルト: `.ls-lint.yml` があればそれを使用、なければ `.github/workflows` と `.github/actions` の kebab-case ルール） | No | `''` |
+| `ghalint-config` | ghalint 設定ファイルのパス（デフォルト: `ghalint.{yaml,yml}` または `.ghalint.{yaml,yml}` または `.github/ghalint.{yaml,yml}`） | No | `''` |
 | `zizmor-config` | zizmor 設定ファイルのパス（デフォルト: `.github/zizmor.yml` または `zizmor.yml`） | No | `''` |
 | `skip-actionlint` | actionlint をスキップ | No | `false` |
 | `skip-ls-lint` | ls-lint をスキップ | No | `false` |
@@ -77,10 +77,10 @@ jobs:
 2. `aquaproj/aqua-installer@v4.0.4` で aqua をインストール
 3. 動的に生成した aqua 設定で全 lint ツール（actionlint, reviewdog, ls-lint, ghalint, zizmor）をセットアップ — caller 側の `aqua.yaml` は不要
 4. aqua の bin パスを `$GITHUB_PATH` に追加
-5. actionlint を実行し、結果を reviewdog にパイプ（レポーターは `reviewdog-reporter` input で指定）。`actionlint-config` が指定されている場合は `-config-file` フラグで設定ファイルを使用、未指定時は `.github/actionlint.yaml` または `.github/actionlint.yml` を検索
-6. ls-lint の設定を3段階フォールバックで準備: `ls-lint-config` input → caller の `.ls-lint.yml` → 内蔵デフォルト設定（`.github/workflows` と `.github/actions` の kebab-case ルール）
+5. actionlint を実行し、結果を reviewdog にパイプ（レポーターは `reviewdog-reporter` input で指定）。`actionlint-config` が指定されている場合は `-config-file` フラグで設定ファイルを使用、未指定時は `.github/actionlint.{yaml,yml}` を検索
+6. ls-lint の設定を3段階フォールバックで準備: `ls-lint-config` input → caller の `.ls-lint.yml` → デフォルトルール（`.github/workflows/*.yml`: kebab-case、`.github/actions/`: kebab-case ディレクトリ名と `action.yml` 命名規則）
 7. 解決された設定で ls-lint を実行
-8. `ghalint run` でワークフロー lint を実行。`ghalint-config` が指定されている場合は `-c` フラグで設定ファイルを使用、未指定時は `ghalint.yaml`, `.ghalint.yaml`, `.github/ghalint.yaml`（および `.yml` 拡張子）を検索
+8. `ghalint run` でワークフロー lint を実行。`ghalint-config` が指定されている場合は `-c` フラグで設定ファイルを使用、未指定時は `ghalint.{yaml,yml}`, `.ghalint.{yaml,yml}`, `.github/ghalint.{yaml,yml}` を検索
 9. `ghalint run-action` で Composite Action lint を実行
 10. `zizmor --format github` で静的セキュリティ分析を実行（`github.token` を `GH_TOKEN` として使用）。`zizmor-config` が指定されている場合は `--config` フラグで設定ファイルを使用、未指定時は `.github/zizmor.yml` または `zizmor.yml` を検索
 

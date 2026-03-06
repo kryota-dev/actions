@@ -10,17 +10,17 @@ on:
         required: false
         default: "github-pr-review"
       actionlint-config:
-        description: "Path to actionlint config file (default: .github/actionlint.yaml or .github/actionlint.yml)"
+        description: "Path to actionlint config file (default: .github/actionlint.{yaml,yml})"
         type: string
         required: false
         default: ""
       ls-lint-config:
-        description: "Path to ls-lint config file (default: .ls-lint.yml if present, otherwise built-in default)"
+        description: "Path to ls-lint config file (default: .ls-lint.yml if present, otherwise kebab-case rules for .github/workflows and .github/actions)"
         type: string
         required: false
         default: ""
       ghalint-config:
-        description: "Path to ghalint config file (default: {.github/,.,}ghalint.{yaml,yml})"
+        description: "Path to ghalint config file (default: ghalint.{yaml,yml} or .ghalint.{yaml,yml} or .github/ghalint.{yaml,yml})"
         type: string
         required: false
         default: ""

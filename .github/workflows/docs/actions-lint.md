@@ -26,9 +26,9 @@ jobs:
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
 | `reviewdog-reporter` | Reporter type for actionlint (github-pr-review, github-check, etc.) | No | `'github-pr-review'` |
-| `actionlint-config` | Path to actionlint config file (default: `.github/actionlint.yaml` or `.github/actionlint.yml`) | No | `''` |
-| `ls-lint-config` | Path to ls-lint config file (default: `.ls-lint.yml` if present, otherwise built-in default) | No | `''` |
-| `ghalint-config` | Path to ghalint config file (default: `{.github/,.,}ghalint.{yaml,yml}`) | No | `''` |
+| `actionlint-config` | Path to actionlint config file (default: `.github/actionlint.{yaml,yml}`) | No | `''` |
+| `ls-lint-config` | Path to ls-lint config file (default: `.ls-lint.yml` if present, otherwise kebab-case rules for `.github/workflows` and `.github/actions`) | No | `''` |
+| `ghalint-config` | Path to ghalint config file (default: `ghalint.{yaml,yml}` or `.ghalint.{yaml,yml}` or `.github/ghalint.{yaml,yml}`) | No | `''` |
 | `zizmor-config` | Path to zizmor config file (default: `.github/zizmor.yml` or `zizmor.yml`) | No | `''` |
 | `skip-actionlint` | Skip actionlint | No | `false` |
 | `skip-ls-lint` | Skip ls-lint | No | `false` |
@@ -77,10 +77,10 @@ jobs:
 2. Install aqua with `aquaproj/aqua-installer@v4.0.4`
 3. Set up all lint tools (actionlint, reviewdog, ls-lint, ghalint, zizmor) via a dynamically generated aqua configuration — no caller-side `aqua.yaml` required
 4. Add aqua's bin path to `$GITHUB_PATH`
-5. Run actionlint and pipe results through reviewdog (reporter specified by the `reviewdog-reporter` input). If `actionlint-config` is specified, the given config file is used via `-config-file` flag; otherwise actionlint looks for `.github/actionlint.yaml` or `.github/actionlint.yml`
-6. Prepare ls-lint config with 3-tier fallback: `ls-lint-config` input → caller's `.ls-lint.yml` → built-in default config (kebab-case rules for `.github/workflows` and `.github/actions`)
+5. Run actionlint and pipe results through reviewdog (reporter specified by the `reviewdog-reporter` input). If `actionlint-config` is specified, the given config file is used via `-config-file` flag; otherwise actionlint looks for `.github/actionlint.{yaml,yml}`
+6. Prepare ls-lint config with 3-tier fallback: `ls-lint-config` input → caller's `.ls-lint.yml` → default rules (`.github/workflows/*.yml`: kebab-case, `.github/actions/`: kebab-case directories and `action.yml` naming)
 7. Run ls-lint with the resolved config
-8. Run `ghalint run` for workflow lint. If `ghalint-config` is specified, the given config file is used via `-c` flag; otherwise ghalint looks for `ghalint.yaml`, `.ghalint.yaml`, `.github/ghalint.yaml` (and `.yml` variants)
+8. Run `ghalint run` for workflow lint. If `ghalint-config` is specified, the given config file is used via `-c` flag; otherwise ghalint looks for `ghalint.{yaml,yml}`, `.ghalint.{yaml,yml}`, or `.github/ghalint.{yaml,yml}`
 9. Run `ghalint run-action` for Composite Action lint
 10. Run `zizmor --format github` for static security analysis (using `github.token` as `GH_TOKEN`). If `zizmor-config` is specified, the given config file is used via `--config` flag; otherwise zizmor looks for `.github/zizmor.yml` or `zizmor.yml`
 
