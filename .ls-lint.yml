@@ -1,6 +1,0 @@
-ls:
-  .github/workflows:
-    .yml: kebab-case
-  .github/actions:
-    .dir: kebab-case
-    .yml: regex:action
