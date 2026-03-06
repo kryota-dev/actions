@@ -9,7 +9,7 @@ rsync over SSH で Web ホスティングサーバーからデプロイ済みデ
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@v1
+- uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@v0
   with:
     # ssh-host - SSH サーバーのホスト名
     # Required
@@ -48,7 +48,7 @@ rsync over SSH で Web ホスティングサーバーからデプロイ済みデ
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@v1
+  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@v0
     with:
       ssh-host: ${{ secrets.SSH_HOST }}
       ssh-user: ${{ secrets.SSH_USER }}
@@ -60,7 +60,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@v1
+  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@v0
     with:
       ssh-host: ${{ secrets.SSH_HOST }}
       ssh-user: ${{ secrets.SSH_USER }}

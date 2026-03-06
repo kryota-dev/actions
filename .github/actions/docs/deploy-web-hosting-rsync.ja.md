@@ -9,7 +9,7 @@ rsync over SSH でビルド成果物を Web ホスティングサーバーにデ
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v1
+- uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v0
   with:
     # output-dir - ビルド出力ディレクトリ名
     # Required
@@ -63,7 +63,7 @@ rsync over SSH でビルド成果物を Web ホスティングサーバーにデ
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v0
     with:
       output-dir: 'dist'
       ssh-host: ${{ secrets.SSH_HOST }}
@@ -76,7 +76,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v0
     with:
       output-dir: 'dist'
       ssh-host: ${{ secrets.SSH_HOST }}
@@ -90,7 +90,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v0
     with:
       output-dir: 'dist'
       ssh-host: ${{ secrets.SSH_HOST }}

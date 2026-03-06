@@ -13,7 +13,7 @@ jobs:
   assign:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
+    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v0
     with:
       # bot-assignees - Comma-separated list of users/teams to assign for Bot PRs (empty = skip)
       # Optional (default: '')
@@ -41,7 +41,7 @@ jobs:
   assign:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
+    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v0
 ```
 
 ### Advanced Usage
@@ -51,7 +51,7 @@ jobs:
   assign:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
+    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v0
     with:
       bot-assignees: 'user1,user2'
 ```

@@ -9,7 +9,7 @@
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
+- uses: kryota-dev/actions/.github/actions/slack-notify-failure@v0
   with:
     # webhook-url - Slack Incoming Webhook URL
     # Required
@@ -50,7 +50,7 @@
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v0
     with:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -61,7 +61,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v0
     with:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
       mention-user: '<@U0123456789>'
@@ -74,7 +74,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v0
     with:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
       title: 'CI テストが失敗しました'

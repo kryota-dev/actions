@@ -9,7 +9,7 @@ lftp を使用してビルド成果物を Web ホスティングサーバーに 
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
+- uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
   with:
     # output-dir - ビルド出力ディレクトリ名
     # Required
@@ -63,7 +63,7 @@ lftp を使用してビルド成果物を Web ホスティングサーバーに 
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
     with:
       output-dir: 'dist'
       ftp-server: ${{ secrets.FTP_SERVER }}
@@ -76,7 +76,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
     with:
       output-dir: 'dist'
       ftp-server: ${{ secrets.FTP_SERVER }}
@@ -90,7 +90,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
     with:
       output-dir: 'dist'
       ftp-server: ${{ secrets.FTP_SERVER }}

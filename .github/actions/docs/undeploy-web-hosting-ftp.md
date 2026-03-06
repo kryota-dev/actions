@@ -9,7 +9,7 @@ A Composite Action that removes a deployed directory from a web hosting server u
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@v1
+- uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@v0
   with:
     # ftp-server - FTP server address
     # Required
@@ -48,7 +48,7 @@ A Composite Action that removes a deployed directory from a web hosting server u
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@v0
     with:
       ftp-server: ${{ secrets.FTP_SERVER }}
       ftp-username: ${{ secrets.FTP_USERNAME }}
@@ -60,7 +60,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@v0
     with:
       ftp-server: ${{ secrets.FTP_SERVER }}
       ftp-username: ${{ secrets.FTP_USERNAME }}
