@@ -4,16 +4,51 @@ name: Actions Lint
 on:
   workflow_call:
     inputs:
-      aqua-version:
-        description: "Version of aqua to install for ghalint"
-        type: string
-        required: false
-        default: "v2.56.6"
       reviewdog-reporter:
-        description: "Reporter type for reviewdog/actionlint (github-pr-review, github-check, etc.)"
+        description: "Reporter type for actionlint (github-pr-review, github-check, etc.)"
         type: string
         required: false
         default: "github-pr-review"
+      actionlint-config:
+        description: "Path to actionlint config file (default: auto-detect)"
+        type: string
+        required: false
+        default: ""
+      ls-lint-config:
+        description: "Path to ls-lint config file (default: .ls-lint.yml if present, otherwise built-in default)"
+        type: string
+        required: false
+        default: ""
+      ghalint-config:
+        description: "Path to ghalint config file (default: auto-detect)"
+        type: string
+        required: false
+        default: ""
+      zizmor-config:
+        description: "Path to zizmor config file (default: auto-detect)"
+        type: string
+        required: false
+        default: ""
+      skip-actionlint:
+        description: "Skip actionlint"
+        type: boolean
+        required: false
+        default: false
+      skip-ls-lint:
+        description: "Skip ls-lint"
+        type: boolean
+        required: false
+        default: false
+      skip-ghalint:
+        description: "Skip ghalint"
+        type: boolean
+        required: false
+        default: false
+      skip-zizmor:
+        description: "Skip zizmor"
+        type: boolean
+        required: false
+        default: false
 
 permissions: {}
 
@@ -29,30 +64,126 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: reviewdog/action-actionlint@0d952c597ef8459f634d7145b0b044a9699e5e43 # v1.71.0
-        with:
-          reporter: ${{ inputs.reviewdog-reporter }}
-
-      - uses: ls-lint/action@02e380fe8733d499cbfc9e22276de5085508a5bd # v2.3.1
-
       - uses: aquaproj/aqua-installer@11dd79b4e498d471a9385aa9fb7f62bb5f52a73c # v4.0.4
         with:
-          aqua_version: ${{ inputs.aqua-version }}
+          aqua_version: v2.56.6
+
+      - name: Setup lint tools via aqua
+        run: |
+          # renovate: datasource=github-tags depName=aquaproj/aqua-registry
+          AQUA_REGISTRY_REF="v4.474.0"
+          # renovate: datasource=github-releases depName=rhysd/actionlint
+          ACTIONLINT_VERSION="v1.7.7"
+          # renovate: datasource=github-releases depName=reviewdog/reviewdog
+          REVIEWDOG_VERSION="v0.20.3"
+          # renovate: datasource=github-releases depName=loeffel-io/ls-lint
+          LS_LINT_VERSION="v2.3.1"
+          # renovate: datasource=github-releases depName=suzuki-shunsuke/ghalint
+          GHALINT_VERSION="v1.5.5"
+          # renovate: datasource=github-releases depName=zizmorcore/zizmor
+          ZIZMOR_VERSION="v1.7.0"
+
+          cat > /tmp/aqua-lint.yaml << HEREDOC
+          ---
+          registries:
+            - type: standard
+              ref: ${AQUA_REGISTRY_REF}
+          packages:
+            - name: rhysd/actionlint@${ACTIONLINT_VERSION}
+            - name: reviewdog/reviewdog@${REVIEWDOG_VERSION}
+            - name: loeffel-io/ls-lint@${LS_LINT_VERSION}
+            - name: suzuki-shunsuke/ghalint@${GHALINT_VERSION}
+            - name: zizmorcore/zizmor@${ZIZMOR_VERSION}
+          HEREDOC
+          AQUA_GLOBAL_CONFIG=/tmp/aqua-lint.yaml aqua install
+        shell: bash
 
       - run: echo "${AQUA_ROOT_DIR:-${HOME}/.local/share/aquaproj-aqua}/bin" >> "$GITHUB_PATH"
         shell: bash
 
-      - name: Run ghalint
-        run: ghalint run
+      - name: Run actionlint
+        if: ${{ !inputs.skip-actionlint }}
+        run: |
+          config_flag=""
+          if [[ -n "$ACTIONLINT_CONFIG" ]]; then
+            config_flag="-config-file $ACTIONLINT_CONFIG"
+          fi
+          # shellcheck disable=SC2086,SC2016
+          actionlint $config_flag \
+            -format '{{range $err := .}}{{$err.Filepath}}:{{$err.Line}}:{{$err.Column}}: {{$err.Message}}
+          {{end}}' \
+            . 2>&1 | \
+            reviewdog -efm="%f:%l:%c: %m" \
+              -reporter="${REVIEWDOG_REPORTER}" \
+              -name=actionlint || true
         shell: bash
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
+          REVIEWDOG_REPORTER: ${{ inputs.reviewdog-reporter }}
+          ACTIONLINT_CONFIG: ${{ inputs.actionlint-config }}
+
+      - name: Prepare ls-lint config
+        if: ${{ !inputs.skip-ls-lint }}
+        id: ls-lint-config
+        run: |
+          if [[ -n "$LS_LINT_CONFIG_INPUT" ]]; then
+            echo "config=$LS_LINT_CONFIG_INPUT" >> "$GITHUB_OUTPUT"
+          elif [[ -f ".ls-lint.yml" ]]; then
+            echo "config=.ls-lint.yml" >> "$GITHUB_OUTPUT"
+          else
+            cat > /tmp/.ls-lint-default.yml << 'HEREDOC'
+          ls:
+            .github/workflows:
+              .yml: kebab-case
+            .github/actions:
+              .dir: kebab-case
+              .yml: regex:action
+          HEREDOC
+            echo "config=/tmp/.ls-lint-default.yml" >> "$GITHUB_OUTPUT"
+          fi
+        shell: bash
+        env:
+          LS_LINT_CONFIG_INPUT: ${{ inputs.ls-lint-config }}
+
+      - name: Run ls-lint
+        if: ${{ !inputs.skip-ls-lint }}
+        run: ls-lint --config "${{ steps.ls-lint-config.outputs.config }}"
+        shell: bash
+
+      - name: Run ghalint
+        if: ${{ !inputs.skip-ghalint }}
+        run: |
+          if [[ -n "$GHALINT_CONFIG_INPUT" ]]; then
+            ghalint -c "$GHALINT_CONFIG_INPUT" run
+          else
+            ghalint run
+          fi
+        shell: bash
+        env:
+          GHALINT_CONFIG_INPUT: ${{ inputs.ghalint-config }}
 
       - name: Run ghalint run-action
-        run: ghalint run-action
+        if: ${{ !inputs.skip-ghalint }}
+        run: |
+          if [[ -n "$GHALINT_CONFIG_INPUT" ]]; then
+            ghalint -c "$GHALINT_CONFIG_INPUT" run-action
+          else
+            ghalint run-action
+          fi
         shell: bash
-
-      - uses: astral-sh/setup-uv@5a095e7a2014a4212f075830d4f7277575a9d098 # v7.3.1
+        env:
+          GHALINT_CONFIG_INPUT: ${{ inputs.ghalint-config }}
 
       - name: Run zizmor
-        run: uvx zizmor --format=github .
+        if: ${{ !inputs.skip-zizmor }}
+        run: |
+          config_flag=""
+          if [[ -n "$ZIZMOR_CONFIG" ]]; then
+            config_flag="--config $ZIZMOR_CONFIG"
+          fi
+          # shellcheck disable=SC2086
+          zizmor --format github $config_flag .
+        shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          ZIZMOR_CONFIG: ${{ inputs.zizmor-config }}
