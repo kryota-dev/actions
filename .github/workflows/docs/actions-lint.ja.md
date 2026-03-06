@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v0
     with:
       # reviewdog-reporter - actionlint のレポータータイプ
       # Optional (default: 'github-pr-review')
@@ -52,7 +52,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v0
 ```
 
 ### カスタマイズ例
@@ -63,7 +63,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v0
     with:
       reviewdog-reporter: 'github-check'
       ls-lint-config: '.custom-ls-lint.yml'
@@ -84,7 +84,7 @@ jobs:
 9. `ghalint run-action` で Composite Action lint を実行
 10. `zizmor --format github` で静的セキュリティ分析を実行（`github.token` を `GH_TOKEN` として使用）。`zizmor-config` が指定されている場合は `--config` フラグで設定ファイルを使用、未指定時は zizmor が標準パスから自動検出
 
-## Migration Guide (v1 → v2)
+## Migration Guide
 
 ### 破壊的変更
 
@@ -95,8 +95,7 @@ jobs:
 
 ### 移行手順
 
-1. バージョンタグを `@v1` から `@v2` に更新
-2. `aqua-version` input を指定している場合は削除
-3. ghalint のためだけに配置していた caller 側の `aqua.yaml` を削除（不要になった）
-4. デフォルトの kebab-case ルールのみ記述していた caller 側の `.ls-lint.yml` を削除（内蔵デフォルトで対応）
-5. 必要に応じて skip や config の input を追加し、きめ細かな制御が可能
+1. `aqua-version` input を指定している場合は削除
+2. ghalint のためだけに配置していた caller 側の `aqua.yaml` を削除（不要になった）
+3. デフォルトの kebab-case ルールのみ記述していた caller 側の `.ls-lint.yml` を削除（内蔵デフォルトで対応）
+4. 必要に応じて skip や config の input を追加し、きめ細かな制御が可能

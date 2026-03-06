@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v0
     with:
       # reviewdog-reporter - Reporter type for actionlint
       # Optional (default: 'github-pr-review')
@@ -52,7 +52,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v0
 ```
 
 ### Customized Usage
@@ -63,7 +63,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v0
     with:
       reviewdog-reporter: 'github-check'
       ls-lint-config: '.custom-ls-lint.yml'
@@ -84,9 +84,9 @@ jobs:
 9. Run `ghalint run-action` for Composite Action lint
 10. Run `zizmor --format github` for static security analysis (using `github.token` as `GH_TOKEN`). If `zizmor-config` is specified, the given config file is used via `--config` flag; otherwise zizmor auto-detects from standard locations
 
-## Migration Guide (v1 → v2)
+## Migration Guide
 
-### Breaking Changes
+### Breaking Changes from Previous Version
 
 | Change | Impact | Migration |
 |--------|--------|-----------|
@@ -95,8 +95,7 @@ jobs:
 
 ### Migration Steps
 
-1. Update the version tag from `@v1` to `@v2`
-2. Remove `aqua-version` input if present
-3. Remove caller-side `aqua.yaml` if it was only used for ghalint (no longer needed)
-4. Remove caller-side `.ls-lint.yml` if it only contained the default kebab-case rules (built-in default now covers this)
-5. Optionally add skip or config inputs for fine-grained control
+1. Remove `aqua-version` input if present
+2. Remove caller-side `aqua.yaml` if it was only used for ghalint (no longer needed)
+3. Remove caller-side `.ls-lint.yml` if it only contained the default kebab-case rules (built-in default now covers this)
+4. Optionally add skip or config inputs for fine-grained control
