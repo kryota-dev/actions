@@ -54,3 +54,4 @@ Internal CI workflows (with `my-` prefix) used for quality management of this re
 | my-setup-pr.yml | PR opened | auto-assign-pr.yml | Auto assignee |
 | my-release.yml | push (main) | tagpr-release.yml | Release management |
 | my-codeql.yml | PR, push (main), merge_group | codeql-analysis.yml | Security scanning |
+| my-update-release-pr.yml | PR labeled (tagpr:major/minor) | tagpr-release.yml | Update release PR version |

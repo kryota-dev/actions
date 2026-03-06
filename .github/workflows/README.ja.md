@@ -54,3 +54,4 @@ jobs:
 | my-setup-pr.yml | PR opened | auto-assign-pr.yml | 自動 assignee |
 | my-release.yml | push (main) | tagpr-release.yml | リリース管理 |
 | my-codeql.yml | PR, push (main), merge_group | codeql-analysis.yml | セキュリティスキャン |
+| my-update-release-pr.yml | PR labeled (tagpr:major/minor) | tagpr-release.yml | リリース PR バージョン更新 |
