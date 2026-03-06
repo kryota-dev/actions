@@ -178,12 +178,12 @@ jobs:
         if: ${{ !inputs.skip-zizmor }}
         run: |
           config_flag=""
-          if [[ -n "$ZIZMOR_CONFIG" ]]; then
-            config_flag="--config $ZIZMOR_CONFIG"
+          if [[ -n "$ZIZMOR_CONFIG_INPUT" ]]; then
+            config_flag="--config $ZIZMOR_CONFIG_INPUT"
           fi
           # shellcheck disable=SC2086
           zizmor --format github $config_flag .
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          ZIZMOR_CONFIG: ${{ inputs.zizmor-config }}
+          ZIZMOR_CONFIG_INPUT: ${{ inputs.zizmor-config }}
