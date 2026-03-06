@@ -1,0 +1,44 @@
+# Tasks Document: actions-lint "No Config" Improvement
+
+- [x] 1. Rewrite actions-lint.yml workflow
+  - File: `.github/workflows/actions-lint.yml`
+  - Replace all steps: remove GitHub Actions (reviewdog/action-actionlint, ls-lint/action, astral-sh/setup-uv) and replace with aqua-based CLI execution
+  - Remove `aqua-version` input, add 8 new inputs (actionlint-config, ls-lint-config, ghalint-config, zizmor-config, skip-actionlint, skip-ls-lint, skip-ghalint, skip-zizmor)
+  - Implement dynamic aqua.yaml generation with Renovate-compatible version comments
+  - Implement ls-lint config fallback chain (input > .ls-lint.yml > built-in default)
+  - Implement actionlint + reviewdog CLI pipe with `-config-file` flag support
+  - Implement ghalint with `-c` flag support for both `run` and `run-action`
+  - Implement zizmor with `--config` flag support and `--format github` output
+  - Purpose: Core workflow rewrite to achieve "no config" and aqua-unified tool management
+  - _Leverage: Current actions-lint.yml structure, design.md Component 1-5 specifications_
+  - _Requirements: 1, 2, 3, 4, 6_
+  - _Prompt: Implement the task for spec actions-lint-no-config, first run spec-workflow-guide to get the workflow guide then implement the task: Role: GitHub Actions workflow engineer specializing in CI/CD pipeline design | Task: Rewrite `.github/workflows/actions-lint.yml` according to the design document at `.spec-workflow/specs/actions-lint-no-config/design.md`. Remove all third-party GitHub Actions (reviewdog/action-actionlint, ls-lint/action, astral-sh/setup-uv) and replace with aqua-based CLI execution. Key details: (1) Remove `aqua-version` input, add 8 new inputs per design. (2) Generate dynamic `/tmp/aqua-lint.yaml` with `# renovate:` comments for each tool version. (3) Use correct CLI flags: actionlint uses `-config-file`, ghalint uses `-c`, zizmor uses `--config`, ls-lint uses `--config`. (4) Implement ls-lint 3-tier config fallback. (5) Pipe actionlint output through reviewdog with efm format. (6) Use `zizmorcore/zizmor` (not woodruffw/zizmor) as the aqua package name. Read the current file first, then the design document for exact specifications. | Restrictions: Do not change permissions, do not change checkout step, keep `persist-credentials: false`, maintain SHA pinning for aqua-installer, ensure all `shell: bash` declarations are present, do not add unnecessary complexity | Success: actionlint validates the generated YAML without errors, all 9 inputs are defined correctly, all skip conditions use `if: ${{ !inputs.skip-* }}`, all config flags match official CLI documentation, Renovate comments follow the exact format for regex customManager | After implementation, log with log-implementation tool, then mark task [x] in tasks.md_
+
+- [x] 2. Add Renovate customManagers to renovate.json5
+  - File: `.github/renovate.json5`
+  - Add customManagers regex configuration to detect and update tool versions in actions-lint.yml
+  - The regex must match `# renovate: datasource=... depName=...\n  VAR_NAME="version"` pattern
+  - Purpose: Enable automatic version updates for all aqua-managed tools via Renovate
+  - _Leverage: Current renovate.json5, design.md Component 6 specification_
+  - _Requirements: 5_
+  - _Prompt: Implement the task for spec actions-lint-no-config, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Renovate Bot configuration specialist | Task: Add a `customManagers` entry to `.github/renovate.json5` that detects tool versions in `.github/workflows/actions-lint.yml`. The regex pattern must match lines like `# renovate: datasource=github-releases depName=rhysd/actionlint\n    ACTIONLINT_VERSION="v1.7.7"`. Read the current renovate.json5 first, then read the design document Component 6 for the exact configuration. Use `extractVersionTemplate` to handle both `v`-prefixed and non-prefixed versions. | Restrictions: Do not modify existing extends, schedule, labels, or vulnerabilityAlerts settings. Only add the customManagers array. Ensure valid JSON5 syntax. | Success: The regex correctly matches all 6 version declarations (aqua-registry, actionlint, reviewdog, ls-lint, ghalint, zizmor) in the workflow file. JSON5 parses without errors. | After implementation, log with log-implementation tool, then mark task [x] in tasks.md_
+
+- [x] 3. Update English documentation
+  - File: `.github/workflows/docs/actions-lint.md`
+  - Update inputs table: remove `aqua-version`, add 8 new inputs with descriptions and defaults
+  - Update permissions table (unchanged but verify)
+  - Rewrite behavior section: update all step descriptions to reflect aqua-based CLI execution
+  - Add migration guide section for v1 → v2
+  - Update usage examples (minimal and customized)
+  - Purpose: Keep English documentation accurate and up-to-date with workflow changes
+  - _Leverage: Current actions-lint.md, requirements.md Requirement 7_
+  - _Requirements: 7_
+  - _Prompt: Implement the task for spec actions-lint-no-config, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Technical documentation writer for GitHub Actions | Task: Update `.github/workflows/docs/actions-lint.md` to reflect all changes in the rewritten `actions-lint.yml`. Read the current documentation file first, then read the updated workflow file at `.github/workflows/actions-lint.yml` to understand the new implementation. Key updates: (1) Replace inputs table - remove `aqua-version`, add `reviewdog-reporter`, `actionlint-config`, `ls-lint-config`, `ghalint-config`, `zizmor-config`, `skip-actionlint`, `skip-ls-lint`, `skip-ghalint`, `skip-zizmor`. (2) Rewrite Behavior section to describe new steps (checkout, aqua-installer, dynamic aqua setup, actionlint+reviewdog CLI, ls-lint with config fallback, ghalint, zizmor). (3) Add Migration Guide section for v1→v2 (remove `aqua-version` input, no more caller-side aqua.yaml needed). (4) Update usage examples. | Restrictions: Keep the same document structure and formatting style. Do not change the document header or name reference. Write in English. | Success: All inputs match the workflow file exactly, behavior steps are accurate, migration guide clearly explains breaking changes | After implementation, log with log-implementation tool, then mark task [x] in tasks.md_
+
+- [x] 4. Update Japanese documentation
+  - File: `.github/workflows/docs/actions-lint.ja.md`
+  - Mirror all changes from task 3 in Japanese
+  - Purpose: Keep Japanese documentation in sync with English version
+  - _Leverage: Updated actions-lint.md (task 3), current actions-lint.ja.md_
+  - _Requirements: 7_
+  - _Prompt: Implement the task for spec actions-lint-no-config, first run spec-workflow-guide to get the workflow guide then implement the task: Role: Technical documentation writer (Japanese) for GitHub Actions | Task: Update `.github/workflows/docs/actions-lint.ja.md` to mirror all changes made to the English version at `.github/workflows/docs/actions-lint.md`. Read both the current Japanese documentation and the updated English documentation. Translate all new content accurately while maintaining natural Japanese technical writing style. | Restrictions: Keep the same document structure as the English version. Use consistent Japanese technical terminology. Do not machine-translate - write naturally. | Success: Japanese documentation matches English documentation in structure and content, all inputs/behavior/migration guide sections are accurately translated | After implementation, log with log-implementation tool, then mark task [x] in tasks.md_
