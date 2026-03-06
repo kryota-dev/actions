@@ -71,17 +71,17 @@ jobs:
       - name: Setup lint tools via aqua
         run: |
           # renovate: datasource=github-tags depName=aquaproj/aqua-registry
-          AQUA_REGISTRY_REF="v4.474.0"
+          AQUA_REGISTRY_REF="v4.477.0"
           # renovate: datasource=github-releases depName=rhysd/actionlint
-          ACTIONLINT_VERSION="v1.7.7"
+          ACTIONLINT_VERSION="v1.7.11"
           # renovate: datasource=github-releases depName=reviewdog/reviewdog
-          REVIEWDOG_VERSION="v0.20.3"
+          REVIEWDOG_VERSION="v0.21.0"
           # renovate: datasource=github-releases depName=loeffel-io/ls-lint
           LS_LINT_VERSION="v2.3.1"
           # renovate: datasource=github-releases depName=suzuki-shunsuke/ghalint
           GHALINT_VERSION="v1.5.5"
           # renovate: datasource=github-releases depName=zizmorcore/zizmor
-          ZIZMOR_VERSION="v1.7.0"
+          ZIZMOR_VERSION="v1.22.0"
 
           cat > aqua.yaml << HEREDOC
           ---
