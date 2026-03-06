@@ -9,7 +9,7 @@ A Composite Action for posting a message to Slack on workflow failure.
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
+- uses: kryota-dev/actions/.github/actions/slack-notify-failure@v0
   with:
     # webhook-url - Slack Incoming Webhook URL
     # Required
@@ -50,7 +50,7 @@ A simple example specifying only required parameters.
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v0
     with:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
 ```
@@ -61,7 +61,7 @@ An example of notifying with a mention to a specific user.
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v0
     with:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
       mention-user: '<@U0123456789>'
@@ -74,7 +74,7 @@ An example of customizing the message body.
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-failure@v0
     with:
       webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
       title: 'CI tests failed'

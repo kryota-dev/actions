@@ -32,7 +32,7 @@
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/{action-name}@v1
+  - uses: kryota-dev/actions/.github/actions/{action-name}@v0
     with:
       # inputs
 ```

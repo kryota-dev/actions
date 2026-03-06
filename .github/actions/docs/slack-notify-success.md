@@ -9,7 +9,7 @@ A Composite Action for posting a message to Slack on workflow success.
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/slack-notify-success@v1
+- uses: kryota-dev/actions/.github/actions/slack-notify-success@v0
   with:
     # channel-id - Slack Channel ID
     # Required
@@ -65,7 +65,7 @@ A simple example specifying only required parameters.
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v0
     with:
       channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
       bot-oauth-token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -77,7 +77,7 @@ An example of notifying with a mention to a specific user.
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v0
     with:
       channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
       bot-oauth-token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -91,7 +91,7 @@ An example of replying to an existing thread and broadcasting to the channel.
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v0
     with:
       channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
       bot-oauth-token: ${{ secrets.SLACK_BOT_TOKEN }}

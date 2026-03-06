@@ -9,7 +9,7 @@ A Composite Action that deploys build artifacts to a web hosting server via FTP 
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
+- uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
   with:
     # output-dir - Build output directory name
     # Required
@@ -63,7 +63,7 @@ A Composite Action that deploys build artifacts to a web hosting server via FTP 
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
     with:
       output-dir: 'dist'
       ftp-server: ${{ secrets.FTP_SERVER }}
@@ -76,7 +76,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
     with:
       output-dir: 'dist'
       ftp-server: ${{ secrets.FTP_SERVER }}
@@ -90,7 +90,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v1
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
     with:
       output-dir: 'dist'
       ftp-server: ${{ secrets.FTP_SERVER }}

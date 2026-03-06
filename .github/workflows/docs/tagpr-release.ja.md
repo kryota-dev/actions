@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v1
+    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
     secrets:
       # app-token - tagpr 用の Personal Access Token（'repo' と 'workflow' スコープが必要）
       # Required
@@ -54,7 +54,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v1
+    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
     secrets:
       app-token: ${{ secrets.APP_TOKEN }}
 ```
@@ -67,7 +67,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v1
+    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
     secrets:
       app-token: ${{ secrets.APP_TOKEN }}
 

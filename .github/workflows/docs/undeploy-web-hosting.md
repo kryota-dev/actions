@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v1
+    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
       # deploy-type - Deployment method ('ftp' or 'rsync')
       # Required
@@ -94,7 +94,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v1
+    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
       deploy-type: 'ftp'
     secrets:
@@ -112,7 +112,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v1
+    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
       deploy-type: 'rsync'
       base-path-prefix: '/my-project'
@@ -131,7 +131,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v1
+    uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
       deploy-type: 'rsync'
       dry-run: 'true'

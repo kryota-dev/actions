@@ -9,7 +9,7 @@ A Composite Action that computes the deploy path and production flag from GitHub
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
+- uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v0
   with:
     # base-path-prefix - Project-specific path prefix (e.g., /<your-project>)
     # Optional (default: '')
@@ -46,7 +46,7 @@ A Composite Action that computes the deploy path and production flag from GitHub
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
+  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v0
     id: compute-path
     with:
       base-path-prefix: '/my-project'
@@ -56,7 +56,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
+  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v0
     id: compute-path
     with:
       base-path-prefix: '/my-project'
@@ -67,7 +67,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v1
+  - uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@v0
     id: compute-path
     with:
       base-path-prefix: '/my-project'

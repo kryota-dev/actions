@@ -9,7 +9,7 @@
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/slack-notify-success@v1
+- uses: kryota-dev/actions/.github/actions/slack-notify-success@v0
   with:
     # channel-id - Slack Channel ID
     # Required
@@ -65,7 +65,7 @@
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v0
     with:
       channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
       bot-oauth-token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -77,7 +77,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v0
     with:
       channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
       bot-oauth-token: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -91,7 +91,7 @@ steps:
 
 ```yaml
 steps:
-  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v1
+  - uses: kryota-dev/actions/.github/actions/slack-notify-success@v0
     with:
       channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
       bot-oauth-token: ${{ secrets.SLACK_BOT_TOKEN }}

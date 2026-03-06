@@ -9,7 +9,7 @@ A Composite Action for setting up Playwright browsers with caching.
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/playwright-setup@v1
+- uses: kryota-dev/actions/.github/actions/playwright-setup@v0
 ```
 
 ## Inputs
@@ -23,8 +23,8 @@ None
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: kryota-dev/actions/.github/actions/pnpm-setup@v1
-  - uses: kryota-dev/actions/.github/actions/playwright-setup@v1
+  - uses: kryota-dev/actions/.github/actions/pnpm-setup@v0
+  - uses: kryota-dev/actions/.github/actions/playwright-setup@v0
 ```
 
 ## Behavior

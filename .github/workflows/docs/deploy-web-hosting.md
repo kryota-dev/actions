@@ -13,7 +13,7 @@ jobs:
   deploy:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
       # deploy-type - Deployment method ('ftp' or 'rsync')
       # Required
@@ -126,7 +126,7 @@ jobs:
   deploy:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
       deploy-type: 'ftp'
       artifact-name: 'build-output'
@@ -145,7 +145,7 @@ jobs:
   deploy:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
       deploy-type: 'rsync'
       artifact-name: 'build-output'
@@ -170,7 +170,7 @@ jobs:
   deploy:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v1
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
       deploy-type: 'rsync'
       artifact-name: 'build-output'

@@ -35,7 +35,7 @@
 ```yaml
 jobs:
   example:
-    uses: kryota-dev/actions/.github/workflows/{workflow}.yml@v1
+    uses: kryota-dev/actions/.github/workflows/{workflow}.yml@v0
     with:
       # inputs
     secrets:

@@ -15,7 +15,7 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v1
+    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v0
     with:
       # languages - 分析対象の言語の JSON 配列
       # Optional (default: '["actions"]')
@@ -47,7 +47,7 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v1
+    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v0
 ```
 
 ### 応用例
@@ -59,7 +59,7 @@ jobs:
       actions: read
       contents: read
       security-events: write
-    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v1
+    uses: kryota-dev/actions/.github/workflows/codeql-analysis.yml@v0
     with:
       languages: '["javascript", "typescript"]'
 ```

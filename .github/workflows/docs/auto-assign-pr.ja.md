@@ -13,7 +13,7 @@ jobs:
   assign:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
+    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v0
     with:
       # bot-assignees - Bot PR 時に割り当てるユーザー/チームのカンマ区切りリスト（空 = スキップ）
       # Optional (default: '')
@@ -41,7 +41,7 @@ jobs:
   assign:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
+    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v0
 ```
 
 ### 応用例
@@ -51,7 +51,7 @@ jobs:
   assign:
     permissions:
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v1
+    uses: kryota-dev/actions/.github/workflows/auto-assign-pr.yml@v0
     with:
       bot-assignees: 'user1,user2'
 ```

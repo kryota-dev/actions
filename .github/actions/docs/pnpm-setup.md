@@ -9,7 +9,7 @@ A Composite Action for setting up Node.js and pnpm, and installing dependencies.
 ## Usage
 
 ```yaml
-- uses: kryota-dev/actions/.github/actions/pnpm-setup@v1
+- uses: kryota-dev/actions/.github/actions/pnpm-setup@v0
 ```
 
 ## Inputs
@@ -23,7 +23,7 @@ None
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  - uses: kryota-dev/actions/.github/actions/pnpm-setup@v1
+  - uses: kryota-dev/actions/.github/actions/pnpm-setup@v0
 ```
 
 ## Behavior
