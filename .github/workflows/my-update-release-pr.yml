@@ -1,0 +1,22 @@
+name: update release PR
+on:
+  pull_request:
+    types: [labeled]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  update-release-pr:
+    if: >-
+      startsWith(github.event.pull_request.head.ref, 'tagpr-from-')
+      && contains(fromJSON('["tagpr:major", "tagpr:minor"]'), github.event.label.name)
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: ./.github/workflows/tagpr-release.yml
+    secrets:
+      app-token: ${{ secrets.APP_TOKEN }}
