@@ -10,7 +10,7 @@ on:
         required: false
         default: "github-pr-review"
       actionlint-config:
-        description: "Path to actionlint config file (default: auto-detect)"
+        description: "Path to actionlint config file (default: .github/actionlint.yaml or .github/actionlint.yml)"
         type: string
         required: false
         default: ""
@@ -20,12 +20,12 @@ on:
         required: false
         default: ""
       ghalint-config:
-        description: "Path to ghalint config file (default: auto-detect)"
+        description: "Path to ghalint config file (default: {.github/,.,}ghalint.{yaml,yml})"
         type: string
         required: false
         default: ""
       zizmor-config:
-        description: "Path to zizmor config file (default: auto-detect)"
+        description: "Path to zizmor config file (default: .github/zizmor.yml or zizmor.yml)"
         type: string
         required: false
         default: ""
