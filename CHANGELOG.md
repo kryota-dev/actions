@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.1.0](https://github.com/kryota-dev/actions/compare/v0.0.9...v0.1.0) - 2026-03-06
+### Other Changes
+- docs(copilot): add custom instructions for Copilot agents by @kryota-dev in https://github.com/kryota-dev/actions/pull/46
+- Replace adr npm package with bash script and Makefile to resolve Dependabot alerts by @Claude in https://github.com/kryota-dev/actions/pull/48
+- feat(actions-lint): unify all tools under aqua for no-config experience by @kryota-dev in https://github.com/kryota-dev/actions/pull/49
+- fix(docs): use correct version tag @v0 instead of @v1 by @kryota-dev in https://github.com/kryota-dev/actions/pull/50
+- feat(release): add workflow to update release PR on version label by @kryota-dev in https://github.com/kryota-dev/actions/pull/51
+
 ## [v0.0.9](https://github.com/kryota-dev/actions/compare/v0.0.8...v0.0.9) - 2026-03-04
 ### Other Changes
 - fix: deploy/undeploy ワークフローの PR コメント・Slack メッセージを最適化 by @kryota-dev in https://github.com/kryota-dev/actions/pull/42
