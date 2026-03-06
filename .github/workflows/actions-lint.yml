@@ -95,6 +95,7 @@ jobs:
             - name: suzuki-shunsuke/ghalint@${GHALINT_VERSION}
             - name: zizmorcore/zizmor@${ZIZMOR_VERSION}
           HEREDOC
+          echo "AQUA_GLOBAL_CONFIG=/tmp/aqua-lint.yaml" >> "$GITHUB_ENV"
           AQUA_GLOBAL_CONFIG=/tmp/aqua-lint.yaml aqua install
         shell: bash
 
