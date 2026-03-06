@@ -83,7 +83,7 @@ jobs:
           # renovate: datasource=github-releases depName=zizmorcore/zizmor
           ZIZMOR_VERSION="v1.7.0"
 
-          cat > /tmp/aqua-lint.yaml << HEREDOC
+          cat > aqua.yaml << HEREDOC
           ---
           registries:
             - type: standard
@@ -95,8 +95,7 @@ jobs:
             - name: suzuki-shunsuke/ghalint@${GHALINT_VERSION}
             - name: zizmorcore/zizmor@${ZIZMOR_VERSION}
           HEREDOC
-          echo "AQUA_GLOBAL_CONFIG=/tmp/aqua-lint.yaml" >> "$GITHUB_ENV"
-          AQUA_GLOBAL_CONFIG=/tmp/aqua-lint.yaml aqua install
+          aqua install
         shell: bash
 
       - run: echo "${AQUA_ROOT_DIR:-${HOME}/.local/share/aquaproj-aqua}/bin" >> "$GITHUB_PATH"
