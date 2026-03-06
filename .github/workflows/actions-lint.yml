@@ -147,8 +147,10 @@ jobs:
 
       - name: Run ls-lint
         if: ${{ !inputs.skip-ls-lint }}
-        run: ls-lint --config "${{ steps.ls-lint-config.outputs.config }}"
+        run: ls-lint --config "$LS_LINT_CONFIG"
         shell: bash
+        env:
+          LS_LINT_CONFIG: ${{ steps.ls-lint-config.outputs.config }}
 
       - name: Run ghalint
         if: ${{ !inputs.skip-ghalint }}
