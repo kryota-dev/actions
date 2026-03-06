@@ -14,13 +14,9 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v1
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
     with:
-      # aqua-version - ghalint 用にインストールする aqua のバージョン
-      # Optional (default: 'v2.56.6')
-      aqua-version: 'v2.56.6'
-
-      # reviewdog-reporter - reviewdog/actionlint のレポータータイプ
+      # reviewdog-reporter - actionlint のレポータータイプ
       # Optional (default: 'github-pr-review')
       reviewdog-reporter: 'github-pr-review'
 ```
@@ -29,8 +25,15 @@ jobs:
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
-| `aqua-version` | ghalint 用にインストールする aqua のバージョン | No | `'v2.56.6'` |
-| `reviewdog-reporter` | reviewdog/actionlint のレポータータイプ（github-pr-review, github-check 等） | No | `'github-pr-review'` |
+| `reviewdog-reporter` | actionlint のレポータータイプ（github-pr-review, github-check 等） | No | `'github-pr-review'` |
+| `actionlint-config` | actionlint 設定ファイルのパス（デフォルト: 自動検出） | No | `''` |
+| `ls-lint-config` | ls-lint 設定ファイルのパス（デフォルト: `.ls-lint.yml` があればそれを使用、なければ内蔵デフォルト） | No | `''` |
+| `ghalint-config` | ghalint 設定ファイルのパス（デフォルト: 自動検出） | No | `''` |
+| `zizmor-config` | zizmor 設定ファイルのパス（デフォルト: 自動検出） | No | `''` |
+| `skip-actionlint` | actionlint をスキップ | No | `false` |
+| `skip-ls-lint` | ls-lint をスキップ | No | `false` |
+| `skip-ghalint` | ghalint をスキップ | No | `false` |
+| `skip-zizmor` | zizmor をスキップ | No | `false` |
 
 ## Permissions
 
@@ -41,7 +44,7 @@ jobs:
 
 ## Examples
 
-### 基本的な使い方
+### 基本的な使い方（設定ファイル不要）
 
 ```yaml
 jobs:
@@ -49,10 +52,10 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v1
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
 ```
 
-### 応用例
+### カスタマイズ例
 
 ```yaml
 jobs:
@@ -60,24 +63,40 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v1
+    uses: kryota-dev/actions/.github/workflows/actions-lint.yml@v2
     with:
-      aqua-version: 'v2.56.6'
       reviewdog-reporter: 'github-check'
+      ls-lint-config: '.custom-ls-lint.yml'
+      ghalint-config: '.ghalint.yaml'
+      skip-zizmor: true
 ```
 
 ## Behavior
 
 1. `actions/checkout@v6` でリポジトリをチェックアウト（`persist-credentials: false`）
-2. `reviewdog/action-actionlint@v1.71.0` で actionlint を実行（レポーターは `reviewdog-reporter` input で指定）
-3. `ls-lint/action@v2.3.1` でファイル命名規則をチェック
-4. `aquaproj/aqua-installer@v4.0.4` で aqua をインストール（バージョンは `aqua-version` input で指定）
-5. aqua の bin パスを `$GITHUB_PATH` に追加
-6. `ghalint run` でワークフロー lint を実行
-7. `ghalint run-action` で Composite Action lint を実行
-8. `astral-sh/setup-uv@v7.3.1` で uv をセットアップ
-9. `uvx zizmor --format=github .` で静的セキュリティ分析を実行（`secrets.GITHUB_TOKEN` を `GH_TOKEN` として使用）
+2. `aquaproj/aqua-installer@v4.0.4` で aqua をインストール
+3. 動的に生成した aqua 設定で全 lint ツール（actionlint, reviewdog, ls-lint, ghalint, zizmor）をセットアップ — caller 側の `aqua.yaml` は不要
+4. aqua の bin パスを `$GITHUB_PATH` に追加
+5. actionlint を実行し、結果を reviewdog にパイプ（レポーターは `reviewdog-reporter` input で指定）。`actionlint-config` が指定されている場合は `-config-file` フラグで設定ファイルを使用、未指定時は actionlint が `.github/actionlint.{yaml,yml}` を自動検出
+6. ls-lint の設定を3段階フォールバックで準備: `ls-lint-config` input → caller の `.ls-lint.yml` → 内蔵デフォルト設定（`.github/workflows` と `.github/actions` の kebab-case ルール）
+7. 解決された設定で ls-lint を実行
+8. `ghalint run` でワークフロー lint を実行。`ghalint-config` が指定されている場合は `-c` フラグで設定ファイルを使用、未指定時は ghalint が標準パスから自動検出
+9. `ghalint run-action` で Composite Action lint を実行
+10. `zizmor --format github` で静的セキュリティ分析を実行（`github.token` を `GH_TOKEN` として使用）。`zizmor-config` が指定されている場合は `--config` フラグで設定ファイルを使用、未指定時は zizmor が標準パスから自動検出
 
-<!-- ## Migration Guide -->
+## Migration Guide (v1 → v2)
 
-<!-- Breaking Changes がある場合にコメントアウトを解除して記載する -->
+### 破壊的変更
+
+| 変更 | 影響 | 移行方法 |
+|------|------|---------|
+| `aqua-version` input 削除 | この input を指定していた caller はエラーになる | ワークフローから `aqua-version` input を削除 |
+| GitHub Actions → CLI 直接実行に変更 | 出力形式が微妙に変わる可能性 | 対応不要 — CLI で同等の出力を生成 |
+
+### 移行手順
+
+1. バージョンタグを `@v1` から `@v2` に更新
+2. `aqua-version` input を指定している場合は削除
+3. ghalint のためだけに配置していた caller 側の `aqua.yaml` を削除（不要になった）
+4. デフォルトの kebab-case ルールのみ記述していた caller 側の `.ls-lint.yml` を削除（内蔵デフォルトで対応）
+5. 必要に応じて skip や config の input を追加し、きめ細かな制御が可能
