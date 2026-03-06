@@ -1,0 +1,38 @@
+{
+  "filePath": ".spec-workflow/specs/actions-lint-no-config/design.md",
+  "currentVersion": 4,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-03-05T16:29:37.031Z",
+      "trigger": "initial",
+      "approvalId": "approval_1772728177026_vzl9pzpfp",
+      "approvalTitle": "Design: actions-lint \"No Config\" Improvement"
+    },
+    {
+      "version": 2,
+      "filename": "snapshot-002.json",
+      "timestamp": "2026-03-05T16:37:26.550Z",
+      "trigger": "revision_requested",
+      "approvalId": "approval_1772728177026_vzl9pzpfp",
+      "approvalTitle": "Design: actions-lint \"No Config\" Improvement"
+    },
+    {
+      "version": 3,
+      "filename": "snapshot-003.json",
+      "timestamp": "2026-03-05T16:40:57.745Z",
+      "trigger": "revision_requested",
+      "approvalId": "approval_1772728704213_f19wsh67w",
+      "approvalTitle": "Design: actions-lint \"No Config\" Improvement (revised)"
+    },
+    {
+      "version": 4,
+      "filename": "snapshot-004.json",
+      "timestamp": "2026-03-05T16:47:40.730Z",
+      "trigger": "approved",
+      "approvalId": "approval_1772729165684_2zdske7nl",
+      "approvalTitle": "Design: actions-lint \"No Config\" (revised v2 - verified CLI flags)"
+    }
+  ]
+}

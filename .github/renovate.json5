@@ -9,5 +9,17 @@
   "vulnerabilityAlerts": {
     "labels": ["[SECURITY]"],
     "schedule": ["at any time"]
-  }
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update tool versions in actions-lint.yml (aqua-managed)",
+      "fileMatch": ["^\\.github/workflows/actions-lint\\.yml$"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\n\\s+[A-Z_]+=\"(?<currentValue>[^\"]+)\""
+      ],
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "^v?(?<version>.*)$"
+    }
+  ]
 }
