@@ -104,15 +104,11 @@ jobs:
       - name: Run actionlint
         if: ${{ !inputs.skip-actionlint }}
         run: |
-          config_flag=""
+          actionlint_args=(-format "$ACTIONLINT_FORMAT")
           if [[ -n "$ACTIONLINT_CONFIG" ]]; then
-            config_flag="-config-file $ACTIONLINT_CONFIG"
+            actionlint_args+=(-config-file "$ACTIONLINT_CONFIG")
           fi
-          # shellcheck disable=SC2086,SC2016
-          actionlint $config_flag \
-            -format '{{range $err := .}}{{$err.Filepath}}:{{$err.Line}}:{{$err.Column}}: {{$err.Message}}
-          {{end}}' \
-            . 2>&1 | \
+          actionlint "${actionlint_args[@]}" . 2>&1 | \
             reviewdog -efm="%f:%l:%c: %m" \
               -reporter="${REVIEWDOG_REPORTER}" \
               -name=actionlint || true
@@ -121,6 +117,7 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
           REVIEWDOG_REPORTER: ${{ inputs.reviewdog-reporter }}
           ACTIONLINT_CONFIG: ${{ inputs.actionlint-config }}
+          ACTIONLINT_FORMAT: "{{range $err := .}}{{$err.Filepath}}:{{$err.Line}}:{{$err.Column}}: {{$err.Message}}\n{{end}}"
 
       - name: Prepare ls-lint config
         if: ${{ !inputs.skip-ls-lint }}
@@ -179,12 +176,11 @@ jobs:
       - name: Run zizmor
         if: ${{ !inputs.skip-zizmor }}
         run: |
-          config_flag=""
+          zizmor_args=(--format github)
           if [[ -n "$ZIZMOR_CONFIG_INPUT" ]]; then
-            config_flag="--config $ZIZMOR_CONFIG_INPUT"
+            zizmor_args+=(--config "$ZIZMOR_CONFIG_INPUT")
           fi
-          # shellcheck disable=SC2086
-          zizmor --format github $config_flag .
+          zizmor "${zizmor_args[@]}" .
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
