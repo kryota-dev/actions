@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.1.1](https://github.com/kryota-dev/actions/compare/v0.1.0...v0.1.1) - 2026-03-12
+### Other Changes
+- chore(deps): update actions/download-artifact action to v8 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/56
+- chore(deps): update actions/setup-node action to v6.3.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/53
+- chore(deps): update github/codeql-action action to v4.32.6 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/52
+- fix(renovate): remove extractVersionTemplate to preserve v prefix in version updates by @kryota-dev in https://github.com/kryota-dev/actions/pull/59
+- chore(deps): update dependency aquaproj/aqua-registry to v4.482.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/54
+
 ## [v0.1.0](https://github.com/kryota-dev/actions/compare/v0.0.9...v0.1.0) - 2026-03-06
 ### Other Changes
 - docs(copilot): add custom instructions for Copilot agents by @kryota-dev in https://github.com/kryota-dev/actions/pull/46
