@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A repository for centrally managing and publishing reusable GitHub Actions (Reusable Workflows and Composite Actions). There is no TypeScript/JavaScript source code; GitHub Actions YAML files are the primary artifacts.
 
+## Language policy
+
+All written artifacts in this repository must be in English:
+- Commit messages
+- Pull request titles and descriptions
+- Code review comments
+- Documentation and markdown files
+
 ## Commands
 
 ```bash
