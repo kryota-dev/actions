@@ -8,10 +8,6 @@ on:
         description: "GitHub Environment name for secret access"
         type: string
         required: true
-    secrets:
-      app-token:
-        description: "Personal Access Token for tagpr (requires 'repo' and 'workflow' scopes)"
-        required: true
     outputs:
       tag:
         description: "The version tag created by tagpr (empty if no release)"
@@ -36,13 +32,13 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
-          token: ${{ secrets.app-token }}
+          token: ${{ secrets.APP_TOKEN }}
           persist-credentials: false
 
       - uses: Songmu/tagpr@b3fb89424646b06c8aa460f50307c60b6a541425 # v1.17.1
         id: tagpr
         env:
-          GITHUB_TOKEN: ${{ secrets.app-token }}
+          GITHUB_TOKEN: ${{ secrets.APP_TOKEN }}
 
   bump_major_tag:
     needs: tagpr
@@ -55,13 +51,13 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
-          token: ${{ secrets.app-token }}
+          token: ${{ secrets.APP_TOKEN }}
           persist-credentials: false
 
       - name: Update major tag
         env:
           TAG: ${{ needs.tagpr.outputs.tag }}
-          GITHUB_TOKEN: ${{ secrets.app-token }}
+          GITHUB_TOKEN: ${{ secrets.APP_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git"

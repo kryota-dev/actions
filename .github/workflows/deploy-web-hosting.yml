@@ -45,25 +45,6 @@ on:
         type: string
         required: false
         default: ''
-    secrets:
-      server-host:
-        required: true
-      server-user:
-        required: true
-      server-path:
-        required: true
-      server-password:
-        required: false
-      ssh-private-key:
-        required: false
-      slack-channel-id:
-        required: false
-      slack-bot-oauth-token:
-        required: false
-      slack-webhook-url:
-        required: false
-      slack-mention-user:
-        required: false
 
 permissions: {}
 
@@ -88,9 +69,9 @@ jobs:
       - name: Check Slack configuration
         id: check-slack
         env:
-          SLACK_CHANNEL_ID: ${{ secrets.slack-channel-id }}
-          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.slack-bot-oauth-token }}
-          SLACK_WEBHOOK_URL: ${{ secrets.slack-webhook-url }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          SLACK_BOT_OAUTH_TOKEN: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
           if [ -n "$SLACK_CHANNEL_ID" ] && [ -n "$SLACK_BOT_OAUTH_TOKEN" ]; then
             echo "success-enabled=true" >> "$GITHUB_OUTPUT"
@@ -112,10 +93,10 @@ jobs:
         with:
           base-path: ${{ steps.compute-path.outputs.deploy-path }}
           output-dir: ${{ inputs.output-dir }}
-          ftp-server: ${{ secrets.server-host }}
-          ftp-username: ${{ secrets.server-user }}
-          ftp-password: ${{ secrets.server-password }}
-          ftp-path: ${{ secrets.server-path }}${{ steps.compute-path.outputs.deploy-path }}
+          ftp-server: ${{ secrets.SERVER_HOST }}
+          ftp-username: ${{ secrets.SERVER_USER }}
+          ftp-password: ${{ secrets.SERVER_PASSWORD }}
+          ftp-path: ${{ secrets.SERVER_PATH }}${{ steps.compute-path.outputs.deploy-path }}
           dry-run: ${{ inputs.dry-run }}
           is-production: ${{ steps.compute-path.outputs.is-production }}
 
@@ -126,10 +107,10 @@ jobs:
         with:
           base-path: ${{ steps.compute-path.outputs.deploy-path }}
           output-dir: ${{ inputs.output-dir }}
-          ssh-host: ${{ secrets.server-host }}
-          ssh-user: ${{ secrets.server-user }}
-          ssh-private-key: ${{ secrets.ssh-private-key }}
-          ssh-path: ${{ secrets.server-path }}${{ steps.compute-path.outputs.deploy-path }}
+          ssh-host: ${{ secrets.SERVER_HOST }}
+          ssh-user: ${{ secrets.SERVER_USER }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-path: ${{ secrets.SERVER_PATH }}${{ steps.compute-path.outputs.deploy-path }}
           dry-run: ${{ inputs.dry-run }}
           is-production: ${{ steps.compute-path.outputs.is-production }}
 
@@ -167,8 +148,8 @@ jobs:
         if: ${{ success() && github.event_name != 'pull_request' && steps.check-slack.outputs.success-enabled == 'true' }}
         uses: kryota-dev/actions/.github/actions/slack-notify-success@568519d2e5e2722d8d2340f594f6af3e1564852e # v0.0.7
         with:
-          channel-id: ${{ secrets.slack-channel-id }}
-          bot-oauth-token: ${{ secrets.slack-bot-oauth-token }}
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
           title: 'Web Hosting deploy succeeded'
           message: '${{ inputs.home-url }}${{ steps.compute-path.outputs.deploy-path }}/'
 
@@ -176,8 +157,8 @@ jobs:
         if: ${{ failure() && github.event_name != 'pull_request' && steps.check-slack.outputs.failure-enabled == 'true' }}
         uses: kryota-dev/actions/.github/actions/slack-notify-failure@568519d2e5e2722d8d2340f594f6af3e1564852e # v0.0.7
         with:
-          webhook-url: ${{ secrets.slack-webhook-url }}
-          mention-user: ${{ secrets.slack-mention-user }}
+          webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          mention-user: ${{ secrets.SLACK_MENTION_USER }}
           title: 'Web Hosting deploy failed'
 
       # --- Hide Previous Failed Comments ---

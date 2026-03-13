@@ -32,17 +32,6 @@ on:
         type: string
         required: false
         default: 'false'
-    secrets:
-      server-host:
-        required: true
-      server-user:
-        required: true
-      server-path:
-        required: true
-      server-password:
-        required: false
-      ssh-private-key:
-        required: false
 
 permissions: {}
 
@@ -70,10 +59,10 @@ jobs:
         if: ${{ inputs.deploy-type == 'ftp' }}
         uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@568519d2e5e2722d8d2340f594f6af3e1564852e # v0.0.7
         with:
-          ftp-server: ${{ secrets.server-host }}
-          ftp-username: ${{ secrets.server-user }}
-          ftp-password: ${{ secrets.server-password }}
-          target-path: ${{ secrets.server-path }}${{ steps.compute-path.outputs.deploy-path }}
+          ftp-server: ${{ secrets.SERVER_HOST }}
+          ftp-username: ${{ secrets.SERVER_USER }}
+          ftp-password: ${{ secrets.SERVER_PASSWORD }}
+          target-path: ${{ secrets.SERVER_PATH }}${{ steps.compute-path.outputs.deploy-path }}
           dry-run: ${{ inputs.dry-run }}
 
       # --- rsync Delete ---
@@ -81,10 +70,10 @@ jobs:
         if: ${{ inputs.deploy-type == 'rsync' }}
         uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@568519d2e5e2722d8d2340f594f6af3e1564852e # v0.0.7
         with:
-          ssh-host: ${{ secrets.server-host }}
-          ssh-user: ${{ secrets.server-user }}
-          ssh-private-key: ${{ secrets.ssh-private-key }}
-          target-path: ${{ secrets.server-path }}${{ steps.compute-path.outputs.deploy-path }}
+          ssh-host: ${{ secrets.SERVER_HOST }}
+          ssh-user: ${{ secrets.SERVER_USER }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          target-path: ${{ secrets.SERVER_PATH }}${{ steps.compute-path.outputs.deploy-path }}
           dry-run: ${{ inputs.dry-run }}
 
       # --- PR Comments ---
