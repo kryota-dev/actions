@@ -4,6 +4,10 @@ name: Undeploy from Web Hosting
 on:
   workflow_call:
     inputs:
+      environment:
+        description: "GitHub Environment name for secret access"
+        type: string
+        required: true
       deploy-type:
         description: "Deploy method ('ftp' or 'rsync')"
         type: string
@@ -47,6 +51,7 @@ jobs:
     name: Undeploy from Web Hosting
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    environment: ${{ inputs.environment }}
     permissions:
       contents: read
       pull-requests: write

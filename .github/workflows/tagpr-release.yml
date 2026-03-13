@@ -3,6 +3,11 @@ name: tagpr Release
 
 on:
   workflow_call:
+    inputs:
+      environment:
+        description: "GitHub Environment name for secret access"
+        type: string
+        required: true
     secrets:
       app-token:
         description: "Personal Access Token for tagpr (requires 'repo' and 'workflow' scopes)"
@@ -22,6 +27,7 @@ jobs:
   tagpr:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment: ${{ inputs.environment }}
     permissions:
       contents: write
       pull-requests: write
@@ -43,6 +49,7 @@ jobs:
     if: needs.tagpr.outputs.tag != ''
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    environment: ${{ inputs.environment }}
     permissions:
       contents: write
     steps:
