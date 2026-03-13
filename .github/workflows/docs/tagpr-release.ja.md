@@ -15,6 +15,10 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
+    with:
+      # environment - シークレットアクセス用の GitHub Environment 名
+      # Required
+      environment: 'release'
     secrets:
       # app-token - tagpr 用の Personal Access Token（'repo' と 'workflow' スコープが必要）
       # Required
@@ -23,7 +27,9 @@ jobs:
 
 ## Inputs
 
-None
+| Name | Description | Required | Default |
+|------|-------------|----------|---------|
+| `environment` | シークレットアクセス用の GitHub Environment 名 | Yes | - |
 
 ## Secrets
 
@@ -55,6 +61,8 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
+    with:
+      environment: 'release'
     secrets:
       app-token: ${{ secrets.APP_TOKEN }}
 ```
@@ -68,6 +76,8 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
+    with:
+      environment: 'release'
     secrets:
       app-token: ${{ secrets.APP_TOKEN }}
 
@@ -101,5 +111,6 @@ jobs:
 
 ## Prerequisites
 
+- 呼び出し元リポジトリに `environment` input に対応する GitHub Environment が存在し、`app-token` シークレットが Environment レベルで設定されていること
 - GitHub App Token または Personal Access Token（`repo` + `workflow` スコープ）が必要
 - `.tagpr` 設定ファイルがリポジトリに存在すること

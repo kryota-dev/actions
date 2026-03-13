@@ -16,6 +16,10 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
+      # environment - GitHub Environment name for secret access
+      # Required
+      environment: 'production'
+
       # deploy-type - Deployment method ('ftp' or 'rsync')
       # Required
       deploy-type: 'ftp'
@@ -61,6 +65,7 @@ jobs:
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
+| `environment` | GitHub Environment name for secret access | Yes | - |
 | `deploy-type` | Deployment method (`'ftp'` or `'rsync'`) | Yes | - |
 | `base-path-prefix` | Project-specific path prefix (e.g., `'/<your-project>'`) | No | `''` |
 | `production-branch` | Production branch name | No | `'main'` |
@@ -96,6 +101,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'ftp'
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
@@ -114,6 +120,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'rsync'
       base-path-prefix: '/my-project'
     secrets:
@@ -133,6 +140,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
+      environment: 'staging'
       deploy-type: 'rsync'
       dry-run: 'true'
     secrets:
@@ -155,5 +163,6 @@ This workflow consists of a `delete` job and executes in the following order:
 
 ## Prerequisites
 
+- A GitHub Environment matching the `environment` input must exist in the caller's repository, with the required secrets configured at the environment level
 - For `deploy-type` `'ftp'`: `server-password` is required
 - For `deploy-type` `'rsync'`: `ssh-private-key` is required

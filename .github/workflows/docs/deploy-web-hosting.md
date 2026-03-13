@@ -15,6 +15,10 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      # environment - GitHub Environment name for secret access
+      # Required
+      environment: 'production'
+
       # deploy-type - Deployment method ('ftp' or 'rsync')
       # Required
       deploy-type: 'ftp'
@@ -88,6 +92,7 @@ jobs:
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
+| `environment` | GitHub Environment name for secret access | Yes | - |
 | `deploy-type` | Deployment method (`'ftp'` or `'rsync'`) | Yes | - |
 | `artifact-name` | Name of the build artifact to download | Yes | - |
 | `output-dir` | Build output directory name | Yes | - |
@@ -128,6 +133,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'ftp'
       artifact-name: 'build-output'
       output-dir: 'dist'
@@ -147,6 +153,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'rsync'
       artifact-name: 'build-output'
       output-dir: 'dist'
@@ -172,6 +179,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'staging'
       deploy-type: 'rsync'
       artifact-name: 'build-output'
       output-dir: 'dist'
@@ -199,6 +207,7 @@ This workflow consists of a `deploy` job and executes in the following order:
 
 ## Prerequisites
 
+- A GitHub Environment matching the `environment` input must exist in the caller's repository, with the required secrets configured at the environment level
 - Build artifacts must have been uploaded via `actions/upload-artifact` in the calling workflow
 - For `deploy-type` `'ftp'`: `server-password` is required
 - For `deploy-type` `'rsync'`: `ssh-private-key` is required

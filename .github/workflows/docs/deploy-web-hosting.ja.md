@@ -15,6 +15,10 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      # environment - シークレットアクセス用の GitHub Environment 名
+      # Required
+      environment: 'production'
+
       # deploy-type - デプロイ方法（'ftp' または 'rsync'）
       # Required
       deploy-type: 'ftp'
@@ -88,6 +92,7 @@ jobs:
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
+| `environment` | シークレットアクセス用の GitHub Environment 名 | Yes | - |
 | `deploy-type` | デプロイ方法（`'ftp'` または `'rsync'`） | Yes | - |
 | `artifact-name` | ダウンロードするビルドアーティファクトの名前 | Yes | - |
 | `output-dir` | ビルド出力ディレクトリ名 | Yes | - |
@@ -128,6 +133,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'ftp'
       artifact-name: 'build-output'
       output-dir: 'dist'
@@ -147,6 +153,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'rsync'
       artifact-name: 'build-output'
       output-dir: 'dist'
@@ -172,6 +179,7 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'staging'
       deploy-type: 'rsync'
       artifact-name: 'build-output'
       output-dir: 'dist'
@@ -199,6 +207,7 @@ jobs:
 
 ## Prerequisites
 
+- 呼び出し元リポジトリに `environment` input に対応する GitHub Environment が存在し、必要なシークレットが Environment レベルで設定されていること
 - 呼び出し元ワークフローで `actions/upload-artifact` によるビルド成果物のアップロードが完了していること
 - `deploy-type` が `'ftp'` の場合: `server-password` が必要
 - `deploy-type` が `'rsync'` の場合: `ssh-private-key` が必要

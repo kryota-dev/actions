@@ -15,6 +15,10 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
+    with:
+      # environment - GitHub Environment name for secret access
+      # Required
+      environment: 'release'
     secrets:
       # app-token - Personal Access Token for tagpr (requires 'repo' and 'workflow' scopes)
       # Required
@@ -23,7 +27,9 @@ jobs:
 
 ## Inputs
 
-None
+| Name | Description | Required | Default |
+|------|-------------|----------|---------|
+| `environment` | GitHub Environment name for secret access | Yes | - |
 
 ## Secrets
 
@@ -55,6 +61,8 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
+    with:
+      environment: 'release'
     secrets:
       app-token: ${{ secrets.APP_TOKEN }}
 ```
@@ -68,6 +76,8 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
+    with:
+      environment: 'release'
     secrets:
       app-token: ${{ secrets.APP_TOKEN }}
 
@@ -101,5 +111,6 @@ Runs only after the `tagpr` job completes and a tag was created (`tag != ''`).
 
 ## Prerequisites
 
+- A GitHub Environment matching the `environment` input must exist in the caller's repository, with the `app-token` secret configured at the environment level
 - GitHub App Token or Personal Access Token (requires `repo` + `workflow` scopes)
 - `.tagpr` configuration file must exist in the repository
