@@ -18,5 +18,5 @@ jobs:
       contents: write
       pull-requests: write
     uses: ./.github/workflows/tagpr-release.yml
-    secrets:
-      app-token: ${{ secrets.APP_TOKEN }}
+    with:
+      environment: release

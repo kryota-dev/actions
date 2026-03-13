@@ -16,6 +16,10 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
+      # environment - シークレットアクセス用の GitHub Environment 名
+      # Required
+      environment: 'production'
+
       # deploy-type - デプロイ方法（'ftp' または 'rsync'）
       # Required
       deploy-type: 'ftp'
@@ -35,47 +39,30 @@ jobs:
       # dry-run - ドライランモード
       # Optional (default: 'false')
       dry-run: 'false'
-    secrets:
-      # server-host - デプロイ先サーバーのホスト名
-      # Required
-      server-host: ${{ secrets.SERVER_HOST }}
-
-      # server-user - デプロイ先サーバーのユーザー名
-      # Required
-      server-user: ${{ secrets.SERVER_USER }}
-
-      # server-path - デプロイ先サーバーのパス
-      # Required
-      server-path: ${{ secrets.SERVER_PATH }}
-
-      # server-password - デプロイ先サーバーのパスワード（FTP 使用時に必要）
-      # Optional
-      server-password: ${{ secrets.SERVER_PASSWORD }}
-
-      # ssh-private-key - SSH 秘密鍵（rsync 使用時に必要）
-      # Optional
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
 
 ## Inputs
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
+| `environment` | シークレットアクセス用の GitHub Environment 名 | Yes | - |
 | `deploy-type` | デプロイ方法（`'ftp'` または `'rsync'`） | Yes | - |
 | `base-path-prefix` | プロジェクト固有のパスプレフィックス（例: `'/<your-project>'`） | No | `''` |
 | `production-branch` | 本番ブランチ名 | No | `'main'` |
 | `ref-name` | ブランチ名の上書き（空の場合は github context から自動取得） | No | `''` |
 | `dry-run` | ドライランモード | No | `'false'` |
 
-## Secrets
+## Environment Secrets
+
+`environment` input で指定した GitHub Environment に以下のシークレットを設定する必要があります:
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `server-host` | デプロイ先サーバーのホスト名 | Yes |
-| `server-user` | デプロイ先サーバーのユーザー名 | Yes |
-| `server-path` | デプロイ先サーバーのパス | Yes |
-| `server-password` | デプロイ先サーバーのパスワード（FTP 使用時に必要） | No |
-| `ssh-private-key` | SSH 秘密鍵（rsync 使用時に必要） | No |
+| `SERVER_HOST` | デプロイ先サーバーのホスト名 | Yes |
+| `SERVER_USER` | デプロイ先サーバーのユーザー名 | Yes |
+| `SERVER_PATH` | デプロイ先サーバーのパス | Yes |
+| `SERVER_PASSWORD` | デプロイ先サーバーのパスワード（FTP 使用時に必要） | Conditional |
+| `SSH_PRIVATE_KEY` | SSH 秘密鍵（rsync 使用時に必要） | Conditional |
 
 ## Permissions
 
@@ -96,12 +83,8 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'ftp'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      server-password: ${{ secrets.SERVER_PASSWORD }}
 ```
 
 ### rsync でフィーチャー環境を削除する（パスプレフィックス付き）
@@ -114,13 +97,9 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'rsync'
       base-path-prefix: '/my-project'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
 
 ### ドライランで確認する
@@ -133,13 +112,9 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/undeploy-web-hosting.yml@v0
     with:
+      environment: 'staging'
       deploy-type: 'rsync'
       dry-run: 'true'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
 
 ## Behavior
@@ -155,5 +130,6 @@ jobs:
 
 ## Prerequisites
 
-- `deploy-type` が `'ftp'` の場合: `server-password` が必要
-- `deploy-type` が `'rsync'` の場合: `ssh-private-key` が必要
+- 呼び出し元リポジトリに `environment` input に対応する GitHub Environment が存在し、必要なシークレットが Environment レベルで設定されていること
+- `deploy-type` が `'ftp'` の場合: `SERVER_PASSWORD` が必要
+- `deploy-type` が `'rsync'` の場合: `SSH_PRIVATE_KEY` が必要

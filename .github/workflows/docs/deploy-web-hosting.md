@@ -15,6 +15,10 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      # environment - GitHub Environment name for secret access
+      # Required
+      environment: 'production'
+
       # deploy-type - Deployment method ('ftp' or 'rsync')
       # Required
       deploy-type: 'ftp'
@@ -46,48 +50,13 @@ jobs:
       # ref-name - Branch name override (auto-detected from github context if empty)
       # Optional (default: '')
       ref-name: ''
-    secrets:
-      # server-host - Deployment server hostname
-      # Required
-      server-host: ${{ secrets.SERVER_HOST }}
-
-      # server-user - Deployment server username
-      # Required
-      server-user: ${{ secrets.SERVER_USER }}
-
-      # server-path - Deployment server path
-      # Required
-      server-path: ${{ secrets.SERVER_PATH }}
-
-      # server-password - Deployment server password (required for FTP)
-      # Optional
-      server-password: ${{ secrets.SERVER_PASSWORD }}
-
-      # ssh-private-key - SSH private key (required for rsync)
-      # Optional
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      # slack-channel-id - Slack notification channel ID
-      # Optional
-      slack-channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-
-      # slack-bot-oauth-token - Slack Bot OAuth token
-      # Optional
-      slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-
-      # slack-webhook-url - Slack Incoming Webhook URL
-      # Optional
-      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      # slack-mention-user - Slack user to mention on failure
-      # Optional
-      slack-mention-user: ${{ secrets.SLACK_MENTION_USER }}
 ```
 
 ## Inputs
 
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
+| `environment` | GitHub Environment name for secret access | Yes | - |
 | `deploy-type` | Deployment method (`'ftp'` or `'rsync'`) | Yes | - |
 | `artifact-name` | Name of the build artifact to download | Yes | - |
 | `output-dir` | Build output directory name | Yes | - |
@@ -97,19 +66,21 @@ jobs:
 | `production-branch` | Production branch name | No | `'main'` |
 | `ref-name` | Branch name override (auto-detected from github context if empty) | No | `''` |
 
-## Secrets
+## Environment Secrets
+
+The following secrets must be configured in the GitHub Environment specified by the `environment` input:
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `server-host` | Deployment server hostname | Yes |
-| `server-user` | Deployment server username | Yes |
-| `server-path` | Deployment server path | Yes |
-| `server-password` | Deployment server password (required for FTP) | No |
-| `ssh-private-key` | SSH private key (required for rsync) | No |
-| `slack-channel-id` | Slack notification channel ID | No |
-| `slack-bot-oauth-token` | Slack Bot OAuth token | No |
-| `slack-webhook-url` | Slack Incoming Webhook URL | No |
-| `slack-mention-user` | Slack user to mention on failure | No |
+| `SERVER_HOST` | Deployment server hostname | Yes |
+| `SERVER_USER` | Deployment server username | Yes |
+| `SERVER_PATH` | Deployment server path | Yes |
+| `SERVER_PASSWORD` | Deployment server password (required for FTP) | Conditional |
+| `SSH_PRIVATE_KEY` | SSH private key (required for rsync) | Conditional |
+| `SLACK_CHANNEL_ID` | Slack notification channel ID | No |
+| `SLACK_BOT_OAUTH_TOKEN` | Slack Bot OAuth token | No |
+| `SLACK_WEBHOOK_URL` | Slack Incoming Webhook URL | No |
+| `SLACK_MENTION_USER` | Slack user to mention on failure | No |
 
 ## Permissions
 
@@ -128,14 +99,10 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'ftp'
       artifact-name: 'build-output'
       output-dir: 'dist'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      server-password: ${{ secrets.SERVER_PASSWORD }}
 ```
 
 ### Deploy via rsync (with Slack notifications)
@@ -147,20 +114,12 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'production'
       deploy-type: 'rsync'
       artifact-name: 'build-output'
       output-dir: 'dist'
       base-path-prefix: '/my-project'
       home-url: 'https://example.com'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      slack-channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-      slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-      slack-mention-user: ${{ secrets.SLACK_MENTION_USER }}
 ```
 
 ### Verify with dry-run
@@ -172,15 +131,11 @@ jobs:
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
     with:
+      environment: 'staging'
       deploy-type: 'rsync'
       artifact-name: 'build-output'
       output-dir: 'dist'
       dry-run: 'true'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
 
 ## Behavior
@@ -188,7 +143,7 @@ jobs:
 This workflow consists of a `deploy` job and executes in the following order:
 
 1. Compute the deployment path using the `compute-web-hosting-deploy-path` Composite Action
-2. Check Slack configuration (`slack-channel-id` + `slack-bot-oauth-token` enables success notifications, `slack-webhook-url` enables failure notifications)
+2. Check Slack configuration (`SLACK_CHANNEL_ID` + `SLACK_BOT_OAUTH_TOKEN` enables success notifications, `SLACK_WEBHOOK_URL` enables failure notifications)
 3. Download build artifacts with `actions/download-artifact@v4.3.0`
 4. Execute deployment based on the `deploy-type` value
    - `'ftp'`: Uses the `deploy-web-hosting-ftp` Composite Action
@@ -199,6 +154,7 @@ This workflow consists of a `deploy` job and executes in the following order:
 
 ## Prerequisites
 
+- A GitHub Environment matching the `environment` input must exist in the caller's repository, with the required secrets configured at the environment level
 - Build artifacts must have been uploaded via `actions/upload-artifact` in the calling workflow
-- For `deploy-type` `'ftp'`: `server-password` is required
-- For `deploy-type` `'rsync'`: `ssh-private-key` is required
+- For `deploy-type` `'ftp'`: `SERVER_PASSWORD` is required
+- For `deploy-type` `'rsync'`: `SSH_PRIVATE_KEY` is required

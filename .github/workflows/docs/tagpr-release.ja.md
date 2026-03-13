@@ -15,21 +15,25 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
-    secrets:
-      # app-token - tagpr 用の Personal Access Token（'repo' と 'workflow' スコープが必要）
+    with:
+      # environment - シークレットアクセス用の GitHub Environment 名
       # Required
-      app-token: ${{ secrets.APP_TOKEN }}
+      environment: 'release'
 ```
 
 ## Inputs
 
-None
+| Name | Description | Required | Default |
+|------|-------------|----------|---------|
+| `environment` | シークレットアクセス用の GitHub Environment 名 | Yes | - |
 
-## Secrets
+## Environment Secrets
+
+`environment` input で指定した GitHub Environment に以下のシークレットを設定する必要があります:
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `app-token` | tagpr 用の Personal Access Token（`repo` と `workflow` スコープが必要） | Yes |
+| `APP_TOKEN` | tagpr 用の Personal Access Token（`repo` と `workflow` スコープが必要） | Yes |
 
 ## Outputs
 
@@ -55,8 +59,8 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
-    secrets:
-      app-token: ${{ secrets.APP_TOKEN }}
+    with:
+      environment: 'release'
 ```
 
 ### リリース後に後続ジョブを実行する
@@ -68,8 +72,8 @@ jobs:
       contents: write
       pull-requests: write
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
-    secrets:
-      app-token: ${{ secrets.APP_TOKEN }}
+    with:
+      environment: 'release'
 
   post-release:
     needs: release
@@ -87,19 +91,20 @@ jobs:
 
 ### tagpr ジョブ
 
-1. `actions/checkout@v6` でリポジトリをチェックアウト（token: `app-token`、`persist-credentials: false`）
-2. `Songmu/tagpr@v1.17.1` を実行してリリース PR の作成・マージ・タグ付けを行う（`GITHUB_TOKEN: app-token`）
+1. `actions/checkout@v6` でリポジトリをチェックアウト（token: `APP_TOKEN`、`persist-credentials: false`）
+2. `Songmu/tagpr@v1.17.1` を実行してリリース PR の作成・マージ・タグ付けを行う（`GITHUB_TOKEN: APP_TOKEN`）
 3. リリースされた場合はバージョンタグを `tag` output として出力（リリースがなければ空）
 
 ### bump_major_tag ジョブ
 
 `tagpr` ジョブの完了後、タグが作成された場合（`tag != ''`）のみ実行されます。
 
-1. `actions/checkout@v6` でリポジトリをチェックアウト（token: `app-token`、`persist-credentials: false`）
+1. `actions/checkout@v6` でリポジトリをチェックアウト（token: `APP_TOKEN`、`persist-credentials: false`）
 2. タグからメジャーバージョンを抽出（例: `v1.2.3` → `v1`）
 3. `git tag -f` でメジャータグを更新し、`git push --force` でリモートに反映
 
 ## Prerequisites
 
+- 呼び出し元リポジトリに `environment` input に対応する GitHub Environment が存在し、`APP_TOKEN` シークレットが Environment レベルで設定されていること
 - GitHub App Token または Personal Access Token（`repo` + `workflow` スコープ）が必要
 - `.tagpr` 設定ファイルがリポジトリに存在すること
