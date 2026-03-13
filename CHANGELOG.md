@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Breaking Changes
 - Add required `environment` input to `deploy-web-hosting.yml`, `tagpr-release.yml`, and `undeploy-web-hosting.yml` to enforce GitHub Environment-scoped secret access (zizmor `secrets-outside-env` audit). Existing callers must create a GitHub Environment and pass the `environment` input.
+- Remove `workflow_call.secrets` from all Reusable Workflows. Secrets are now read directly from the GitHub Environment via `environment:` on each job. Callers no longer pass `secrets:` blocks; instead, configure secrets at the environment level (UPPER_SNAKE_CASE naming: `APP_TOKEN`, `SERVER_HOST`, etc.).
 
 ## [v0.1.0](https://github.com/kryota-dev/actions/compare/v0.0.9...v0.1.0) - 2026-03-06
 ### Other Changes

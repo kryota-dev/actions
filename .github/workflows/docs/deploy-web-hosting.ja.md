@@ -50,42 +50,6 @@ jobs:
       # ref-name - ブランチ名の上書き（空の場合は github context から自動取得）
       # Optional (default: '')
       ref-name: ''
-    secrets:
-      # server-host - デプロイ先サーバーのホスト名
-      # Required
-      server-host: ${{ secrets.SERVER_HOST }}
-
-      # server-user - デプロイ先サーバーのユーザー名
-      # Required
-      server-user: ${{ secrets.SERVER_USER }}
-
-      # server-path - デプロイ先サーバーのパス
-      # Required
-      server-path: ${{ secrets.SERVER_PATH }}
-
-      # server-password - デプロイ先サーバーのパスワード（FTP 使用時に必要）
-      # Optional
-      server-password: ${{ secrets.SERVER_PASSWORD }}
-
-      # ssh-private-key - SSH 秘密鍵（rsync 使用時に必要）
-      # Optional
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      # slack-channel-id - Slack 通知先チャンネル ID
-      # Optional
-      slack-channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-
-      # slack-bot-oauth-token - Slack Bot の OAuth トークン
-      # Optional
-      slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-
-      # slack-webhook-url - Slack Incoming Webhook URL
-      # Optional
-      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      # slack-mention-user - Slack で失敗時にメンションするユーザー
-      # Optional
-      slack-mention-user: ${{ secrets.SLACK_MENTION_USER }}
 ```
 
 ## Inputs
@@ -102,19 +66,21 @@ jobs:
 | `production-branch` | 本番ブランチ名 | No | `'main'` |
 | `ref-name` | ブランチ名の上書き（空の場合は github context から自動取得） | No | `''` |
 
-## Secrets
+## Environment Secrets
+
+`environment` input で指定した GitHub Environment に以下のシークレットを設定する必要があります:
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `server-host` | デプロイ先サーバーのホスト名 | Yes |
-| `server-user` | デプロイ先サーバーのユーザー名 | Yes |
-| `server-path` | デプロイ先サーバーのパス | Yes |
-| `server-password` | デプロイ先サーバーのパスワード（FTP 使用時に必要） | No |
-| `ssh-private-key` | SSH 秘密鍵（rsync 使用時に必要） | No |
-| `slack-channel-id` | Slack 通知先チャンネル ID | No |
-| `slack-bot-oauth-token` | Slack Bot の OAuth トークン | No |
-| `slack-webhook-url` | Slack Incoming Webhook URL | No |
-| `slack-mention-user` | Slack で失敗時にメンションするユーザー | No |
+| `SERVER_HOST` | デプロイ先サーバーのホスト名 | Yes |
+| `SERVER_USER` | デプロイ先サーバーのユーザー名 | Yes |
+| `SERVER_PATH` | デプロイ先サーバーのパス | Yes |
+| `SERVER_PASSWORD` | デプロイ先サーバーのパスワード（FTP 使用時に必要） | Conditional |
+| `SSH_PRIVATE_KEY` | SSH 秘密鍵（rsync 使用時に必要） | Conditional |
+| `SLACK_CHANNEL_ID` | Slack 通知先チャンネル ID | No |
+| `SLACK_BOT_OAUTH_TOKEN` | Slack Bot の OAuth トークン | No |
+| `SLACK_WEBHOOK_URL` | Slack Incoming Webhook URL | No |
+| `SLACK_MENTION_USER` | Slack で失敗時にメンションするユーザー | No |
 
 ## Permissions
 
@@ -137,11 +103,6 @@ jobs:
       deploy-type: 'ftp'
       artifact-name: 'build-output'
       output-dir: 'dist'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      server-password: ${{ secrets.SERVER_PASSWORD }}
 ```
 
 ### rsync でデプロイする（Slack 通知付き）
@@ -159,15 +120,6 @@ jobs:
       output-dir: 'dist'
       base-path-prefix: '/my-project'
       home-url: 'https://example.com'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      slack-channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-      slack-bot-oauth-token: ${{ secrets.SLACK_BOT_OAUTH_TOKEN }}
-      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-      slack-mention-user: ${{ secrets.SLACK_MENTION_USER }}
 ```
 
 ### ドライランで確認する
@@ -184,11 +136,6 @@ jobs:
       artifact-name: 'build-output'
       output-dir: 'dist'
       dry-run: 'true'
-    secrets:
-      server-host: ${{ secrets.SERVER_HOST }}
-      server-user: ${{ secrets.SERVER_USER }}
-      server-path: ${{ secrets.SERVER_PATH }}
-      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 ```
 
 ## Behavior
@@ -196,7 +143,7 @@ jobs:
 このワークフローは `deploy` ジョブで構成され、以下の順序で実行されます。
 
 1. `compute-web-hosting-deploy-path` Composite Action でデプロイ先パスを計算
-2. Slack 設定チェック（`slack-channel-id` + `slack-bot-oauth-token` があれば成功通知可能、`slack-webhook-url` があれば失敗通知可能）
+2. Slack 設定チェック（`SLACK_CHANNEL_ID` + `SLACK_BOT_OAUTH_TOKEN` があれば成功通知可能、`SLACK_WEBHOOK_URL` があれば失敗通知可能）
 3. `actions/download-artifact@v4.3.0` でビルドアーティファクトをダウンロード
 4. `deploy-type` の値に応じてデプロイを実行
    - `'ftp'`: `deploy-web-hosting-ftp` Composite Action を使用
@@ -209,5 +156,5 @@ jobs:
 
 - 呼び出し元リポジトリに `environment` input に対応する GitHub Environment が存在し、必要なシークレットが Environment レベルで設定されていること
 - 呼び出し元ワークフローで `actions/upload-artifact` によるビルド成果物のアップロードが完了していること
-- `deploy-type` が `'ftp'` の場合: `server-password` が必要
-- `deploy-type` が `'rsync'` の場合: `ssh-private-key` が必要
+- `deploy-type` が `'ftp'` の場合: `SERVER_PASSWORD` が必要
+- `deploy-type` が `'rsync'` の場合: `SSH_PRIVATE_KEY` が必要

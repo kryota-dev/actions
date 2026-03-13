@@ -19,10 +19,6 @@ jobs:
       # environment - GitHub Environment name for secret access
       # Required
       environment: 'release'
-    secrets:
-      # app-token - Personal Access Token for tagpr (requires 'repo' and 'workflow' scopes)
-      # Required
-      app-token: ${{ secrets.APP_TOKEN }}
 ```
 
 ## Inputs
@@ -31,11 +27,13 @@ jobs:
 |------|-------------|----------|---------|
 | `environment` | GitHub Environment name for secret access | Yes | - |
 
-## Secrets
+## Environment Secrets
+
+The following secrets must be configured in the GitHub Environment specified by the `environment` input:
 
 | Name | Description | Required |
 |------|-------------|----------|
-| `app-token` | Personal Access Token for tagpr (requires `repo` and `workflow` scopes) | Yes |
+| `APP_TOKEN` | Personal Access Token for tagpr (requires `repo` and `workflow` scopes) | Yes |
 
 ## Outputs
 
@@ -63,8 +61,6 @@ jobs:
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
     with:
       environment: 'release'
-    secrets:
-      app-token: ${{ secrets.APP_TOKEN }}
 ```
 
 ### Running follow-up jobs after release
@@ -78,8 +74,6 @@ jobs:
     uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
     with:
       environment: 'release'
-    secrets:
-      app-token: ${{ secrets.APP_TOKEN }}
 
   post-release:
     needs: release
@@ -97,20 +91,20 @@ This workflow consists of two jobs: `tagpr` and `bump_major_tag`.
 
 ### tagpr Job
 
-1. Check out the repository with `actions/checkout@v6` (token: `app-token`, `persist-credentials: false`)
-2. Run `Songmu/tagpr@v1.17.1` to create/merge release PRs and tag releases (`GITHUB_TOKEN: app-token`)
+1. Check out the repository with `actions/checkout@v6` (token: `APP_TOKEN`, `persist-credentials: false`)
+2. Run `Songmu/tagpr@v1.17.1` to create/merge release PRs and tag releases (`GITHUB_TOKEN: APP_TOKEN`)
 3. If a release is made, output the version tag as the `tag` output (empty if no release)
 
 ### bump_major_tag Job
 
 Runs only after the `tagpr` job completes and a tag was created (`tag != ''`).
 
-1. Check out the repository with `actions/checkout@v6` (token: `app-token`, `persist-credentials: false`)
+1. Check out the repository with `actions/checkout@v6` (token: `APP_TOKEN`, `persist-credentials: false`)
 2. Extract the major version from the tag (e.g., `v1.2.3` → `v1`)
 3. Update the major tag with `git tag -f` and push to remote with `git push --force`
 
 ## Prerequisites
 
-- A GitHub Environment matching the `environment` input must exist in the caller's repository, with the `app-token` secret configured at the environment level
+- A GitHub Environment matching the `environment` input must exist in the caller's repository, with `APP_TOKEN` configured as an environment secret
 - GitHub App Token or Personal Access Token (requires `repo` + `workflow` scopes)
 - `.tagpr` configuration file must exist in the repository
