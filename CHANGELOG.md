@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Breaking Changes
+- Add required `environment` input to `deploy-web-hosting.yml`, `tagpr-release.yml`, and `undeploy-web-hosting.yml` to enforce GitHub Environment-scoped secret access (zizmor `secrets-outside-env` audit). Existing callers must create a GitHub Environment and pass the `environment` input.
+
 ## [v0.1.0](https://github.com/kryota-dev/actions/compare/v0.0.9...v0.1.0) - 2026-03-06
 ### Other Changes
 - docs(copilot): add custom instructions for Copilot agents by @kryota-dev in https://github.com/kryota-dev/actions/pull/46
