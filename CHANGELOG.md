@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.2](https://github.com/kryota-dev/actions/compare/v0.1.1...v0.1.2) - 2026-03-13
+### Other Changes
+- chore(config): migrate Renovate config by @renovate[bot] in https://github.com/kryota-dev/actions/pull/61
+
 ## [v0.1.1](https://github.com/kryota-dev/actions/compare/v0.1.0...v0.1.1) - 2026-03-12
 ### Other Changes
 - chore(deps): update actions/download-artifact action to v8 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/56
