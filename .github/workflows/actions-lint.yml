@@ -71,7 +71,7 @@ jobs:
       - name: Setup lint tools via aqua
         run: |
           # renovate: datasource=github-tags depName=aquaproj/aqua-registry
-          AQUA_REGISTRY_REF="v4.482.0"
+          AQUA_REGISTRY_REF="v4.484.0"
           # renovate: datasource=github-releases depName=rhysd/actionlint
           ACTIONLINT_VERSION="v1.7.11"
           # renovate: datasource=github-releases depName=reviewdog/reviewdog
