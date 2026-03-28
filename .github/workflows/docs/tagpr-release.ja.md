@@ -87,7 +87,7 @@ jobs:
 
 ### tagpr ジョブ
 
-1. `actions/checkout@v6` でリポジトリをチェックアウト（ref: `pull_request` イベント時は `github.head_ref`、それ以外はデフォルト、token: `app-token`、`persist-credentials: false`）
+1. `actions/checkout@v6` でリポジトリをチェックアウト（ref: `pull_request` イベント時は `github.event.pull_request.base.ref`、それ以外はデフォルト、token: `app-token`、`persist-credentials: false`）
 2. `Songmu/tagpr@v1.17.1` を実行してリリース PR の作成・マージ・タグ付けを行う（`GITHUB_TOKEN: app-token`）
 3. リリースされた場合はバージョンタグを `tag` output として出力（リリースがなければ空）
 
