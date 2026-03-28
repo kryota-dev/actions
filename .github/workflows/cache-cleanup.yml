@@ -1,0 +1,55 @@
+# Documentation: .github/workflows/docs/cache-cleanup.md
+name: Cache Cleanup
+
+on:
+  workflow_call:
+    inputs:
+      max-age-days:
+        description: "Maximum number of days since last access before a cache is deleted"
+        type: number
+        required: false
+        default: 2
+
+permissions: {}
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write
+    steps:
+      - name: Delete stale caches
+        run: |
+          threshold=$(date -u -d "${MAX_AGE_DAYS} days ago" +%s)
+          page=1
+          deleted=0
+          while true; do
+            response=$(gh api \
+              "/repos/${REPO}/actions/caches?per_page=100&page=${page}")
+            caches=$(echo "$response" | jq -c '.actions_caches[]')
+            if [[ -z "$caches" ]]; then
+              break
+            fi
+            while IFS= read -r cache; do
+              id=$(echo "$cache" | jq -r '.id')
+              key=$(echo "$cache" | jq -r '.key')
+              last_accessed=$(echo "$cache" | jq -r '.last_accessed_at')
+              last_accessed_epoch=$(date -u -d "$last_accessed" +%s)
+              if [[ "$last_accessed_epoch" -lt "$threshold" ]]; then
+                echo "Deleting cache id=${id} key=${key} last_accessed=${last_accessed}"
+                gh api --method DELETE "/repos/${REPO}/actions/caches/${id}"
+                deleted=$((deleted + 1))
+              fi
+            done <<< "$caches"
+            count=$(echo "$response" | jq '.actions_caches | length')
+            if [[ "$count" -lt 100 ]]; then
+              break
+            fi
+            page=$((page + 1))
+          done
+          echo "Deleted ${deleted} stale cache(s) older than ${MAX_AGE_DAYS} day(s)."
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          MAX_AGE_DAYS: ${{ inputs.max-age-days }}
