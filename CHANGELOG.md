@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.2.0](https://github.com/kryota-dev/actions/compare/v0.1.1...v0.2.0) - 2026-03-28
+### Other Changes
+- chore(config): migrate Renovate config by @renovate[bot] in https://github.com/kryota-dev/actions/pull/61
+- chore(deps): update pnpm/action-setup action to v5 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/68
+- chore(deps): update github/codeql-action action to v4.35.1 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/67
+- chore(deps): update dependency aquaproj/aqua-registry to v4.488.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/63
+- fix: remove pnpm-setup duplicate cache + add cache-cleanup reusable workflow by @Copilot in https://github.com/kryota-dev/actions/pull/70
+- chore(deps): update actions/cache action to v5.0.4 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/66
+- chore(deps): update marocchino/sticky-pull-request-comment action to v3 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/65
+- fix: add ref input to tagpr-release.yml to fix detached HEAD on pull_request events by @kryota-dev in https://github.com/kryota-dev/actions/pull/73
+
 ## [v0.1.1](https://github.com/kryota-dev/actions/compare/v0.1.0...v0.1.1) - 2026-03-12
 ### Other Changes
 - chore(deps): update actions/download-artifact action to v8 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/56
