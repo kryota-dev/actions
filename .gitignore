@@ -4,3 +4,7 @@
 
 # Node.js
 node_modules/
+
+# Local tool-specific directories (not shared artifacts)
+.spec-workflow/
+.serena/
