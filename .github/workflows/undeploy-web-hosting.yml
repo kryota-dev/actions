@@ -54,7 +54,7 @@ jobs:
     steps:
       - name: Compute deploy path
         id: compute-path
-        uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@568519d2e5e2722d8d2340f594f6af3e1564852e # v0.0.7
+        uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@3b272b2a6373f12ef037d218f6202874c0dce80b # v0.2.0
         with:
           base-path-prefix: ${{ inputs.base-path-prefix }}
           production-branch: ${{ inputs.production-branch }}
@@ -63,7 +63,7 @@ jobs:
       # --- FTP Delete ---
       - name: Undeploy from web hosting via FTP
         if: ${{ inputs.deploy-type == 'ftp' }}
-        uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@568519d2e5e2722d8d2340f594f6af3e1564852e # v0.0.7
+        uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-ftp@3b272b2a6373f12ef037d218f6202874c0dce80b # v0.2.0
         with:
           ftp-server: ${{ secrets.server-host }}
           ftp-username: ${{ secrets.server-user }}
@@ -74,7 +74,7 @@ jobs:
       # --- rsync Delete ---
       - name: Undeploy from web hosting via rsync
         if: ${{ inputs.deploy-type == 'rsync' }}
-        uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@568519d2e5e2722d8d2340f594f6af3e1564852e # v0.0.7
+        uses: kryota-dev/actions/.github/actions/undeploy-web-hosting-rsync@3b272b2a6373f12ef037d218f6202874c0dce80b # v0.2.0
         with:
           ssh-host: ${{ secrets.server-host }}
           ssh-user: ${{ secrets.server-user }}
