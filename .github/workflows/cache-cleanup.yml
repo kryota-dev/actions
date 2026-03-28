@@ -26,8 +26,10 @@ jobs:
             exit 1
           fi
           threshold=$(date -u -d "${MAX_AGE_DAYS} days ago" +%s)
+
+          # Phase 1: Collect stale caches
+          stale=()
           page=1
-          deleted=0
           while true; do
             response=$(gh api \
               "/repos/${REPO}/actions/caches?per_page=100&page=${page}")
@@ -43,12 +45,7 @@ jobs:
               fi
               last_accessed_epoch=$(date -u -d "$last_accessed" +%s)
               if [[ "$last_accessed_epoch" -lt "$threshold" ]]; then
-                echo "Deleting cache id=${id} key=${key} last_accessed=${last_accessed}"
-                if ! gh api --method DELETE "/repos/${REPO}/actions/caches/${id}"; then
-                  echo "::warning::Failed to delete cache id=${id} key=${key}"
-                else
-                  deleted=$((deleted + 1))
-                fi
+                stale+=("${id}"$'\t'"${key}"$'\t'"${last_accessed}")
               fi
             done <<< "$caches"
             count=$(echo "$response" | jq '.actions_caches | length')
@@ -56,6 +53,18 @@ jobs:
               break
             fi
             page=$((page + 1))
+          done
+
+          # Phase 2: Delete collected stale caches
+          deleted=0
+          for entry in "${stale[@]}"; do
+            IFS=$'\t' read -r id key last_accessed <<< "$entry"
+            echo "Deleting cache id=${id} key=${key} last_accessed=${last_accessed}"
+            if ! gh api --method DELETE "/repos/${REPO}/actions/caches/${id}"; then
+              echo "::warning::Failed to delete cache id=${id} key=${key}"
+            else
+              deleted=$((deleted + 1))
+            fi
           done
           echo "Deleted ${deleted} stale cache(s) older than ${MAX_AGE_DAYS} day(s)."
         env:
