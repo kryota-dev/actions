@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Delete stale caches
         run: |
+          if ! [[ "$MAX_AGE_DAYS" =~ ^[0-9]+$ ]] || [[ "$MAX_AGE_DAYS" -le 0 ]]; then
+            echo "Error: max-age-days must be a positive integer, but got '${MAX_AGE_DAYS}'." >&2
+            exit 1
+          fi
           threshold=$(date -u -d "${MAX_AGE_DAYS} days ago" +%s)
           page=1
           deleted=0
@@ -32,14 +36,19 @@ jobs:
               break
             fi
             while IFS= read -r cache; do
-              id=$(echo "$cache" | jq -r '.id')
-              key=$(echo "$cache" | jq -r '.key')
-              last_accessed=$(echo "$cache" | jq -r '.last_accessed_at')
+              read -r id key last_accessed <<< "$(echo "$cache" | jq -r '[.id, .key, .last_accessed_at] | @tsv')"
+              if [[ -z "$last_accessed" || "$last_accessed" == "null" ]]; then
+                echo "::warning::Skipping cache id=${id} key=${key}: last_accessed_at is empty"
+                continue
+              fi
               last_accessed_epoch=$(date -u -d "$last_accessed" +%s)
               if [[ "$last_accessed_epoch" -lt "$threshold" ]]; then
                 echo "Deleting cache id=${id} key=${key} last_accessed=${last_accessed}"
-                gh api --method DELETE "/repos/${REPO}/actions/caches/${id}"
-                deleted=$((deleted + 1))
+                if ! gh api --method DELETE "/repos/${REPO}/actions/caches/${id}"; then
+                  echo "::warning::Failed to delete cache id=${id} key=${key}"
+                else
+                  deleted=$((deleted + 1))
+                fi
               fi
             done <<< "$caches"
             count=$(echo "$response" | jq '.actions_caches | length')
