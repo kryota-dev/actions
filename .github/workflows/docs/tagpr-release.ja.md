@@ -23,9 +23,7 @@ jobs:
 
 ## Inputs
 
-| Name | Description | Required | Default |
-|------|-------------|----------|---------|
-| `ref` | チェックアウトする Git ref（デフォルト: イベント駆動） | No | `''` |
+None
 
 ## Secrets
 
@@ -81,24 +79,6 @@ jobs:
       - run: echo "Released ${{ needs.release.outputs.tag }}"
 ```
 
-### ラベルイベントで tagpr を再実行する（バージョンバンプ等）
-
-`pull_request` イベントから呼び出す場合、detached HEAD を回避するために `ref` input で PR ヘッドブランチを渡します：
-
-```yaml
-jobs:
-  update-release-pr:
-    if: startsWith(github.event.pull_request.head.ref, 'tagpr-from-')
-    permissions:
-      contents: write
-      pull-requests: write
-    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
-    with:
-      ref: ${{ github.event.pull_request.head.ref }}
-    secrets:
-      app-token: ${{ secrets.APP_TOKEN }}
-```
-
 ## Behavior
 
 このワークフローは `tagpr` ジョブと `bump_major_tag` ジョブの2つで構成されます。
@@ -107,7 +87,7 @@ jobs:
 
 ### tagpr ジョブ
 
-1. `actions/checkout@v6` でリポジトリをチェックアウト（ref: `inputs.ref`（指定時）、token: `app-token`、`persist-credentials: false`）
+1. `actions/checkout@v6` でリポジトリをチェックアウト（ref: `pull_request` イベント時は `github.head_ref`、それ以外はデフォルト、token: `app-token`、`persist-credentials: false`）
 2. `Songmu/tagpr@v1.17.1` を実行してリリース PR の作成・マージ・タグ付けを行う（`GITHUB_TOKEN: app-token`）
 3. リリースされた場合はバージョンタグを `tag` output として出力（リリースがなければ空）
 

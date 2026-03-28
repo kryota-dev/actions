@@ -3,12 +3,6 @@ name: tagpr Release
 
 on:
   workflow_call:
-    inputs:
-      ref:
-        description: "Git ref to checkout (default: event-driven)"
-        type: string
-        required: false
-        default: ''
     secrets:
       app-token:
         description: "Personal Access Token for tagpr (requires 'repo' and 'workflow' scopes)"
@@ -36,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
-          ref: ${{ inputs.ref || '' }}
+          ref: ${{ github.head_ref || '' }}
           token: ${{ secrets.app-token }}
           persist-credentials: false
 
