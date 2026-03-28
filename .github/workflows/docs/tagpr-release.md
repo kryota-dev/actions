@@ -23,7 +23,9 @@ jobs:
 
 ## Inputs
 
-None
+| Name | Description | Required | Default |
+|------|-------------|----------|---------|
+| `ref` | Git ref to checkout (default: event-driven) | No | `''` |
 
 ## Secrets
 
@@ -79,6 +81,24 @@ jobs:
       - run: echo "Released ${{ needs.release.outputs.tag }}"
 ```
 
+### Re-running tagpr on label events (e.g., version bump)
+
+When calling from a `pull_request` event, pass the PR head branch via the `ref` input to avoid detached HEAD:
+
+```yaml
+jobs:
+  update-release-pr:
+    if: startsWith(github.event.pull_request.head.ref, 'tagpr-from-')
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: kryota-dev/actions/.github/workflows/tagpr-release.yml@v0
+    with:
+      ref: ${{ github.event.pull_request.head.ref }}
+    secrets:
+      app-token: ${{ secrets.APP_TOKEN }}
+```
+
 ## Behavior
 
 This workflow consists of two jobs: `tagpr` and `bump_major_tag`.
@@ -87,7 +107,7 @@ This workflow consists of two jobs: `tagpr` and `bump_major_tag`.
 
 ### tagpr Job
 
-1. Check out the repository with `actions/checkout@v6` (token: `app-token`, `persist-credentials: false`)
+1. Check out the repository with `actions/checkout@v6` (ref: `inputs.ref` if provided, token: `app-token`, `persist-credentials: false`)
 2. Run `Songmu/tagpr@v1.17.1` to create/merge release PRs and tag releases (`GITHUB_TOKEN: app-token`)
 3. If a release is made, output the version tag as the `tag` output (empty if no release)
 
