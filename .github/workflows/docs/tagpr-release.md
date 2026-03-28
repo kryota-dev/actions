@@ -87,7 +87,7 @@ This workflow consists of two jobs: `tagpr` and `bump_major_tag`.
 
 ### tagpr Job
 
-1. Check out the repository with `actions/checkout@v6` (ref: `github.head_ref` for `pull_request` events, default for others; token: `app-token`, `persist-credentials: false`)
+1. Check out the repository with `actions/checkout@v6` (ref: `github.event.pull_request.base.ref` for `pull_request` events, default for others; token: `app-token`, `persist-credentials: false`)
 2. Run `Songmu/tagpr@v1.17.1` to create/merge release PRs and tag releases (`GITHUB_TOKEN: app-token`)
 3. If a release is made, output the version tag as the `tag` output (empty if no release)
 
