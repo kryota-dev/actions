@@ -29,7 +29,7 @@ steps:
 ## Behavior
 
 1. `pnpm/action-setup@v4.2.0` を使用して pnpm をインストールする（`package.json` を参照、`run_install: false`）
-2. `actions/setup-node@v6.2.0` を使用して Node.js をインストールする（`.node-version` ファイルからバージョンを取得、`cache: 'pnpm'`）
+2. `actions/setup-node@v6.3.0` を使用して Node.js をインストールする（`.node-version` ファイルからバージョンを取得）
 3. `pnpm store path --silent` を実行して pnpm ストアのパスを取得する
 4. `actions/cache@v5.0.3` を使用して pnpm ストアをキャッシュする（キー: `{os}-pnpm-store-{hash(pnpm-lock.yaml)}`）
 5. `pnpm install` を実行して依存関係をインストールする

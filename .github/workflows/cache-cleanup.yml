@@ -1,0 +1,73 @@
+# Documentation: .github/workflows/docs/cache-cleanup.md
+name: Cache Cleanup
+
+on:
+  workflow_call:
+    inputs:
+      max-age-days:
+        description: "Maximum number of days since last access before a cache is deleted"
+        type: number
+        required: false
+        default: 2
+
+permissions: {}
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      actions: write
+    steps:
+      - name: Delete stale caches
+        run: |
+          if ! [[ "$MAX_AGE_DAYS" =~ ^[0-9]+$ ]] || [[ "$MAX_AGE_DAYS" -le 0 ]]; then
+            echo "Error: max-age-days must be a positive integer, but got '${MAX_AGE_DAYS}'." >&2
+            exit 1
+          fi
+          threshold=$(date -u -d "${MAX_AGE_DAYS} days ago" +%s)
+
+          # Phase 1: Collect stale caches
+          stale=()
+          page=1
+          while true; do
+            response=$(gh api \
+              "/repos/${REPO}/actions/caches?per_page=100&page=${page}")
+            caches=$(echo "$response" | jq -c '.actions_caches[]')
+            if [[ -z "$caches" ]]; then
+              break
+            fi
+            while IFS= read -r cache; do
+              IFS=$'\t' read -r id key last_accessed <<< "$(echo "$cache" | jq -r '[.id, .key, .last_accessed_at] | @tsv')"
+              if [[ -z "$last_accessed" || "$last_accessed" == "null" ]]; then
+                echo "::warning::Skipping cache id=${id} key=${key}: last_accessed_at is empty"
+                continue
+              fi
+              last_accessed_epoch=$(date -u -d "$last_accessed" +%s)
+              if [[ "$last_accessed_epoch" -lt "$threshold" ]]; then
+                stale+=("${id}"$'\t'"${key}"$'\t'"${last_accessed}")
+              fi
+            done <<< "$caches"
+            count=$(echo "$response" | jq '.actions_caches | length')
+            if [[ "$count" -lt 100 ]]; then
+              break
+            fi
+            page=$((page + 1))
+          done
+
+          # Phase 2: Delete collected stale caches
+          deleted=0
+          for entry in "${stale[@]}"; do
+            IFS=$'\t' read -r id key last_accessed <<< "$entry"
+            echo "Deleting cache id=${id} key=${key} last_accessed=${last_accessed}"
+            if ! gh api --method DELETE "/repos/${REPO}/actions/caches/${id}"; then
+              echo "::warning::Failed to delete cache id=${id} key=${key}"
+            else
+              deleted=$((deleted + 1))
+            fi
+          done
+          echo "Deleted ${deleted} stale cache(s) older than ${MAX_AGE_DAYS} day(s)."
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          MAX_AGE_DAYS: ${{ inputs.max-age-days }}

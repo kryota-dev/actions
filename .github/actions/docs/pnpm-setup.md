@@ -29,7 +29,7 @@ steps:
 ## Behavior
 
 1. Install pnpm using `pnpm/action-setup@v4.2.0` (references `package.json`, `run_install: false`)
-2. Install Node.js using `actions/setup-node@v6.2.0` (reads version from `.node-version` file, `cache: 'pnpm'`)
+2. Install Node.js using `actions/setup-node@v6.3.0` (reads version from `.node-version` file)
 3. Get the pnpm store path by running `pnpm store path --silent`
 4. Cache the pnpm store using `actions/cache@v5.0.3` (key: `{os}-pnpm-store-{hash(pnpm-lock.yaml)}`)
 5. Install dependencies by running `pnpm install`
