@@ -38,7 +38,7 @@ jobs:
               break
             fi
             while IFS= read -r cache; do
-              read -r id key last_accessed <<< "$(echo "$cache" | jq -r '[.id, .key, .last_accessed_at] | @tsv')"
+              IFS=$'\t' read -r id key last_accessed <<< "$(echo "$cache" | jq -r '[.id, .key, .last_accessed_at] | @tsv')"
               if [[ -z "$last_accessed" || "$last_accessed" == "null" ]]; then
                 echo "::warning::Skipping cache id=${id} key=${key}: last_accessed_at is empty"
                 continue
