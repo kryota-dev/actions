@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.2.2](https://github.com/kryota-dev/actions/compare/v0.2.1...v0.2.2) - 2026-03-28
+### Other Changes
+- chore: exclude .spec-workflow/ and .serena/ from git tracking by @Copilot in https://github.com/kryota-dev/actions/pull/74
+- chore: exclude `.agents/skills/manage-rulesets/` from git tracking by @kryota-dev in https://github.com/kryota-dev/actions/pull/82
+
 ## [v0.2.1](https://github.com/kryota-dev/actions/compare/v0.2.0...v0.2.1) - 2026-03-28
 ### Other Changes
 - chore(deps): update kryota-dev/actions action to v0.2.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/55
