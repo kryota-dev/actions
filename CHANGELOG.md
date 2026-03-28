@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.2.1](https://github.com/kryota-dev/actions/compare/v0.2.0...v0.2.1) - 2026-03-28
+### Other Changes
+- chore(deps): update kryota-dev/actions action to v0.2.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/55
+
 ## [v0.2.0](https://github.com/kryota-dev/actions/compare/v0.1.1...v0.2.0) - 2026-03-28
 ### Other Changes
 - chore(config): migrate Renovate config by @renovate[bot] in https://github.com/kryota-dev/actions/pull/61
