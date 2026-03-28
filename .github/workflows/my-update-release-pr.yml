@@ -18,5 +18,7 @@ jobs:
       contents: write
       pull-requests: write
     uses: ./.github/workflows/tagpr-release.yml
+    with:
+      ref: ${{ github.event.pull_request.head.ref }}
     secrets:
       app-token: ${{ secrets.APP_TOKEN }}
