@@ -73,7 +73,7 @@ jobs:
           # renovate: datasource=github-tags depName=aquaproj/aqua-registry
           AQUA_REGISTRY_REF="v4.488.0"
           # renovate: datasource=github-releases depName=rhysd/actionlint
-          ACTIONLINT_VERSION="v1.7.11"
+          ACTIONLINT_VERSION="v1.7.12"
           # renovate: datasource=github-releases depName=reviewdog/reviewdog
           REVIEWDOG_VERSION="v0.21.0"
           # renovate: datasource=github-releases depName=loeffel-io/ls-lint
