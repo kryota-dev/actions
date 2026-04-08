@@ -81,7 +81,7 @@ jobs:
           # renovate: datasource=github-releases depName=suzuki-shunsuke/ghalint
           GHALINT_VERSION="v1.5.5"
           # renovate: datasource=github-releases depName=zizmorcore/zizmor
-          ZIZMOR_VERSION="v1.22.0"
+          ZIZMOR_VERSION="v1.23.1"
 
           cat > aqua.yaml << HEREDOC
           ---
