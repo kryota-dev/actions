@@ -38,7 +38,7 @@ jobs:
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
 | `model` | `--model` フラグ経由で claude-code-action に渡す Claude モデル | No | `'claude-sonnet-4-6'` |
-| `max-review-agents` | 並列実行するレビューサブエージェントの最大数 | No | `5` |
+| `max-review-agents` | 並列実行するレビューサブエージェントの最大数 | No | `3` |
 | `review-roles` | カンマ区切りで固定するレビュアーロール（空の場合はロールカタログから自動選択） | No | `''` |
 | `role-prompts-dir` | 呼び出し元チェックアウト内のオーバーライド用プロンプトファイル（`role-catalog.md`）を格納するディレクトリ | No | `''` |
 | `review-instructions-path` | 組み込みデフォルトを上書きする `review-rules.md` の、呼び出し元チェックアウト内のパス | No | `''` |
@@ -56,6 +56,7 @@ jobs:
 | `skip-bots` | bot 作成の pull request（`*[bot]`）をスキップする | No | `true` |
 | `allowed-bots` | `skip-bots` が有効でもレビュー対象とする bot ログインのカンマ区切りリスト | No | `''` |
 | `timeout-minutes` | ジョブタイムアウト（分） | No | `30` |
+| `debug` | エージェントの全出力を表示し Claude に `--debug` を渡す（トラブルシュート用） | No | `false` |
 
 ## Secrets
 

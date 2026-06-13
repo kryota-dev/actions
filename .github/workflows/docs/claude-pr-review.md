@@ -38,7 +38,7 @@ jobs:
 | Name | Description | Required | Default |
 |------|-------------|----------|---------|
 | `model` | Claude model passed to claude-code-action via `--model` | No | `'claude-sonnet-4-6'` |
-| `max-review-agents` | Maximum number of parallel review subagents | No | `5` |
+| `max-review-agents` | Maximum number of parallel review subagents | No | `3` |
 | `review-roles` | Comma-separated fixed reviewer roles (empty = auto-select from the role catalog) | No | `''` |
 | `role-prompts-dir` | Directory in the caller checkout holding override prompt files (`role-catalog.md`) | No | `''` |
 | `review-instructions-path` | Path in the caller checkout to a `review-rules.md` that overrides the embedded default | No | `''` |
@@ -56,6 +56,7 @@ jobs:
 | `skip-bots` | Skip pull requests authored by bots (`*[bot]`) | No | `true` |
 | `allowed-bots` | Comma-separated bot logins to review despite `skip-bots` | No | `''` |
 | `timeout-minutes` | Job timeout in minutes | No | `30` |
+| `debug` | Show full agent output and pass `--debug` to Claude (for troubleshooting) | No | `false` |
 
 ## Secrets
 

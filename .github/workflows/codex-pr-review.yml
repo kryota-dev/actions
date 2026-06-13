@@ -817,8 +817,18 @@ jobs:
           output-file: ${{ github.workspace }}/.pr-review/findings.json
           codex-args: ${{ inputs.codex-args }}
 
+      - name: Ensure findings file
+        if: ${{ !cancelled() && steps.diff.outputs.proceed == 'true' }}
+        env:
+          WORK: ${{ github.workspace }}/.pr-review
+        run: |
+          if [ ! -s "$WORK/findings.json" ]; then
+            echo "::warning::Codex did not write .pr-review/findings.json; treating as no valid output."
+            echo '{}' > "$WORK/findings.json"
+          fi
+
       - name: Post review
-        if: steps.diff.outputs.proceed == 'true'
+        if: ${{ !cancelled() && steps.diff.outputs.proceed == 'true' }}
         env:
           GH_TOKEN: ${{ secrets.github-token || github.token }}
           GH_REPO: ${{ github.repository }}

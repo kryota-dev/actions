@@ -17,5 +17,7 @@ jobs:
     with:
       # This repository is a GitHub Actions catalog; review drafts too while dogfooding.
       skip-draft: false
+      # Surface full agent output while validating the new workflow.
+      debug: true
     secrets:
       claude-code-oauth-token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
