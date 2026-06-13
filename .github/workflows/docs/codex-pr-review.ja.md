@@ -44,6 +44,7 @@ jobs:
 | `codex-args` | codex exec に転送する追加 CLI 引数 | No | `''` |
 | `review-instructions-path` | 組み込みデフォルトを上書きする `review-rules.md` の、呼び出し元チェックアウト内のパス | No | `''` |
 | `additional-instructions` | Codex プロンプトに追加するレビュアー向け補足指示 | No | `''` |
+| `output-language` | レビューの可読テキスト（problem/suggestion/サマリー）の言語。コードや識別子はそのまま | No | `'English'` |
 | `paths` | レビュー対象に含めるカンマ／改行区切りの glob パターン（空の場合は diff 全体） | No | `''` |
 | `exclude-paths` | レビューから除外するカンマ／改行区切りの glob パターン | No | `''` |
 | `max-files` | diff が指定ファイル数を超えた場合に警告する閾値 | No | `200` |

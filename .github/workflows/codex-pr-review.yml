@@ -39,6 +39,11 @@ on:
         type: string
         required: false
         default: ''
+      output-language:
+        description: "Language for human-readable review text (problem/suggestion/summary); code and identifiers stay unchanged"
+        type: string
+        required: false
+        default: 'English'
       paths:
         description: "Comma/newline-separated globs to include (empty = whole diff)"
         type: string
@@ -790,9 +795,11 @@ jobs:
         env:
           WORK: ${{ github.workspace }}/.pr-review
           ADDITIONAL_INSTRUCTIONS: ${{ inputs.additional-instructions }}
+          OUTPUT_LANGUAGE: ${{ inputs.output-language }}
         run: |
           set -euo pipefail
           {
+            printf '## Output language\n\nWrite all human-readable review text (problem, suggestion, summary) in %s. Keep code, file paths, identifiers, JSON keys, severity enums, and source tags unchanged.\n\n' "$OUTPUT_LANGUAGE"
             cat "$WORK/review-rules.md"
             printf '\n\n## Additional instructions\n\n%s\n' "$ADDITIONAL_INSTRUCTIONS"
             printf '\n## Prior reviews (JSON; de-duplicate against these)\n\n'

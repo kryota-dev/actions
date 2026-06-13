@@ -34,6 +34,11 @@ on:
         type: string
         required: false
         default: ''
+      output-language:
+        description: "Language for human-readable review text (problem/suggestion/summary); code and identifiers stay unchanged"
+        type: string
+        required: false
+        default: 'English'
       claude-args:
         description: "Extra CLI args appended to claude_args"
         type: string
@@ -855,6 +860,7 @@ jobs:
             --model ${{ inputs.model }}
             --max-turns 20
             --allowedTools "Agent,Read,Grep,Glob,Write"
+            --append-system-prompt "Write all human-readable review text (the problem and suggestion fields and the summary) in ${{ inputs.output-language }}. Keep code, file paths, identifiers, JSON keys, severity enums, and source tags unchanged."
             ${{ inputs.debug && '--debug' || '' }}
             ${{ inputs.claude-args }}
 

@@ -44,6 +44,7 @@ jobs:
 | `codex-args` | Extra CLI args forwarded to codex exec | No | `''` |
 | `review-instructions-path` | Path in the caller checkout to a `review-rules.md` that overrides the embedded default | No | `''` |
 | `additional-instructions` | Extra reviewer instructions appended to the Codex prompt | No | `''` |
+| `output-language` | Language for human-readable review text (problem/suggestion/summary); code and identifiers stay unchanged | No | `'English'` |
 | `paths` | Comma/newline-separated globs to include (empty = whole diff) | No | `''` |
 | `exclude-paths` | Comma/newline-separated globs to exclude from review | No | `''` |
 | `max-files` | Warn when the diff touches more than this many files | No | `200` |

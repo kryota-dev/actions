@@ -43,6 +43,7 @@ jobs:
 | `role-prompts-dir` | 呼び出し元チェックアウト内のオーバーライド用プロンプトファイル（`role-catalog.md`）を格納するディレクトリ | No | `''` |
 | `review-instructions-path` | 組み込みデフォルトを上書きする `review-rules.md` の、呼び出し元チェックアウト内のパス | No | `''` |
 | `additional-instructions` | オーケストレーションプロンプトに追加するレビュアー向け補足指示 | No | `''` |
+| `output-language` | レビューの可読テキスト（problem/suggestion/サマリー）の言語。コードや識別子はそのまま | No | `'English'` |
 | `claude-args` | `claude_args` に追加する CLI 引数 | No | `''` |
 | `paths` | レビュー対象に含めるカンマ／改行区切りの glob パターン（空の場合は diff 全体） | No | `''` |
 | `exclude-paths` | レビューから除外するカンマ／改行区切りの glob パターン | No | `''` |

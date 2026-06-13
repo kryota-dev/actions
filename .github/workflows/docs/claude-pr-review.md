@@ -43,6 +43,7 @@ jobs:
 | `role-prompts-dir` | Directory in the caller checkout holding override prompt files (`role-catalog.md`) | No | `''` |
 | `review-instructions-path` | Path in the caller checkout to a `review-rules.md` that overrides the embedded default | No | `''` |
 | `additional-instructions` | Extra reviewer instructions appended to the orchestration prompt | No | `''` |
+| `output-language` | Language for human-readable review text (problem/suggestion/summary); code and identifiers stay unchanged | No | `'English'` |
 | `claude-args` | Extra CLI args appended to `claude_args` | No | `''` |
 | `paths` | Comma/newline-separated globs to include (empty = whole diff) | No | `''` |
 | `exclude-paths` | Comma/newline-separated globs to exclude from review | No | `''` |
