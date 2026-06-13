@@ -5,6 +5,10 @@
 # Node.js
 node_modules/
 
+# Python
+__pycache__/
+*.pyc
+
 # Local tool-specific directories (not shared artifacts)
 .spec-workflow/
 .serena/

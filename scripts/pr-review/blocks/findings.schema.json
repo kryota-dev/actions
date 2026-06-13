@@ -1,0 +1,67 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["summary", "findings", "rejected"],
+  "properties": {
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["overview", "type", "scope", "impact", "size", "key_changes", "agent_failures"],
+      "properties": {
+        "overview": { "type": "string" },
+        "type": { "type": "string" },
+        "scope": { "type": "string" },
+        "impact": { "type": "string" },
+        "size": { "type": "string" },
+        "key_changes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["path", "status", "note"],
+            "properties": {
+              "path": { "type": "string" },
+              "status": { "type": "string" },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "agent_failures": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["severity", "path", "line", "side", "start_line", "source", "category", "rule", "problem", "suggestion"],
+        "properties": {
+          "severity": { "type": "string", "enum": ["critical", "warning", "suggestion"] },
+          "path": { "type": "string" },
+          "line": { "type": ["integer", "null"] },
+          "side": { "type": "string", "enum": ["RIGHT", "LEFT"] },
+          "start_line": { "type": ["integer", "null"] },
+          "source": { "type": "array", "items": { "type": "string" } },
+          "category": { "type": "string" },
+          "rule": { "type": "string" },
+          "problem": { "type": "string" },
+          "suggestion": { "type": "string" }
+        }
+      }
+    },
+    "rejected": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "line", "reason", "original_severity"],
+        "properties": {
+          "path": { "type": "string" },
+          "line": { "type": ["integer", "null"] },
+          "reason": { "type": "string" },
+          "original_severity": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+name: claude-pr-review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
+  issue_comment:
+    types: [created]
+
+permissions: {}
+
+jobs:
+  review:
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    uses: ./.github/workflows/claude-pr-review.yml
+    with:
+      # This repository is a GitHub Actions catalog; review drafts too while dogfooding.
+      skip-draft: false
+    secrets:
+      claude-code-oauth-token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
