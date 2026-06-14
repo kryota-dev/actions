@@ -1,5 +1,21 @@
 # Changelog
 
+## [v0.2.3](https://github.com/kryota-dev/actions/compare/v0.2.2...v0.2.3) - 2026-06-14
+
+### Other Changes
+- feat(pr-review): auto-resolve addressed prior review threads by @kryota-dev in https://github.com/kryota-dev/actions/pull/92
+- chore(deps): update dependency zizmorcore/zizmor to v1.25.2 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/57
+- chore(deps): update actions/setup-node action to v6.4.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/90
+- chore(deps): update actions/cache action to v5.0.5 - autoclosed by @renovate[bot] in https://github.com/kryota-dev/actions/pull/88
+- chore(deps): update marocchino/sticky-pull-request-comment action to v3.0.4 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/85
+- chore(deps): update dependency rhysd/actionlint to v1.7.12 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/83
+- chore(deps): update kryota-dev/actions action to v0.2.2 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/80
+- chore(deps): update github/codeql-action action to v4.36.2 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/89
+- chore(deps): update songmu/tagpr action to v1.20.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/86
+- chore(deps): update dependency aquaproj/aqua-registry to v4.524.1 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/84
+- chore(deps): update pnpm/action-setup action to v6 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/87
+- chore(deps): update dependency suzuki-shunsuke/ghalint to v1.5.6 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/94
+
 ## [v0.2.2](https://github.com/kryota-dev/actions/compare/v0.2.1...v0.2.2) - 2026-06-14
 ### Other Changes
 - chore: exclude .spec-workflow/ and .serena/ from git tracking by @Copilot in https://github.com/kryota-dev/actions/pull/74
