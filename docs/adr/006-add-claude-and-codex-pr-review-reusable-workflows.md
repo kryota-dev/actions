@@ -6,6 +6,8 @@ Date: 2026-06-13
 
 2026-06-13 accepted
 
+2026-06-14 amended: added hybrid auto-resolve of addressed review threads (decision 8)
+
 ## Context
 
 Automated AI-assisted PR review reduces the burden on human reviewers and catches issues earlier in the development cycle.
@@ -62,6 +64,18 @@ Key constraints identified during design:
      metered API charges.
    - The advisory dogfood CI check is **not** added to required status checks, so it cannot block merges.
 
+8. **Hybrid auto-resolve of addressed threads**:
+   - On each run the workflow resolves its own prior inline threads that pass **both** a mechanical gate
+     (the thread is ours—its first comment carries the workflow marker—and is unresolved, line-anchored,
+     `viewerCanResolve`, and reported `isOutdated` by GitHub, i.e. the flagged lines changed) **and** the
+     reviewer's explicit judgment that the finding is addressed (a `resolved` entry referencing the thread's
+     `comment_id`). The agent's handle is validated against the mechanical set, so a hallucinated handle is a
+     safe no-op (under-resolve, never wrong-resolve).
+   - The hybrid AND is conservative on both sides: the mechanical gate stops the agent from closing a
+     still-valid issue, and the agent gate stops resolving on a mere unrelated code change. Resolution is
+     silent (no reply comment) and best-effort—a single failed `resolveReviewThread` logs a warning and never
+     fails the job—and is gated by the `resolve-addressed` input (default `true`).
+
 ## Consequences
 
 - **Embedded-engine duplication**: the Python engine and prompts exist in two locations (workflow YAML and
@@ -76,3 +90,8 @@ Key constraints identified during design:
   required status checks, a broken AI review step cannot block legitimate PRs.
 - **Cost transparency**: callers of `codex-pr-review.yml` must supply their own `OPENAI_API_KEY` and accept
   associated OpenAI usage charges. The workflow documentation must make this explicit.
+- **Auto-resolve is forward-looking and self-healing**: only threads created after this change carry the inline
+  marker, so pre-existing bot threads are not auto-resolved. If an issue wrongly judged addressed actually
+  persists, the agent re-posts it fresh on the next run, so a false-resolve never silently drops a real
+  finding. Resolution requires the posting token to satisfy each thread's `viewerCanResolve`; a
+  caller-supplied `github-token` lacking that scope degrades gracefully (warning logged, job still succeeds).
