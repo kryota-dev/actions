@@ -84,6 +84,11 @@ on:
         type: string
         required: false
         default: 'COMMENT'
+      resolve-addressed:
+        description: "Resolve our prior inline threads whose code changed and that the reviewer judged addressed. false = never auto-resolve"
+        type: boolean
+        required: false
+        default: true
       skip-draft:
         description: "Skip draft pull requests"
         type: boolean
@@ -227,9 +232,11 @@ jobs:
             post
                 Turn the agent findings JSON into a review payload + summary, applying
                 diff-line validation (demote non-mappable to body-only) and the mechanical
-                dedup guard (semantic dedup is the agent's job). Env-driven; never crashes
-                on malformed findings (soft-fail). Writes review_payload.json,
-                summary_body.md, meta.json into OUT_DIR.
+                dedup guard (semantic dedup is the agent's job). Also computes the hybrid
+                auto-resolve set (mechanically-stale prior threads the reviewer judged
+                addressed). Env-driven; never crashes on malformed findings (soft-fail).
+                Writes review_payload.json, summary_body.md, resolve_thread_ids.json,
+                meta.json into OUT_DIR.
 
           Pure stdlib (python3).
           """
@@ -375,6 +382,66 @@ jobs:
               return False
 
 
+          def _to_int(value):
+              if isinstance(value, bool):
+                  return None
+              if isinstance(value, int):
+                  return value
+              if isinstance(value, float):
+                  return int(value) if value == int(value) else None
+              if isinstance(value, str):
+                  return int(value) if value.strip().isdigit() else None
+              return None
+
+
+          def _thread_is_ours(thread, marker):
+              nodes = thread.get("comments") or []
+              first = nodes[0] if nodes and isinstance(nodes[0], dict) else {}
+              author = first.get("author") or ""
+              # Require BOTH the marker and a bot author on the FIRST comment. A human login
+              # can never end with "[bot]", so a user who quotes our (HTML-comment) marker
+              # cannot get their own thread classified as ours and silently auto-resolved.
+              return marker in (first.get("body") or "") and author.endswith("[bot]")
+
+
+          def _resolve_targets(prior_threads, agent_resolved, marker):
+              """Hybrid resolve set: threads that pass BOTH the mechanical gate (ours, open,
+              outdated, resolvable, line-anchored) AND the reviewer's "addressed" judgment.
+
+              The agent references a thread by the integer ``comment_id`` (its first comment's
+              databaseId). We validate that handle against the mechanical map, so a garbled or
+              hallucinated handle is a safe no-op (under-resolve, never wrong-resolve).
+              """
+              if not marker:
+                  return []
+              mechanical = {}
+              for t in prior_threads:
+                  if not isinstance(t, dict):
+                      continue
+                  if t.get("isResolved"):
+                      continue
+                  if not t.get("isOutdated"):
+                      continue
+                  if not t.get("viewerCanResolve"):
+                      continue
+                  if t.get("subjectType") not in (None, "LINE"):
+                      continue
+                  if not _thread_is_ours(t, marker):
+                      continue
+                  cid = _to_int(t.get("comment_id"))
+                  tid = t.get("id")
+                  if cid is not None and tid:
+                      mechanical[cid] = tid
+              ids = []
+              for r in agent_resolved:
+                  if not isinstance(r, dict):
+                      continue
+                  cid = _to_int(r.get("comment_id"))
+                  if cid is not None and cid in mechanical and mechanical[cid] not in ids:
+                      ids.append(mechanical[cid])
+              return ids
+
+
           def _sign(text, signature):
               return f"{text}\n\n---\n*{signature}*" if signature else text
 
@@ -453,10 +520,12 @@ jobs:
               signature = _env("SIGNATURE")
               submit = _env("SUBMIT", "true").lower() == "true"
               review_event = _env("REVIEW_EVENT", "COMMENT")
+              resolve_addressed = _env("RESOLVE_ADDRESSED", "true").lower() == "true"
 
               positions = _load_json(_env("POSITIONS_JSON"), {})
               prior = _load_json(_env("PRIOR_REVIEWS_JSON"), {})
               prior_inline = prior.get("inline", []) if isinstance(prior, dict) else []
+              prior_threads = prior.get("threads", []) if isinstance(prior, dict) else []
 
               raw = _load_json(_env("FINDINGS_JSON"), None)
               status = "ok"
@@ -467,6 +536,7 @@ jobs:
               summary = raw.get("summary", {}) if isinstance(raw.get("summary"), dict) else {}
               findings = [f for f in raw.get("findings", []) if isinstance(f, dict)]
               rejected = [r for r in raw.get("rejected", []) if isinstance(r, dict)]
+              agent_resolved = [r for r in raw.get("resolved", []) if isinstance(r, dict)]
 
               norm = []
               demoted = 0
@@ -512,6 +582,8 @@ jobs:
                   body = f"{EMOJI[f['severity']]} **{f['severity']}**: {f['problem']}\n\n{f['suggestion']}"
                   if tag:
                       body += f"\n\n{tag}"
+                  if marker:
+                      body += f"\n\n{marker}"  # self-identify the thread for later auto-resolve
                   comment = {"path": f["path"], "line": f["line"], "side": f["side"],
                              "body": _sign(body, signature)}
                   if f.get("start_line") and f["start_line"] != f["line"]:
@@ -532,13 +604,18 @@ jobs:
               if submit:
                   payload["event"] = review_event
 
+              resolve_ids = (_resolve_targets(prior_threads, agent_resolved, marker)
+                             if status == "ok" and resolve_addressed else [])
+
               with open(os.path.join(out_dir, "review_payload.json"), "w", encoding="utf-8") as fh:
                   json.dump(payload, fh, ensure_ascii=False)
               with open(os.path.join(out_dir, "summary_body.md"), "w", encoding="utf-8") as fh:
                   fh.write(_build_summary(summary, marker, counts) + "\n")
+              with open(os.path.join(out_dir, "resolve_thread_ids.json"), "w", encoding="utf-8") as fh:
+                  json.dump(resolve_ids, fh, ensure_ascii=False)
               meta = {"status": status, "post_review": post_review, "counts": counts,
                       "inline": len(comments), "deduped": deduped, "demoted": demoted,
-                      "rejected": len(rejected)}
+                      "rejected": len(rejected), "resolve": len(resolve_ids)}
               with open(os.path.join(out_dir, "meta.json"), "w", encoding="utf-8") as fh:
                   json.dump(meta, fh, ensure_ascii=False)
               print(json.dumps(meta, ensure_ascii=False))
@@ -563,7 +640,7 @@ jobs:
           {
             "type": "object",
             "additionalProperties": false,
-            "required": ["summary", "findings", "rejected"],
+            "required": ["summary", "findings", "rejected", "resolved"],
             "properties": {
               "summary": {
                 "type": "object",
@@ -622,6 +699,18 @@ jobs:
                     "line": { "type": ["integer", "null"] },
                     "reason": { "type": "string" },
                     "original_severity": { "type": "string" }
+                  }
+                }
+              },
+              "resolved": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["comment_id", "reason"],
+                  "properties": {
+                    "comment_id": { "type": ["integer", "null"] },
+                    "reason": { "type": "string" }
                   }
                 }
               }
@@ -701,6 +790,23 @@ jobs:
 
           Set each finding's `source` to your reviewer id(s): Claude subagents use
           `claude:<role>` (e.g. `claude:security`); Codex uses `codex`.
+
+          ## Resolving addressed prior findings
+
+          `.pr-review/prior_reviews.json` `threads` lists existing review threads. Some were
+          posted by THIS reviewer in earlier runs: their first comment carries this
+          workflow's marker (an HTML comment) and a `review-source:` tag. For each such OUR
+          thread that is still unresolved and whose flagged problem is clearly addressed by
+          the current code (the issue no longer applies), add an entry to `resolved`:
+
+              { "comment_id": <the thread's comment_id, copied verbatim>, "reason": "<one line: how it was addressed>" }
+
+          Only list OUR threads — skip threads without our marker, and skip any thread that
+          holds an ongoing human conversation. If an issue is still present (you kept its
+          finding, or de-duplicated it against the thread), do NOT also list it in
+          `resolved`. When in doubt, do not list it: a mechanical safety gate further
+          restricts what is actually resolved, so omitting an entry merely leaves a thread
+          open, while a wrong entry can never close a still-valid issue.
           RULES_MD
           if [ -n "$REVIEW_INSTRUCTIONS_PATH" ] && [ -f "$REVIEW_INSTRUCTIONS_PATH" ]; then
             cp "$REVIEW_INSTRUCTIONS_PATH" "$WORK/review-rules.md"
@@ -765,12 +871,12 @@ jobs:
               repository(owner: $owner, name: $name) {
                 pullRequest(number: $number) {
                   reviewThreads(first: 100) {
-                    nodes { isResolved path line comments(first: 20) { nodes { author { login } body } } }
+                    nodes { id isResolved isOutdated subjectType viewerCanResolve path line comments(first: 20) { nodes { author { login } body databaseId } } }
                   }
                 }
               }
             }' \
-            --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | {isResolved, path, line, comments: [.comments.nodes[] | {author: .author.login, body: .body}]}]' \
+            --jq '[.data.repository.pullRequest.reviewThreads.nodes[] | {id, isResolved, isOutdated, subjectType, viewerCanResolve, path, line, comment_id: (.comments.nodes[0].databaseId), comments: [.comments.nodes[] | {author: .author.login, body: .body}]}]' \
             > "$WORK/_threads.json" || echo '[]' > "$WORK/_threads.json"
           jq -n \
             --slurpfile r "$WORK/_reviews.json" \
@@ -806,7 +912,7 @@ jobs:
             cat "$WORK/prior_reviews.json"
             printf '\n\n## Annotated diff (cite these absolute line numbers)\n\n'
             cat "$WORK/annotated_diff.txt"
-            printf '\n\nReview the diff comprehensively and output ONLY a JSON object conforming to the provided schema. Set the source field of each finding to "codex".\n'
+            printf '\n\nReview the diff comprehensively and output ONLY a JSON object conforming to the provided schema. Set the source field of each finding to "codex". Also populate "resolved": for OUR prior threads (first comment carries this workflow marker and a review-source tag) whose flagged problem the current code now addresses, add {"comment_id": <thread.comment_id>, "reason": ...} per the rules; never list a thread whose issue still stands.\n'
           } > "$WORK/codex-prompt.md"
 
       - name: Run Codex review
@@ -849,6 +955,7 @@ jobs:
           SIGNATURE: "Generated with OpenAI Codex"
           SUBMIT: ${{ inputs.submit }}
           REVIEW_EVENT: ${{ inputs.review-event }}
+          RESOLVE_ADDRESSED: ${{ inputs.resolve-addressed }}
         run: |
           set -euo pipefail
           python3 "$WORK/engine.py" post
@@ -879,4 +986,21 @@ jobs:
             gh api --method PATCH "repos/$GH_REPO/issues/comments/$existing" -F body=@"$WORK/summary_body.md" > /dev/null
           else
             gh api --method POST "repos/$GH_REPO/issues/$PR_NUMBER/comments" -F body=@"$WORK/summary_body.md" > /dev/null
+          fi
+          # Auto-resolve our prior threads the reviewer judged addressed (silent; soft-fail per thread).
+          if [ -s "$WORK/resolve_thread_ids.json" ]; then
+            n=0
+            while IFS= read -r tid; do
+              [ -n "$tid" ] || continue
+              # shellcheck disable=SC2016  # GraphQL variable ($threadId) is an intentional literal
+              if gh api graphql -f threadId="$tid" -f query='
+                mutation($threadId: ID!) { resolveReviewThread(input: {threadId: $threadId}) { thread { id isResolved } } }' \
+                > /dev/null 2> "$WORK/_resolve_err.txt"; then
+                n=$((n + 1))
+              else
+                echo "::warning::resolveReviewThread failed for $tid"
+                cat "$WORK/_resolve_err.txt" || true
+              fi
+            done < <(jq -r '.[]' "$WORK/resolve_thread_ids.json")
+            echo "::notice::Resolved $n addressed thread(s)."
           fi

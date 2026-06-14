@@ -75,10 +75,14 @@ translation (`*.ja.md`) in sync if the change is substantive.
 #   Honors PATHS / EXCLUDE_PATHS env globs.
 python3 engine.py annotate raw.diff annotated_diff.txt positions.json
 
-# post: findings JSON -> review_payload.json + summary_body.md + meta.json
+# post: findings JSON -> review_payload.json + summary_body.md
+#       + resolve_thread_ids.json + meta.json
 #   Env: FINDINGS_JSON, POSITIONS_JSON, PRIOR_REVIEWS_JSON, OUT_DIR,
-#        MARKER, SIGNATURE, SUBMIT, REVIEW_EVENT
+#        MARKER, SIGNATURE, SUBMIT, REVIEW_EVENT, RESOLVE_ADDRESSED
 #   Defensive: never crashes on malformed findings (soft-fail -> meta.status="parse-error").
+#   Auto-resolve: resolve_thread_ids.json holds the node ids of our prior threads that
+#     pass BOTH the mechanical gate (ours/unresolved/outdated/resolvable/LINE) and the
+#     agent's "resolved" list. Empty unless RESOLVE_ADDRESSED=true and status="ok".
 python3 engine.py post
 ```
 
@@ -90,9 +94,13 @@ python3 engine.py post
 tmp=$(mktemp -d)
 printf 'diff --git a/x.ts b/x.ts\n--- a/x.ts\n+++ b/x.ts\n@@ -1,1 +1,2 @@\n a\n+b\n' > "$tmp/raw.diff"
 python3 engine.py annotate "$tmp/raw.diff" "$tmp/annotated.txt" "$tmp/positions.json"
-printf '{"summary":{"overview":"","type":"","scope":"","impact":"","size":"","key_changes":[],"agent_failures":[]},"findings":[{"severity":"warning","path":"x.ts","line":2,"side":"RIGHT","start_line":null,"source":["test"],"category":"","rule":"","problem":"p","suggestion":"s"}],"rejected":[]}' > "$tmp/findings.json"
-OUT_DIR="$tmp" POSITIONS_JSON="$tmp/positions.json" PRIOR_REVIEWS_JSON=/dev/null \
+# prior_reviews with one of OUR threads (its first comment carries MARKER) that is outdated + resolvable
+printf '{"reviews":[],"inline":[],"issue":[],"threads":[{"id":"PRRT_x","isResolved":false,"isOutdated":true,"subjectType":"LINE","viewerCanResolve":true,"path":"x.ts","comment_id":501,"comments":[{"author":"github-actions[bot]","body":"old finding <!-- test -->"}]}]}' > "$tmp/prior.json"
+# findings: one new finding + mark thread 501 as addressed
+printf '{"summary":{"overview":"","type":"","scope":"","impact":"","size":"","key_changes":[],"agent_failures":[]},"findings":[{"severity":"warning","path":"x.ts","line":2,"side":"RIGHT","start_line":null,"source":["test"],"category":"","rule":"","problem":"p","suggestion":"s"}],"rejected":[],"resolved":[{"comment_id":501,"reason":"fixed"}]}' > "$tmp/findings.json"
+OUT_DIR="$tmp" POSITIONS_JSON="$tmp/positions.json" PRIOR_REVIEWS_JSON="$tmp/prior.json" \
   FINDINGS_JSON="$tmp/findings.json" MARKER="<!-- test -->" SIGNATURE="test" \
-  SUBMIT=true REVIEW_EVENT=COMMENT python3 engine.py post
-cat "$tmp/meta.json"   # -> {"status":"ok","post_review":true,"inline":1,...}
+  SUBMIT=true REVIEW_EVENT=COMMENT RESOLVE_ADDRESSED=true python3 engine.py post
+cat "$tmp/meta.json"                 # -> {"status":"ok","post_review":true,"inline":1,...,"resolve":1}
+cat "$tmp/resolve_thread_ids.json"   # -> ["PRRT_x"]   (mechanical gate ∩ agent "resolved")
 ```

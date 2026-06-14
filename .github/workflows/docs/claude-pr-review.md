@@ -53,6 +53,7 @@ jobs:
 | `label-name` | Label name that triggers a review on a `labeled` event | No | `'claude-review'` |
 | `submit` | Submit the review (`COMMENT`). `false` = leave it pending | No | `true` |
 | `review-event` | Review event when submitting (`COMMENT` / `APPROVE` / `REQUEST_CHANGES`) | No | `'COMMENT'` |
+| `resolve-addressed` | Resolve our prior inline threads whose code changed and that the reviewer judged addressed. `false` = never auto-resolve | No | `true` |
 | `skip-draft` | Skip draft pull requests | No | `true` |
 | `skip-bots` | Skip pull requests authored by bots (`*[bot]`) | No | `true` |
 | `allowed-bots` | Comma-separated bot logins to review despite `skip-bots` | No | `''` |
@@ -74,8 +75,10 @@ jobs:
 | Permission | Level | Purpose |
 |------------|-------|---------|
 | `contents` | `read` | Check out the PR head and let the agent read related code |
-| `pull-requests` | `write` | Read the diff/prior reviews and create the review with inline comments |
+| `pull-requests` | `write` | Read the diff/prior reviews, create the review with inline comments, and resolve addressed threads |
 | `issues` | `write` | Upsert the marker-tagged narrative summary comment |
+
+Auto-resolve is gated on each thread's `viewerCanResolve`, so it degrades gracefully if a caller-supplied `github-token` lacks the scope to resolve threads (a warning is logged; the job still succeeds).
 
 ## Examples
 
@@ -123,8 +126,9 @@ jobs:
 3. **Prior reviews** — collects existing reviews/comments/threads (excluding common bot boilerplate) for de-duplication.
 4. **Review** — the main agent selects roles from the embedded catalog (or `review-roles`), spawns up to `max-review-agents` parallel subagents, integrates, semantically de-duplicates, validates, and emits a structured findings JSON.
 5. **Post** — a deterministic step validates each finding's line against the diff (non-mappable findings become body-only), applies a mechanical dedup guard, creates one review (inline `critical`/`warning` + a body table of all findings) and submits it (when `submit: true`), then upserts a `<!-- claude-pr-review -->` summary comment.
+6. **Auto-resolve** (when `resolve-addressed: true`) — silently resolves the workflow's own prior inline threads that pass **both** a mechanical gate (the thread is ours, unresolved, line-anchored, resolvable, and GitHub reports it `isOutdated` — i.e. the flagged lines changed) **and** the reviewer's judgment (it listed the thread as addressed). The hybrid AND avoids closing still-valid issues; if an issue actually persists the reviewer re-posts it fresh. Each resolve is best-effort (a failure logs a warning and never fails the job).
 
-Re-runs replace the summary comment in place; inline comments are de-duplicated so they do not stack.
+Re-runs replace the summary comment in place; inline comments are de-duplicated so they do not stack, and addressed threads are resolved instead of re-posted.
 
 ## Prerequisites
 

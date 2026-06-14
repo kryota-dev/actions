@@ -53,6 +53,7 @@ jobs:
 | `label-name` | `labeled` イベントでレビューをトリガーするラベル名 | No | `'claude-review'` |
 | `submit` | レビューを送信する（`COMMENT`）。`false` の場合は pending のまま保留 | No | `true` |
 | `review-event` | 送信時のレビューイベント（`COMMENT` / `APPROVE` / `REQUEST_CHANGES`） | No | `'COMMENT'` |
+| `resolve-addressed` | コードが変更され、レビュアーが対応済みと判断した自分の過去インラインスレッドを resolve する。`false` = 自動 resolve しない | No | `true` |
 | `skip-draft` | draft pull request をスキップする | No | `true` |
 | `skip-bots` | bot 作成の pull request（`*[bot]`）をスキップする | No | `true` |
 | `allowed-bots` | `skip-bots` が有効でもレビュー対象とする bot ログインのカンマ区切りリスト | No | `''` |
@@ -74,8 +75,10 @@ jobs:
 | Permission | Level | Purpose |
 |------------|-------|---------|
 | `contents` | `read` | PR の head をチェックアウトし、エージェントが関連コードを読めるようにする |
-| `pull-requests` | `write` | diff／既存レビューの取得と、インラインコメント付きレビューの作成 |
+| `pull-requests` | `write` | diff／既存レビューの取得、インラインコメント付きレビューの作成、対応済みスレッドの resolve |
 | `issues` | `write` | マーカータグ付きのナラティブサマリーコメントを upsert する |
+
+自動 resolve は各スレッドの `viewerCanResolve` でゲーティングされるため、呼び出し元が指定した `github-token` にスレッドを resolve する権限がない場合でも安全に劣化する（警告をログ出力し、ジョブ自体は成功する）。
 
 ## 使用例
 
@@ -123,8 +126,9 @@ jobs:
 3. **既存レビュー取得** — 重複排除のため、既存のレビュー／コメント／スレッド（一般的な bot の定型文は除外）を収集する。
 4. **レビュー** — メインエージェントが組み込みカタログ（または `review-roles`）からロールを選択し、最大 `max-review-agents` 数の並列サブエージェントを起動する。結果を統合・意味的重複排除・バリデーションして構造化された指摘 JSON を出力する。
 5. **投稿** — 決定論的なステップが各指摘の行を diff に対してバリデーションし（マッピング不可の指摘は body のみに掲載）、機械的な重複排除ガードを適用したうえで、1 つのレビュー（インライン `critical`/`warning` + 全指摘のテーブル形式 body）を作成して送信する（`submit: true` の場合）。その後 `<!-- claude-pr-review -->` サマリーコメントを upsert する。
+6. **自動 resolve**（`resolve-addressed: true` の場合）— このワークフロー自身が過去に投稿したインラインスレッドのうち、**機械的ゲート**（自分のスレッドで、未 resolve・行アンカー・resolve 可能、かつ GitHub が `isOutdated`＝指摘行が変更済みと報告）**と** レビュアーの判断（対応済みとして列挙）の**両方**を満たすものを無言で resolve する。ハイブリッドな AND により未解決の問題を誤って閉じることを防ぐ。問題が実際に残っている場合はレビュアーが新規に再投稿する。各 resolve はベストエフォート（失敗しても警告を出すだけでジョブは失敗しない）。
 
-再実行時はサマリーコメントをその場で置き換える。インラインコメントは重複排除されるため積み重ならない。
+再実行時はサマリーコメントをその場で置き換える。インラインコメントは重複排除されるため積み重ならず、対応済みスレッドは再投稿されず resolve される。
 
 ## 前提条件
 
