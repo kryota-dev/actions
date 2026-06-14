@@ -70,3 +70,20 @@ different category are kept. When in doubt, drop.
 
 Set each finding's `source` to your reviewer id(s): Claude subagents use
 `claude:<role>` (e.g. `claude:security`); Codex uses `codex`.
+
+## Resolving addressed prior findings
+
+`.pr-review/prior_reviews.json` `threads` lists existing review threads. Some were
+posted by THIS reviewer in earlier runs: their first comment carries this
+workflow's marker (an HTML comment) and a `review-source:` tag. For each such OUR
+thread that is still unresolved and whose flagged problem is clearly addressed by
+the current code (the issue no longer applies), add an entry to `resolved`:
+
+    { "comment_id": <the thread's comment_id, copied verbatim>, "reason": "<one line: how it was addressed>" }
+
+Only list OUR threads — skip threads without our marker, and skip any thread that
+holds an ongoing human conversation. If an issue is still present (you kept its
+finding, or de-duplicated it against the thread), do NOT also list it in
+`resolved`. When in doubt, do not list it: a mechanical safety gate further
+restricts what is actually resolved, so omitting an entry merely leaves a thread
+open, while a wrong entry can never close a still-valid issue.

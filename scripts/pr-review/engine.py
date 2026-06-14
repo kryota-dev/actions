@@ -9,9 +9,11 @@ Subcommands:
   post
       Turn the agent findings JSON into a review payload + summary, applying
       diff-line validation (demote non-mappable to body-only) and the mechanical
-      dedup guard (semantic dedup is the agent's job). Env-driven; never crashes
-      on malformed findings (soft-fail). Writes review_payload.json,
-      summary_body.md, meta.json into OUT_DIR.
+      dedup guard (semantic dedup is the agent's job). Also computes the hybrid
+      auto-resolve set (mechanically-stale prior threads the reviewer judged
+      addressed). Env-driven; never crashes on malformed findings (soft-fail).
+      Writes review_payload.json, summary_body.md, resolve_thread_ids.json,
+      meta.json into OUT_DIR.
 
 Pure stdlib (python3).
 """
@@ -157,6 +159,62 @@ def _dedup_hit(finding, sources, existing):
     return False
 
 
+def _to_int(value):
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return int(value) if value == int(value) else None
+    if isinstance(value, str):
+        return int(value) if value.strip().isdigit() else None
+    return None
+
+
+def _thread_is_ours(thread, marker):
+    nodes = thread.get("comments") or []
+    first = nodes[0] if nodes and isinstance(nodes[0], dict) else {}
+    return marker in (first.get("body") or "")
+
+
+def _resolve_targets(prior_threads, agent_resolved, marker):
+    """Hybrid resolve set: threads that pass BOTH the mechanical gate (ours, open,
+    outdated, resolvable, line-anchored) AND the reviewer's "addressed" judgment.
+
+    The agent references a thread by the integer ``comment_id`` (its first comment's
+    databaseId). We validate that handle against the mechanical map, so a garbled or
+    hallucinated handle is a safe no-op (under-resolve, never wrong-resolve).
+    """
+    if not marker:
+        return []
+    mechanical = {}
+    for t in prior_threads:
+        if not isinstance(t, dict):
+            continue
+        if t.get("isResolved"):
+            continue
+        if not t.get("isOutdated"):
+            continue
+        if not t.get("viewerCanResolve"):
+            continue
+        if t.get("subjectType") not in (None, "LINE"):
+            continue
+        if not _thread_is_ours(t, marker):
+            continue
+        cid = _to_int(t.get("comment_id"))
+        tid = t.get("id")
+        if cid is not None and tid:
+            mechanical[cid] = tid
+    ids = []
+    for r in agent_resolved:
+        if not isinstance(r, dict):
+            continue
+        cid = _to_int(r.get("comment_id"))
+        if cid is not None and cid in mechanical and mechanical[cid] not in ids:
+            ids.append(mechanical[cid])
+    return ids
+
+
 def _sign(text, signature):
     return f"{text}\n\n---\n*{signature}*" if signature else text
 
@@ -235,10 +293,12 @@ def cmd_post():
     signature = _env("SIGNATURE")
     submit = _env("SUBMIT", "true").lower() == "true"
     review_event = _env("REVIEW_EVENT", "COMMENT")
+    resolve_addressed = _env("RESOLVE_ADDRESSED", "true").lower() == "true"
 
     positions = _load_json(_env("POSITIONS_JSON"), {})
     prior = _load_json(_env("PRIOR_REVIEWS_JSON"), {})
     prior_inline = prior.get("inline", []) if isinstance(prior, dict) else []
+    prior_threads = prior.get("threads", []) if isinstance(prior, dict) else []
 
     raw = _load_json(_env("FINDINGS_JSON"), None)
     status = "ok"
@@ -249,6 +309,7 @@ def cmd_post():
     summary = raw.get("summary", {}) if isinstance(raw.get("summary"), dict) else {}
     findings = [f for f in raw.get("findings", []) if isinstance(f, dict)]
     rejected = [r for r in raw.get("rejected", []) if isinstance(r, dict)]
+    agent_resolved = [r for r in raw.get("resolved", []) if isinstance(r, dict)]
 
     norm = []
     demoted = 0
@@ -294,6 +355,8 @@ def cmd_post():
         body = f"{EMOJI[f['severity']]} **{f['severity']}**: {f['problem']}\n\n{f['suggestion']}"
         if tag:
             body += f"\n\n{tag}"
+        if marker:
+            body += f"\n\n{marker}"  # self-identify the thread for later auto-resolve
         comment = {"path": f["path"], "line": f["line"], "side": f["side"],
                    "body": _sign(body, signature)}
         if f.get("start_line") and f["start_line"] != f["line"]:
@@ -314,13 +377,18 @@ def cmd_post():
     if submit:
         payload["event"] = review_event
 
+    resolve_ids = (_resolve_targets(prior_threads, agent_resolved, marker)
+                   if status == "ok" and resolve_addressed else [])
+
     with open(os.path.join(out_dir, "review_payload.json"), "w", encoding="utf-8") as fh:
         json.dump(payload, fh, ensure_ascii=False)
     with open(os.path.join(out_dir, "summary_body.md"), "w", encoding="utf-8") as fh:
         fh.write(_build_summary(summary, marker, counts) + "\n")
+    with open(os.path.join(out_dir, "resolve_thread_ids.json"), "w", encoding="utf-8") as fh:
+        json.dump(resolve_ids, fh, ensure_ascii=False)
     meta = {"status": status, "post_review": post_review, "counts": counts,
             "inline": len(comments), "deduped": deduped, "demoted": demoted,
-            "rejected": len(rejected)}
+            "rejected": len(rejected), "resolve": len(resolve_ids)}
     with open(os.path.join(out_dir, "meta.json"), "w", encoding="utf-8") as fh:
         json.dump(meta, fh, ensure_ascii=False)
     print(json.dumps(meta, ensure_ascii=False))

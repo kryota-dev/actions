@@ -1,7 +1,7 @@
 {
   "type": "object",
   "additionalProperties": false,
-  "required": ["summary", "findings", "rejected"],
+  "required": ["summary", "findings", "rejected", "resolved"],
   "properties": {
     "summary": {
       "type": "object",
@@ -60,6 +60,18 @@
           "line": { "type": ["integer", "null"] },
           "reason": { "type": "string" },
           "original_severity": { "type": "string" }
+        }
+      }
+    },
+    "resolved": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["comment_id", "reason"],
+        "properties": {
+          "comment_id": { "type": ["integer", "null"] },
+          "reason": { "type": "string" }
         }
       }
     }
