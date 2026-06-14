@@ -174,7 +174,11 @@ def _to_int(value):
 def _thread_is_ours(thread, marker):
     nodes = thread.get("comments") or []
     first = nodes[0] if nodes and isinstance(nodes[0], dict) else {}
-    return marker in (first.get("body") or "")
+    author = first.get("author") or ""
+    # Require BOTH the marker and a bot author on the FIRST comment. A human login
+    # can never end with "[bot]", so a user who quotes our (HTML-comment) marker
+    # cannot get their own thread classified as ours and silently auto-resolved.
+    return marker in (first.get("body") or "") and author.endswith("[bot]")
 
 
 def _resolve_targets(prior_threads, agent_resolved, marker):
