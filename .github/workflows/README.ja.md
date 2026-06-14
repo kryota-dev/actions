@@ -15,6 +15,13 @@
 |----------|-------------|
 | [auto-assign-pr](docs/auto-assign-pr.ja.md) | PR 作成者の自動 assignee 設定 |
 
+## コードレビュー
+
+| Workflow | Description |
+|----------|-------------|
+| [claude-pr-review](docs/claude-pr-review.ja.md) | Claude Code（並列ロールサブエージェント）で PR をレビュー |
+| [codex-pr-review](docs/codex-pr-review.ja.md) | Codex（単一の包括的パス）で PR をレビュー |
+
 ## リリース
 
 | Workflow | Description |
@@ -55,3 +62,4 @@ jobs:
 | my-release.yml | push (main) | tagpr-release.yml | リリース管理 |
 | my-codeql.yml | PR, push (main), merge_group | codeql-analysis.yml | セキュリティスキャン |
 | my-update-release-pr.yml | PR labeled (tagpr:major/minor) | tagpr-release.yml | リリース PR バージョン更新 |
+| my-claude-pr-review.yml | PR | claude-pr-review.yml | Claude Code によるドッグフード PR レビュー |

@@ -15,6 +15,13 @@
 |----------|-------------|
 | [auto-assign-pr](docs/auto-assign-pr.md) | Auto-assign PR creator as assignee |
 
+## Code Review
+
+| Workflow | Description |
+|----------|-------------|
+| [claude-pr-review](docs/claude-pr-review.md) | Review a pull request with Claude Code (parallel role subagents) |
+| [codex-pr-review](docs/codex-pr-review.md) | Review a pull request with Codex (single comprehensive pass) |
+
 ## Release
 
 | Workflow | Description |
@@ -55,3 +62,4 @@ Internal CI workflows (with `my-` prefix) used for quality management of this re
 | my-release.yml | push (main) | tagpr-release.yml | Release management |
 | my-codeql.yml | PR, push (main), merge_group | codeql-analysis.yml | Security scanning |
 | my-update-release-pr.yml | PR labeled (tagpr:major/minor) | tagpr-release.yml | Update release PR version |
+| my-claude-pr-review.yml | PR | claude-pr-review.yml | Dogfood PR review with Claude Code |

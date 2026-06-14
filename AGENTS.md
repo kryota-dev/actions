@@ -30,6 +30,9 @@ aqua exec -- ghalint run-action   # Composite Action security verification
 bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh apply   # Apply local JSON to GitHub
 bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh diff    # Diff between local and GitHub
 bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh export  # Export GitHub settings to local
+
+# PR review engine (scripts/pr-review/) — re-embed the shared engine/prompts into the review workflows
+python3 scripts/pr-review/embed.py   # Run after editing engine.py or blocks/*; details in scripts/pr-review/README.md
 ```
 
 ## Architecture
@@ -39,6 +42,7 @@ bash .agents/skills/manage-rulesets/scripts/manage-rulesets.sh export  # Export 
 - `.github/workflows/` — Publicly available Reusable Workflows + internal CI workflows (`my-` prefix)
 - `.github/actions/{action-name}/action.yml` — Publicly available Composite Actions
 - `.github/rulesets/` — Branch and tag protection rules (JSON, synced with GitHub via `manage-rulesets` script)
+- `scripts/pr-review/` — Shared PR-review engine + prompt sources, embedded into `claude-pr-review.yml` / `codex-pr-review.yml` via `embed.py` (see `scripts/pr-review/README.md`)
 - `docs/adr/` — Architecture Decision Records
 
 ### Reusable Workflows vs Composite Actions
