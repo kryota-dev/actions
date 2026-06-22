@@ -79,7 +79,7 @@ jobs:
     steps:
       - name: Compute deploy path
         id: compute-path
-        uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@d793c3db5c3981c8e2e576e21b66b144ff24e12d # v0.2.2
+        uses: kryota-dev/actions/.github/actions/compute-web-hosting-deploy-path@1b0a97fd1b3e970f119d09fd2949be8d7fc45959 # v0.2.4
         with:
           base-path-prefix: ${{ inputs.base-path-prefix }}
           production-branch: ${{ inputs.production-branch }}
@@ -108,7 +108,7 @@ jobs:
       # --- FTP Deploy ---
       - name: Deploy to web hosting via FTP
         if: ${{ inputs.deploy-type == 'ftp' }}
-        uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@d793c3db5c3981c8e2e576e21b66b144ff24e12d # v0.2.2
+        uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@1b0a97fd1b3e970f119d09fd2949be8d7fc45959 # v0.2.4
         with:
           base-path: ${{ steps.compute-path.outputs.deploy-path }}
           output-dir: ${{ inputs.output-dir }}
@@ -123,7 +123,7 @@ jobs:
       # --- rsync Deploy ---
       - name: Deploy to web hosting via rsync
         if: ${{ inputs.deploy-type == 'rsync' }}
-        uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@d793c3db5c3981c8e2e576e21b66b144ff24e12d # v0.2.2
+        uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@1b0a97fd1b3e970f119d09fd2949be8d7fc45959 # v0.2.4
         with:
           base-path: ${{ steps.compute-path.outputs.deploy-path }}
           output-dir: ${{ inputs.output-dir }}
@@ -167,7 +167,7 @@ jobs:
       # --- Slack Notifications ---
       - name: Notify Slack (Deploy Success)
         if: ${{ success() && github.event_name != 'pull_request' && steps.check-slack.outputs.success-enabled == 'true' }}
-        uses: kryota-dev/actions/.github/actions/slack-notify-success@d793c3db5c3981c8e2e576e21b66b144ff24e12d # v0.2.2
+        uses: kryota-dev/actions/.github/actions/slack-notify-success@1b0a97fd1b3e970f119d09fd2949be8d7fc45959 # v0.2.4
         with:
           channel-id: ${{ secrets.slack-channel-id }}
           bot-oauth-token: ${{ secrets.slack-bot-oauth-token }}
@@ -176,7 +176,7 @@ jobs:
 
       - name: Notify Slack (Deploy Failure)
         if: ${{ failure() && github.event_name != 'pull_request' && steps.check-slack.outputs.failure-enabled == 'true' }}
-        uses: kryota-dev/actions/.github/actions/slack-notify-failure@d793c3db5c3981c8e2e576e21b66b144ff24e12d # v0.2.2
+        uses: kryota-dev/actions/.github/actions/slack-notify-failure@1b0a97fd1b3e970f119d09fd2949be8d7fc45959 # v0.2.4
         with:
           webhook-url: ${{ secrets.slack-webhook-url }}
           mention-user: ${{ secrets.slack-mention-user }}
