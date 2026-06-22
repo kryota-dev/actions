@@ -81,7 +81,7 @@ runs:
           echo "_feature/" >> /tmp/rsync-exclude
           RSYNC_OPTS+=(--exclude-from=/tmp/rsync-exclude)
           if [ "$APPLY_HTACCESS" = "true" ]; then
-            echo "::notice::PRODUCTION MODE: Applying artifact .htaccess via explicit transfer; excluding .htaccess and _feature/ from deletion"
+            echo "::notice::PRODUCTION MODE: apply-htaccess enabled; the artifact .htaccess will be applied in a second pass if present. Excluding .htaccess and _feature/ from deletion"
           else
             echo "::notice::PRODUCTION MODE: Excluding .htaccess and _feature/ directories from deletion"
           fi
@@ -115,21 +115,29 @@ runs:
         # Run as a separate transfer without --delete, only when the artifact
         # actually contains a .htaccess, so the server copy is overwritten only
         # when there is a replacement and is otherwise left untouched.
-        if [ "$IS_PRODUCTION" = "true" ] && [ "$APPLY_HTACCESS" = "true" ] && [ -f "${SOURCE_PATH}/.htaccess" ]; then
-          HTACCESS_OPTS=(-az)
-          if [ "$DRY_RUN" = "true" ]; then
-            HTACCESS_OPTS+=(--dry-run)
-          fi
-          if [ "$DEBUG" = "1" ] || [ "$DRY_RUN" = "true" ]; then
-            HTACCESS_OPTS+=(--verbose)
-          fi
-          if rsync "${HTACCESS_OPTS[@]}" \
-            -e "ssh -o StrictHostKeyChecking=no" \
-            "${SOURCE_PATH}/.htaccess" "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}/.htaccess"; then
-            echo "::notice::Applied artifact .htaccess to production target"
+        if [ "$IS_PRODUCTION" = "true" ] && [ "$APPLY_HTACCESS" = "true" ]; then
+          if [ -f "${SOURCE_PATH}/.htaccess" ]; then
+            HTACCESS_OPTS=(-az)
+            if [ "$DRY_RUN" = "true" ]; then
+              HTACCESS_OPTS+=(--dry-run)
+            fi
+            if [ "$DEBUG" = "1" ] || [ "$DRY_RUN" = "true" ]; then
+              HTACCESS_OPTS+=(--verbose)
+            fi
+            if rsync "${HTACCESS_OPTS[@]}" \
+              -e "ssh -o StrictHostKeyChecking=no" \
+              "${SOURCE_PATH}/.htaccess" "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}/.htaccess"; then
+              if [ "$DRY_RUN" = "true" ]; then
+                echo "::notice::Dry-run: artifact .htaccess would be applied to production target"
+              else
+                echo "::notice::Applied artifact .htaccess to production target"
+              fi
+            else
+              echo "::error::Failed to apply .htaccess to production target"
+              exit 1
+            fi
           else
-            echo "::error::Failed to apply .htaccess to production target"
-            exit 1
+            echo "::notice::apply-htaccess enabled, but artifact .htaccess was not found; preserving the server copy"
           fi
         fi
 

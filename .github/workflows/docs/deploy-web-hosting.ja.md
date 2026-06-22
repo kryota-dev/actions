@@ -98,7 +98,7 @@ jobs:
 | `base-path-prefix` | プロジェクト固有のパスプレフィックス（例: `'/<your-project>'`） | No | `''` |
 | `home-url` | サイトのホーム URL | No | `''` |
 | `dry-run` | ドライランモード | No | `'false'` |
-| `apply-htaccess` | 本番デプロイで成果物の `.htaccess` を適用するか（opt-in。production のときのみ有効）。`deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` アクションへ渡される。 | No | `'false'` |
+| `apply-htaccess` | 本番デプロイで成果物の `.htaccess` を適用するか（opt-in。production のときのみ有効）。`deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` アクションへ渡される。**注意**: 本ワークフローはこれらのアクションを特定リリースの SHA に pin しているため、`apply-htaccess` は（Renovate により）この input を定義したリリースへ pin が更新されて初めて有効になる。 | No | `'false'` |
 | `production-branch` | 本番ブランチ名 | No | `'main'` |
 | `ref-name` | ブランチ名の上書き（空の場合は github context から自動取得） | No | `''` |
 

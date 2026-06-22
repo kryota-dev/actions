@@ -98,7 +98,7 @@ jobs:
 | `base-path-prefix` | Project-specific path prefix (e.g., `'/<your-project>'`) | No | `''` |
 | `home-url` | Site home URL | No | `''` |
 | `dry-run` | Dry-run mode | No | `'false'` |
-| `apply-htaccess` | Apply the artifact `.htaccess` on production deploys (opt-in; only effective on production). Passed through to the `deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` actions. | No | `'false'` |
+| `apply-htaccess` | Apply the artifact `.htaccess` on production deploys (opt-in; only effective on production). Passed through to the `deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` actions. **Note**: this workflow pins those actions to a specific release SHA, so `apply-htaccess` only takes effect once the pin is bumped (via Renovate) to a release that defines the input. | No | `'false'` |
 | `production-branch` | Production branch name | No | `'main'` |
 | `ref-name` | Branch name override (auto-detected from github context if empty) | No | `''` |
 

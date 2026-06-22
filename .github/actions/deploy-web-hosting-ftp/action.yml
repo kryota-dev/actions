@@ -99,17 +99,30 @@ runs:
 
           # Note: SSL disabled due to server configuration compatibility
           # Consider upgrading to FTPS if server supports it
+          # Single-quote a value for safe embedding in lftp's -e command string
+          # (lftp has its own shell-like parser): escape embedded ' as '\'' then
+          # wrap in single quotes.
+          lftp_quote() {
+            local s=${1//\'/\'\\\'\'}
+            printf "'%s'" "$s"
+          }
+          SRC_Q=$(lftp_quote "${SOURCE_PATH}")
+          DST_Q=$(lftp_quote "${TARGET_PATH}")
+
           MIRROR_OPTS="--reverse --delete"
           PUT_HTACCESS_CMD=""
           if [ "$IS_PRODUCTION" = "true" ]; then
             # lftp mirror has no protect-only filter, so always exclude .htaccess
             # and _feature/ from the mirror to keep the server copies safe from
-            # deletion. Each pattern needs its own -x.
+            # deletion. Each pattern needs its own -x. The '\\' in the bash string
+            # becomes a single '\' passed to lftp's ERE, so '\.' matches a literal
+            # dot (not "any char").
             MIRROR_OPTS="${MIRROR_OPTS} -x '\\.htaccess$' -x '_feature/'"
             if [ "$APPLY_HTACCESS" = "true" ] && [ -f "${SOURCE_PATH}/.htaccess" ]; then
               # Opt-in pass 2: upload the artifact's .htaccess explicitly so it is
               # transferred without re-enabling deletion of the server copy.
-              PUT_HTACCESS_CMD="put -O '${TARGET_PATH}' '${SOURCE_PATH}/.htaccess';"
+              HTACCESS_Q=$(lftp_quote "${SOURCE_PATH}/.htaccess")
+              PUT_HTACCESS_CMD="put -O ${DST_Q} ${HTACCESS_Q};"
               echo "::notice::PRODUCTION MODE: Applying artifact .htaccess via explicit upload; mirror excludes .htaccess and _feature/ from deletion"
             else
               echo "::notice::PRODUCTION MODE: Excluding .htaccess and _feature/ directories from deletion"
@@ -127,7 +140,7 @@ runs:
           set net:timeout 30; \
           mirror \
           ${MIRROR_OPTS} \
-          ${SOURCE_PATH} ${TARGET_PATH}; \
+          ${SRC_Q} ${DST_Q}; \
           ${PUT_HTACCESS_CMD} \
           exit"; then
             echo "::notice::Deployment completed successfully"

@@ -127,7 +127,7 @@ steps:
 
 1. Install lftp
 2. Build the source path `./{output-dir}{base-path}`
-3. In dry-run mode, test the connection to the FTP server and only display the file listing
+3. In dry-run mode, test the connection to the FTP server and only display the file listing (both the mirror pass and the optional `.htaccess` upload are skipped — use the rsync action if you need a dry-run simulation of the `.htaccess` pass)
 4. In normal mode, sync files from local to remote using the `mirror --reverse --delete` command
 5. In production mode, exclude `.htaccess` and `_feature/` from the mirror so the server copies are never deleted (lftp `mirror` has no protect-only filter)
 6. When `apply-htaccess: 'true'` (production only) and the artifact contains a `.htaccess`, upload it in a second pass via `put` — the artifact's `.htaccess` is transferred (overwriting the server copy) while the mirror still protects the server copy from deletion. If the artifact has no `.htaccess`, the second pass is skipped and the server copy is preserved. `apply-htaccess` has no effect outside production.

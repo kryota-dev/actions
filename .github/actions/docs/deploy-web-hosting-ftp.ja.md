@@ -127,7 +127,7 @@ steps:
 
 1. lftp をインストールする
 2. ソースパス `./{output-dir}{base-path}` を構築する
-3. dry-run モードの場合、FTP サーバーへの接続テストを実行し、ファイル一覧のみを表示する
+3. dry-run モードの場合、FTP サーバーへの接続テストを実行し、ファイル一覧のみを表示する（mirror パスと任意の `.htaccess` アップロードはともにスキップされる。`.htaccess` パスの dry-run シミュレーションが必要な場合は rsync アクションを使用すること）
 4. 通常モードの場合、`mirror --reverse --delete` コマンドでローカルからリモートへファイルを同期する
 5. production モードの場合、`.htaccess` と `_feature/` を mirror から除外し、サーバー側のコピーが削除されないようにする（lftp の `mirror` には protect 専用フィルタがないため）
 6. `apply-htaccess: 'true'`（production のみ）かつ成果物に `.htaccess` が含まれる場合、2 パス目で `put` によりアップロードする。成果物の `.htaccess` を転送（サーバー側を上書き）しつつ、mirror 側ではサーバー側コピーを削除から保護する。成果物に `.htaccess` がない場合は 2 パス目をスキップし、サーバー側コピーを保持する。`apply-htaccess` は production 以外では効果がない。
