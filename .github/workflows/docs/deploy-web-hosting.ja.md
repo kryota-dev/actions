@@ -39,6 +39,10 @@ jobs:
       # Optional (default: 'false')
       dry-run: 'false'
 
+      # apply-htaccess - 本番デプロイで成果物の .htaccess を適用するか（opt-in）
+      # Optional (default: 'false')
+      apply-htaccess: 'false'
+
       # production-branch - 本番ブランチ名
       # Optional (default: 'main')
       production-branch: 'main'
@@ -94,6 +98,7 @@ jobs:
 | `base-path-prefix` | プロジェクト固有のパスプレフィックス（例: `'/<your-project>'`） | No | `''` |
 | `home-url` | サイトのホーム URL | No | `''` |
 | `dry-run` | ドライランモード | No | `'false'` |
+| `apply-htaccess` | 本番デプロイで成果物の `.htaccess` を適用するか（opt-in。production のときのみ有効）。`deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` アクションへ渡される。 | No | `'false'` |
 | `production-branch` | 本番ブランチ名 | No | `'main'` |
 | `ref-name` | ブランチ名の上書き（空の場合は github context から自動取得） | No | `''` |
 
@@ -176,6 +181,29 @@ jobs:
       artifact-name: 'build-output'
       output-dir: 'dist'
       dry-run: 'true'
+    secrets:
+      server-host: ${{ secrets.SERVER_HOST }}
+      server-user: ${{ secrets.SERVER_USER }}
+      server-path: ${{ secrets.SERVER_PATH }}
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+```
+
+### リポジトリ管理の `.htaccess` を本番へ適用する（opt-in）
+
+```yaml
+jobs:
+  deploy:
+    permissions:
+      pull-requests: write
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
+    with:
+      deploy-type: 'rsync'
+      artifact-name: 'build-output'
+      output-dir: 'dist'
+      # 本番デプロイで成果物の .htaccess（リダイレクト、ErrorDocument 404 など）を
+      # 除外せずにアップロードする。後方互換: この input を省略（または 'false'）すると
+      # 従来どおり .htaccess を手動管理できる。
+      apply-htaccess: 'true'
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
       server-user: ${{ secrets.SERVER_USER }}

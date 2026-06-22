@@ -39,6 +39,10 @@ jobs:
       # Optional (default: 'false')
       dry-run: 'false'
 
+      # apply-htaccess - Apply the artifact .htaccess on production deploys (opt-in)
+      # Optional (default: 'false')
+      apply-htaccess: 'false'
+
       # production-branch - Production branch name
       # Optional (default: 'main')
       production-branch: 'main'
@@ -94,6 +98,7 @@ jobs:
 | `base-path-prefix` | Project-specific path prefix (e.g., `'/<your-project>'`) | No | `''` |
 | `home-url` | Site home URL | No | `''` |
 | `dry-run` | Dry-run mode | No | `'false'` |
+| `apply-htaccess` | Apply the artifact `.htaccess` on production deploys (opt-in; only effective on production). Passed through to the `deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` actions. | No | `'false'` |
 | `production-branch` | Production branch name | No | `'main'` |
 | `ref-name` | Branch name override (auto-detected from github context if empty) | No | `''` |
 
@@ -176,6 +181,29 @@ jobs:
       artifact-name: 'build-output'
       output-dir: 'dist'
       dry-run: 'true'
+    secrets:
+      server-host: ${{ secrets.SERVER_HOST }}
+      server-user: ${{ secrets.SERVER_USER }}
+      server-path: ${{ secrets.SERVER_PATH }}
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+```
+
+### Apply repository-managed `.htaccess` on production (opt-in)
+
+```yaml
+jobs:
+  deploy:
+    permissions:
+      pull-requests: write
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
+    with:
+      deploy-type: 'rsync'
+      artifact-name: 'build-output'
+      output-dir: 'dist'
+      # On production deploys, upload the artifact's .htaccess (redirects,
+      # ErrorDocument 404, etc.) instead of excluding it. Backward compatible:
+      # omit this input (or set 'false') to keep managing .htaccess manually.
+      apply-htaccess: 'true'
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
       server-user: ${{ secrets.SERVER_USER }}
