@@ -42,6 +42,10 @@ A Composite Action that deploys build artifacts to a web hosting server via FTP 
     # is-production - Whether this is a production deploy
     # Optional (default: 'false')
     is-production: 'false'
+
+    # apply-htaccess - Apply the artifact .htaccess on production deploys (opt-in)
+    # Optional (default: 'false')
+    apply-htaccess: 'false'
 ```
 
 ## Inputs
@@ -56,6 +60,7 @@ A Composite Action that deploys build artifacts to a web hosting server via FTP 
 | `base-path` | Base path for artifacts | No | - |
 | `dry-run` | Whether to run in dry-run mode | No | `'false'` |
 | `is-production` | Whether this is a production deploy | No | `'false'` |
+| `apply-htaccess` | Apply the artifact `.htaccess` on production deploys (opt-in; only effective when `is-production` is `'true'`) | No | `'false'` |
 
 ## Examples
 
@@ -101,14 +106,32 @@ steps:
       is-production: 'true'
 ```
 
+### Apply repository-managed `.htaccess` on production (opt-in)
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-ftp@v0
+    with:
+      output-dir: 'dist'
+      ftp-server: ${{ secrets.FTP_SERVER }}
+      ftp-username: ${{ secrets.FTP_USERNAME }}
+      ftp-password: ${{ secrets.FTP_PASSWORD }}
+      ftp-path: '/public_html'
+      is-production: 'true'
+      # Upload the artifact's .htaccess (e.g. redirects, ErrorDocument 404)
+      # while still protecting the server's copy from deletion.
+      apply-htaccess: 'true'
+```
+
 ## Behavior
 
 1. Install lftp
 2. Build the source path `./{output-dir}{base-path}`
-3. In dry-run mode, test the connection to the FTP server and only display the file listing
+3. In dry-run mode, test the connection to the FTP server and only display the file listing (both the mirror pass and the optional `.htaccess` upload are skipped — use the rsync action if you need a dry-run simulation of the `.htaccess` pass)
 4. In normal mode, sync files from local to remote using the `mirror --reverse --delete` command
-5. In production mode, exclude `.htaccess` and `_feature/` from sync targets
-6. If `runner.debug` is enabled, enable the lftp debug flag `-d`
+5. In production mode, exclude `.htaccess` and `_feature/` from the mirror so the server copies are never deleted (lftp `mirror` has no protect-only filter)
+6. When `apply-htaccess: 'true'` (production only) and the artifact contains a `.htaccess`, upload it in a second pass via `put` — the artifact's `.htaccess` is transferred (overwriting the server copy) while the mirror still protects the server copy from deletion. If the artifact has no `.htaccess`, the second pass is skipped and the server copy is preserved. `apply-htaccess` has no effect outside production.
+7. If `runner.debug` is enabled, enable the lftp debug flag `-d`
 
 ## Prerequisites
 
