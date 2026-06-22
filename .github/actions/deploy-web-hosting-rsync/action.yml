@@ -29,6 +29,10 @@ inputs:
     description: 'Whether this is a production deployment'
     required: false
     default: 'false'
+  apply-htaccess:
+    description: 'Whether to apply the artifact .htaccess on production deploys (opt-in; only effective when is-production is true)'
+    required: false
+    default: 'false'
 
 runs:
   using: 'composite'
@@ -55,6 +59,7 @@ runs:
         DRY_RUN: ${{ inputs.dry-run }}
         DEBUG: ${{ runner.debug }}
         IS_PRODUCTION: ${{ inputs.is-production }}
+        APPLY_HTACCESS: ${{ inputs.apply-htaccess }}
       run: |
         TARGET_PATH="${SSH_PATH}"
         SOURCE_PATH="./${OUTPUT_DIR}${BASE_PATH}"
@@ -63,26 +68,36 @@ runs:
         echo "::notice::Source: ${SOURCE_PATH}"
         echo "::notice::Target: ${SSH_USER}@${SSH_HOST}:${TARGET_PATH}"
 
-        RSYNC_OPTS="-az --delete"
+        RSYNC_OPTS=(-az --delete)
 
         if [ "$IS_PRODUCTION" = "true" ]; then
+          # Always exclude .htaccess and _feature/ from the --delete mirror so the
+          # server copies are never removed. The artifact's .htaccess (when opted
+          # in) is applied separately below via an explicit transfer. This keeps
+          # behavior independent of rsync's 'protect'-rule transfer semantics
+          # (which differ across implementations) and symmetric with the FTP
+          # action's two-pass approach.
           echo ".htaccess" > /tmp/rsync-exclude
           echo "_feature/" >> /tmp/rsync-exclude
-          RSYNC_OPTS="${RSYNC_OPTS} --exclude-from=/tmp/rsync-exclude"
-          echo "::notice::PRODUCTION MODE: Excluding .htaccess and _feature/ directories from deletion"
+          RSYNC_OPTS+=(--exclude-from=/tmp/rsync-exclude)
+          if [ "$APPLY_HTACCESS" = "true" ]; then
+            echo "::notice::PRODUCTION MODE: Applying artifact .htaccess via explicit transfer; excluding .htaccess and _feature/ from deletion"
+          else
+            echo "::notice::PRODUCTION MODE: Excluding .htaccess and _feature/ directories from deletion"
+          fi
         fi
 
         if [ "$DRY_RUN" = "true" ]; then
-          RSYNC_OPTS="${RSYNC_OPTS} --dry-run"
+          RSYNC_OPTS+=(--dry-run)
           echo "::notice::DRY RUN MODE: Using rsync --dry-run option"
         fi
 
         if [ "$DEBUG" = "1" ] || [ "$DRY_RUN" = "true" ]; then
-          RSYNC_OPTS="${RSYNC_OPTS} --verbose"
+          RSYNC_OPTS+=(--verbose)
           echo "::notice::DEBUG MODE or DRY RUN MODE: Using rsync --verbose option"
         fi
 
-        if rsync $RSYNC_OPTS \
+        if rsync "${RSYNC_OPTS[@]}" \
           -e "ssh -o StrictHostKeyChecking=no" \
           "${SOURCE_PATH}/" "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}/"; then
           if [ "$DRY_RUN" = "true" ]; then
@@ -94,6 +109,28 @@ runs:
         else
           echo "::error::rsync command failed"
           exit 1
+        fi
+
+        # Opt-in pass 2: apply the artifact's .htaccess on production deploys.
+        # Run as a separate transfer without --delete, only when the artifact
+        # actually contains a .htaccess, so the server copy is overwritten only
+        # when there is a replacement and is otherwise left untouched.
+        if [ "$IS_PRODUCTION" = "true" ] && [ "$APPLY_HTACCESS" = "true" ] && [ -f "${SOURCE_PATH}/.htaccess" ]; then
+          HTACCESS_OPTS=(-az)
+          if [ "$DRY_RUN" = "true" ]; then
+            HTACCESS_OPTS+=(--dry-run)
+          fi
+          if [ "$DEBUG" = "1" ] || [ "$DRY_RUN" = "true" ]; then
+            HTACCESS_OPTS+=(--verbose)
+          fi
+          if rsync "${HTACCESS_OPTS[@]}" \
+            -e "ssh -o StrictHostKeyChecking=no" \
+            "${SOURCE_PATH}/.htaccess" "${SSH_USER}@${SSH_HOST}:${TARGET_PATH}/.htaccess"; then
+            echo "::notice::Applied artifact .htaccess to production target"
+          else
+            echo "::error::Failed to apply .htaccess to production target"
+            exit 1
+          fi
         fi
 
     - name: Cleanup SSH keys

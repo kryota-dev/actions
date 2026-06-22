@@ -31,6 +31,11 @@ on:
         type: string
         required: false
         default: 'false'
+      apply-htaccess:
+        description: "Apply the artifact .htaccess on production deploys (opt-in; only effective on production)"
+        type: string
+        required: false
+        default: 'false'
       production-branch:
         description: "Production branch name"
         type: string
@@ -113,6 +118,7 @@ jobs:
           ftp-path: ${{ secrets.server-path }}${{ steps.compute-path.outputs.deploy-path }}
           dry-run: ${{ inputs.dry-run }}
           is-production: ${{ steps.compute-path.outputs.is-production }}
+          apply-htaccess: ${{ inputs.apply-htaccess }}
 
       # --- rsync Deploy ---
       - name: Deploy to web hosting via rsync
@@ -127,6 +133,7 @@ jobs:
           ssh-path: ${{ secrets.server-path }}${{ steps.compute-path.outputs.deploy-path }}
           dry-run: ${{ inputs.dry-run }}
           is-production: ${{ steps.compute-path.outputs.is-production }}
+          apply-htaccess: ${{ inputs.apply-htaccess }}
 
       # --- PR Comments ---
       - name: Comment on PR (Deploy Success)
