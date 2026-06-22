@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.2.4](https://github.com/kryota-dev/actions/compare/v0.2.3...v0.2.4) - 2026-06-22
+
+### Other Changes
+- fix(pr-review): update claude-code-action pin to current v1 commit by @kryota-dev in https://github.com/kryota-dev/actions/pull/103
+- feat: add opt-in apply-htaccess for production web hosting deploys by @kryota-dev in https://github.com/kryota-dev/actions/pull/102
+
 ## [v0.2.3](https://github.com/kryota-dev/actions/compare/v0.2.2...v0.2.3) - 2026-06-14
 
 ### Other Changes
