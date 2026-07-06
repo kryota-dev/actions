@@ -10,6 +10,28 @@
   labels: [
     'Maintenance',
   ],
+  automergeType: 'pr',
+  ignoreTests: false,
+  minor: {
+    automerge: false,
+  },
+  patch: {
+    automerge: true,
+  },
+  pin: {
+    automerge: true,
+  },
+  packageRules: [
+    {
+      matchManagers: [
+        'github-actions',
+      ],
+      matchUpdateTypes: [
+        'digest',
+      ],
+      automerge: true,
+    },
+  ],
   vulnerabilityAlerts: {
     labels: [
       '[SECURITY]',
