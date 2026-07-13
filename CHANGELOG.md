@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.2.5](https://github.com/kryota-dev/actions/compare/v0.2.4...v0.2.5) - 2026-07-13
+
+### Other Changes
+- chore(deps): update anthropics/claude-code-action digest to 558b1d6 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/96
+- chore(renovate): enable automerge for patch, pin, and digest updates by @kryota-dev in https://github.com/kryota-dev/actions/pull/110
+- fix(deploy-web-hosting): bump internal action pins to v0.2.4 by @kryota-dev in https://github.com/kryota-dev/actions/pull/114
+
 ## [v0.2.4](https://github.com/kryota-dev/actions/compare/v0.2.3...v0.2.4) - 2026-06-22
 
 ### Other Changes
