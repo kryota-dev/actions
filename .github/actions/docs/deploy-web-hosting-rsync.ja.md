@@ -46,6 +46,10 @@ rsync over SSH でビルド成果物を Web ホスティングサーバーにデ
     # apply-htaccess - 本番デプロイで成果物の .htaccess を適用するか（opt-in）
     # Optional (default: 'false')
     apply-htaccess: 'false'
+
+    # exclude-paths - 本番デプロイで触れないパス（改行区切り）
+    # Optional (default: '')
+    exclude-paths: ''
 ```
 
 ## Inputs
@@ -61,6 +65,7 @@ rsync over SSH でビルド成果物を Web ホスティングサーバーにデ
 | `dry-run` | dry-run モードで実行するかどうか | No | `'false'` |
 | `is-production` | 本番デプロイかどうか | No | `'false'` |
 | `apply-htaccess` | 本番デプロイで成果物の `.htaccess` を適用するか（opt-in。`is-production` が `'true'` のときのみ有効） | No | `'false'` |
+| `exclude-paths` | 本番デプロイで `.htaccess` と `_feature/` に加えて触れない（転送も削除もしない）パス。ターゲットのルートからの相対パスを改行区切りで指定する。使用できる文字は `[A-Za-z0-9._-]` と `/` で、末尾の `/` はディレクトリのみに一致する（`is-production` が `'true'` のときのみ有効） | No | `''` |
 
 ## Examples
 
@@ -123,16 +128,36 @@ steps:
       apply-htaccess: 'true'
 ```
 
+### 本番のターゲット配下にある別コンテンツに触れない
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v0
+    with:
+      output-dir: 'dist'
+      ssh-host: ${{ secrets.SSH_HOST }}
+      ssh-user: ${{ secrets.SSH_USER }}
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      ssh-path: '/home/user/public_html'
+      is-production: 'true'
+      # 同じドキュメントルート配下に置かれた別サイト。これらのパスは
+      # --delete ミラーで転送も削除もされない。
+      exclude-paths: |
+        other-site/
+        shared/robots-extra.txt
+```
+
 ## Behavior
 
 1. SSH 鍵をセットアップする（`~/.ssh/id_rsa` に秘密鍵を書き込み、`ssh-keyscan` でホスト鍵を取得）
 2. ソースパス `./{output-dir}{base-path}` を構築する
 3. `rsync -az --delete` コマンドでローカルからリモートへファイルを同期する
 4. production モードの場合（デフォルト・後方互換）、`--exclude-from` で `.htaccess` と `_feature/` を `--delete` ミラーから除外し、サーバー側のコピーを転送も削除もしない
-5. `apply-htaccess: 'true'`（production のみ）かつ成果物に `.htaccess` が含まれる場合、2 パス目で `--delete` なしの別の `rsync` により適用する。成果物の `.htaccess` を転送（サーバー側を上書き）しつつ、成果物に存在しない場合はサーバー側のコピーを保持する。この明示転送により rsync の `protect` ルールのセマンティクスに依存しない挙動になる。`apply-htaccess` は production 以外では効果がない
-6. dry-run モードの場合、`--dry-run` フラグを追加する（両パスとも dry-run に従う）
-7. debug モードまたは dry-run モードの場合、`--verbose` フラグを追加する
-8. 処理完了後（成功・失敗問わず）、SSH 鍵をクリーンアップする
+5. production モードの場合、`exclude-paths` に列挙したパスを同じ除外ファイルに追記する。先頭に `/` を付けてターゲットのルートに固定するため、`other-site/` は `<target>/other-site/` のみに一致し、同名のネストしたディレクトリには一致しない。これらのパスは転送も削除もされない。各エントリは事前に検証し、許可されない文字や `.` / `..` セグメントを含む場合はステップを失敗させる。`exclude-paths` は production 以外では効果がない
+6. `apply-htaccess: 'true'`（production のみ）かつ成果物に `.htaccess` が含まれる場合、2 パス目で `--delete` なしの別の `rsync` により適用する。成果物の `.htaccess` を転送（サーバー側を上書き）しつつ、成果物に存在しない場合はサーバー側のコピーを保持する。この明示転送により rsync の `protect` ルールのセマンティクスに依存しない挙動になる。`apply-htaccess` は production 以外では効果がない
+7. dry-run モードの場合、`--dry-run` フラグを追加する（両パスとも dry-run に従う）
+8. debug モードまたは dry-run モードの場合、`--verbose` フラグを追加する
+9. 処理完了後（成功・失敗問わず）、SSH 鍵をクリーンアップする
 
 ## Prerequisites
 

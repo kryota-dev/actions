@@ -46,6 +46,10 @@ A Composite Action that deploys build artifacts to a web hosting server via rsyn
     # apply-htaccess - Apply the artifact .htaccess on production deploys (opt-in)
     # Optional (default: 'false')
     apply-htaccess: 'false'
+
+    # exclude-paths - Newline-separated paths to leave untouched on production deploys
+    # Optional (default: '')
+    exclude-paths: ''
 ```
 
 ## Inputs
@@ -61,6 +65,7 @@ A Composite Action that deploys build artifacts to a web hosting server via rsyn
 | `dry-run` | Whether to run in dry-run mode | No | `'false'` |
 | `is-production` | Whether this is a production deploy | No | `'false'` |
 | `apply-htaccess` | Apply the artifact `.htaccess` on production deploys (opt-in; only effective when `is-production` is `'true'`) | No | `'false'` |
+| `exclude-paths` | Newline-separated paths relative to the target root to leave untouched (neither transferred nor deleted) on production deploys, in addition to `.htaccess` and `_feature/`. Allowed characters are `[A-Za-z0-9._-]` and `/`; a trailing `/` matches directories only (only effective when `is-production` is `'true'`) | No | `''` |
 
 ## Examples
 
@@ -123,16 +128,36 @@ steps:
       apply-htaccess: 'true'
 ```
 
+### Leave other content under the target root untouched on production
+
+```yaml
+steps:
+  - uses: kryota-dev/actions/.github/actions/deploy-web-hosting-rsync@v0
+    with:
+      output-dir: 'dist'
+      ssh-host: ${{ secrets.SSH_HOST }}
+      ssh-user: ${{ secrets.SSH_USER }}
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      ssh-path: '/home/user/public_html'
+      is-production: 'true'
+      # Another site placed under the same document root. These paths are
+      # neither transferred nor deleted by the --delete mirror.
+      exclude-paths: |
+        other-site/
+        shared/robots-extra.txt
+```
+
 ## Behavior
 
 1. Set up the SSH key (write private key to `~/.ssh/id_rsa`, retrieve host key with `ssh-keyscan`)
 2. Build the source path `./{output-dir}{base-path}`
 3. Sync files from local to remote using the `rsync -az --delete` command
 4. In production mode (default, backward compatible), exclude `.htaccess` and `_feature/` from the `--delete` mirror via `--exclude-from`, so the server copies are never transferred or deleted
-5. When `apply-htaccess: 'true'` (production only) and the artifact contains a `.htaccess`, apply it in a second pass via a separate `rsync` without `--delete`: the artifact's `.htaccess` is transferred (overwriting the server copy), while the server copy is preserved when the artifact has none. This explicit transfer keeps behavior independent of rsync `protect`-rule semantics. `apply-htaccess` has no effect outside production
-6. In dry-run mode, add the `--dry-run` flag (both passes honor dry-run)
-7. In debug mode or dry-run mode, add the `--verbose` flag
-8. Clean up SSH keys after completion (regardless of success or failure)
+5. In production mode, paths listed in `exclude-paths` are appended to the same exclude file, anchored at the target root with a leading `/` (so `other-site/` matches only `<target>/other-site/`, not a nested directory of the same name). They are neither transferred nor deleted. Entries are validated up front and the step fails on disallowed characters or `.` / `..` segments. `exclude-paths` has no effect outside production
+6. When `apply-htaccess: 'true'` (production only) and the artifact contains a `.htaccess`, apply it in a second pass via a separate `rsync` without `--delete`: the artifact's `.htaccess` is transferred (overwriting the server copy), while the server copy is preserved when the artifact has none. This explicit transfer keeps behavior independent of rsync `protect`-rule semantics. `apply-htaccess` has no effect outside production
+7. In dry-run mode, add the `--dry-run` flag (both passes honor dry-run)
+8. In debug mode or dry-run mode, add the `--verbose` flag
+9. Clean up SSH keys after completion (regardless of success or failure)
 
 ## Prerequisites
 

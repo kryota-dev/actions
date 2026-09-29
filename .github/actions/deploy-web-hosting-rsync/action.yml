@@ -33,6 +33,10 @@ inputs:
     description: 'Whether to apply the artifact .htaccess on production deploys (opt-in; only effective when is-production is true)'
     required: false
     default: 'false'
+  exclude-paths:
+    description: 'Newline-separated paths relative to the target root to leave untouched (neither transferred nor deleted) on production deploys, in addition to .htaccess and _feature/ (only effective when is-production is true)'
+    required: false
+    default: ''
 
 runs:
   using: 'composite'
@@ -60,9 +64,34 @@ runs:
         DEBUG: ${{ runner.debug }}
         IS_PRODUCTION: ${{ inputs.is-production }}
         APPLY_HTACCESS: ${{ inputs.apply-htaccess }}
+        EXCLUDE_PATHS: ${{ inputs.exclude-paths }}
       run: |
         TARGET_PATH="${SSH_PATH}"
         SOURCE_PATH="./${OUTPUT_DIR}${BASE_PATH}"
+
+        # Parse exclude-paths up front so an invalid entry fails fast in every
+        # mode. Entries are plain paths relative to the target root; only a
+        # conservative character set is accepted so they can be embedded in
+        # rsync filter rules (and lftp regexes in the FTP action) without
+        # escaping. A trailing '/' restricts the match to directories.
+        EXTRA_EXCLUDES=()
+        while IFS= read -r line || [ -n "$line" ]; do
+          entry="${line#"${line%%[![:space:]]*}"}"
+          entry="${entry%"${entry##*[![:space:]]}"}"
+          [ -z "$entry" ] && continue
+          entry="${entry#/}"
+          if ! [[ "$entry" =~ ^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*/?$ ]]; then
+            echo "::error::Invalid exclude-paths entry: '${line}' (use paths relative to the target root with [A-Za-z0-9._-] segments)"
+            exit 1
+          fi
+          case "/${entry%/}/" in
+            */./* | */../*)
+              echo "::error::Invalid exclude-paths entry: '${line}' ('.' and '..' segments are not allowed)"
+              exit 1
+              ;;
+          esac
+          EXTRA_EXCLUDES+=("$entry")
+        done <<< "$EXCLUDE_PATHS"
 
         echo "::notice::Deploying via rsync"
         echo "::notice::Source: ${SOURCE_PATH}"
@@ -79,12 +108,22 @@ runs:
           # action's two-pass approach.
           echo ".htaccess" > /tmp/rsync-exclude
           echo "_feature/" >> /tmp/rsync-exclude
+          # Anchor consumer-specified paths with a leading '/' so they only match
+          # at the target root (an unanchored rsync pattern matches at any depth).
+          for entry in "${EXTRA_EXCLUDES[@]}"; do
+            echo "/${entry}" >> /tmp/rsync-exclude
+          done
           RSYNC_OPTS+=(--exclude-from=/tmp/rsync-exclude)
+          if [ "${#EXTRA_EXCLUDES[@]}" -gt 0 ]; then
+            echo "::notice::PRODUCTION MODE: Also excluding from transfer and deletion: ${EXTRA_EXCLUDES[*]}"
+          fi
           if [ "$APPLY_HTACCESS" = "true" ]; then
             echo "::notice::PRODUCTION MODE: apply-htaccess enabled; the artifact .htaccess will be applied in a second pass if present. Excluding .htaccess and _feature/ from deletion"
           else
             echo "::notice::PRODUCTION MODE: Excluding .htaccess and _feature/ directories from deletion"
           fi
+        elif [ "${#EXTRA_EXCLUDES[@]}" -gt 0 ]; then
+          echo "::notice::exclude-paths is ignored outside production deploys"
         fi
 
         if [ "$DRY_RUN" = "true" ]; then
