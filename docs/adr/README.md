@@ -6,3 +6,4 @@
 * [5. Replace adr npm package with bash script](005-replace-adr-npm-package-with-bash-script.md)
 * [6. Add Claude and Codex PR review reusable workflows](006-add-claude-and-codex-pr-review-reusable-workflows.md)
 * [7. Apply repository-managed htaccess on production deploys via opt-in](007-apply-repository-managed-htaccess-on-production-deploys-via-opt-in.md)
+* [8. Allow consumers to exclude additional paths from production deploy mirrors](008-allow-consumers-to-exclude-additional-paths-from-production-deploy-mirrors.md)
