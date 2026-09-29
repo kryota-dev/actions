@@ -43,6 +43,10 @@ jobs:
       # Optional (default: 'false')
       apply-htaccess: 'false'
 
+      # exclude-paths - Newline-separated paths to leave untouched on production deploys
+      # Optional (default: '')
+      exclude-paths: ''
+
       # production-branch - Production branch name
       # Optional (default: 'main')
       production-branch: 'main'
@@ -99,6 +103,7 @@ jobs:
 | `home-url` | Site home URL | No | `''` |
 | `dry-run` | Dry-run mode | No | `'false'` |
 | `apply-htaccess` | Apply the artifact `.htaccess` on production deploys (opt-in; only effective on production). Passed through to the `deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` actions. **Note**: this workflow pins those actions to a specific release SHA, so `apply-htaccess` only takes effect once the pin is bumped (via Renovate) to a release that defines the input. | No | `'false'` |
+| `exclude-paths` | Newline-separated paths relative to `server-path` to leave untouched (neither transferred nor deleted) on production deploys, in addition to `.htaccess` and `_feature/` (only effective on production). Allowed characters are `[A-Za-z0-9._-]` and `/`; a trailing `/` matches directories only. Passed through to the `deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` actions. **Note**: like `apply-htaccess`, it only takes effect once the internal action pins point to a release that defines the input. | No | `''` |
 | `production-branch` | Production branch name | No | `'main'` |
 | `ref-name` | Branch name override (auto-detected from github context if empty) | No | `''` |
 
@@ -204,6 +209,29 @@ jobs:
       # ErrorDocument 404, etc.) instead of excluding it. Backward compatible:
       # omit this input (or set 'false') to keep managing .htaccess manually.
       apply-htaccess: 'true'
+    secrets:
+      server-host: ${{ secrets.SERVER_HOST }}
+      server-user: ${{ secrets.SERVER_USER }}
+      server-path: ${{ secrets.SERVER_PATH }}
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+```
+
+### Leave other content under the server path untouched on production
+
+```yaml
+jobs:
+  deploy:
+    permissions:
+      pull-requests: write
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
+    with:
+      deploy-type: 'rsync'
+      artifact-name: 'build-output'
+      output-dir: 'dist'
+      # Another site placed under the same document root. The production
+      # --delete mirror neither transfers nor deletes these paths.
+      exclude-paths: |
+        other-site/
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
       server-user: ${{ secrets.SERVER_USER }}
