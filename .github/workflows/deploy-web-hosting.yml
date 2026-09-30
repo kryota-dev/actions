@@ -36,6 +36,11 @@ on:
         type: string
         required: false
         default: 'false'
+      exclude-paths:
+        description: "Newline-separated paths relative to the server path to leave untouched on production deploys (only effective on production)"
+        type: string
+        required: false
+        default: ''
       production-branch:
         description: "Production branch name"
         type: string
@@ -119,6 +124,7 @@ jobs:
           dry-run: ${{ inputs.dry-run }}
           is-production: ${{ steps.compute-path.outputs.is-production }}
           apply-htaccess: ${{ inputs.apply-htaccess }}
+          exclude-paths: ${{ inputs.exclude-paths }}
 
       # --- rsync Deploy ---
       - name: Deploy to web hosting via rsync
@@ -134,6 +140,7 @@ jobs:
           dry-run: ${{ inputs.dry-run }}
           is-production: ${{ steps.compute-path.outputs.is-production }}
           apply-htaccess: ${{ inputs.apply-htaccess }}
+          exclude-paths: ${{ inputs.exclude-paths }}
 
       # --- PR Comments ---
       - name: Comment on PR (Deploy Success)

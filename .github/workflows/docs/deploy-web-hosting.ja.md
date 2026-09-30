@@ -43,6 +43,10 @@ jobs:
       # Optional (default: 'false')
       apply-htaccess: 'false'
 
+      # exclude-paths - 本番デプロイで触れないパス（改行区切り）
+      # Optional (default: '')
+      exclude-paths: ''
+
       # production-branch - 本番ブランチ名
       # Optional (default: 'main')
       production-branch: 'main'
@@ -99,6 +103,7 @@ jobs:
 | `home-url` | サイトのホーム URL | No | `''` |
 | `dry-run` | ドライランモード | No | `'false'` |
 | `apply-htaccess` | 本番デプロイで成果物の `.htaccess` を適用するか（opt-in。production のときのみ有効）。`deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` アクションへ渡される。**注意**: 本ワークフローはこれらのアクションを特定リリースの SHA に pin しているため、`apply-htaccess` は（Renovate により）この input を定義したリリースへ pin が更新されて初めて有効になる。 | No | `'false'` |
+| `exclude-paths` | 本番デプロイで `.htaccess` と `_feature/` に加えて触れない（転送も削除もしない）パス。`server-path` からの相対パスを改行区切りで指定する（production のときのみ有効）。使用できる文字は `[A-Za-z0-9._-]` と `/` で、末尾の `/` はディレクトリのみに一致する。`deploy-web-hosting-ftp` / `deploy-web-hosting-rsync` アクションへ渡される。**注意**: `apply-htaccess` と同様、内部のアクション pin がこの input を定義したリリースへ更新されて初めて有効になる。 | No | `''` |
 | `production-branch` | 本番ブランチ名 | No | `'main'` |
 | `ref-name` | ブランチ名の上書き（空の場合は github context から自動取得） | No | `''` |
 
@@ -204,6 +209,29 @@ jobs:
       # 除外せずにアップロードする。後方互換: この input を省略（または 'false'）すると
       # 従来どおり .htaccess を手動管理できる。
       apply-htaccess: 'true'
+    secrets:
+      server-host: ${{ secrets.SERVER_HOST }}
+      server-user: ${{ secrets.SERVER_USER }}
+      server-path: ${{ secrets.SERVER_PATH }}
+      ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+```
+
+### 本番の server-path 配下にある別コンテンツに触れない
+
+```yaml
+jobs:
+  deploy:
+    permissions:
+      pull-requests: write
+    uses: kryota-dev/actions/.github/workflows/deploy-web-hosting.yml@v0
+    with:
+      deploy-type: 'rsync'
+      artifact-name: 'build-output'
+      output-dir: 'dist'
+      # 同じドキュメントルート配下に置かれた別サイト。本番の --delete ミラーは
+      # これらのパスを転送も削除もしない。
+      exclude-paths: |
+        other-site/
     secrets:
       server-host: ${{ secrets.SERVER_HOST }}
       server-user: ${{ secrets.SERVER_USER }}
