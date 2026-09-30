@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.2.7](https://github.com/kryota-dev/actions/compare/v0.2.6...v0.2.7) - 2026-09-30
+
+### Other Changes
+- fix(deploy-web-hosting): bump internal action pins to v0.2.6 by @kryota-dev in https://github.com/kryota-dev/actions/pull/119
+
 ## [v0.2.6](https://github.com/kryota-dev/actions/compare/v0.2.5...v0.2.6) - 2026-09-30
 
 ### Other Changes
