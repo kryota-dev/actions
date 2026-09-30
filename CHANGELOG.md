@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.2.6](https://github.com/kryota-dev/actions/compare/v0.2.5...v0.2.6) - 2026-09-30
+
+### Other Changes
+- fix(ci): pin exact upstream versions in action version comments by @kryota-dev in https://github.com/kryota-dev/actions/pull/117
+- feat(deploy-web-hosting): add exclude-paths input for production deploys by @kryota-dev in https://github.com/kryota-dev/actions/pull/118
+
 ## [v0.2.5](https://github.com/kryota-dev/actions/compare/v0.2.4...v0.2.5) - 2026-07-13
 
 ### Other Changes
