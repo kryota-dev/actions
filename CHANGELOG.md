@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.2.8](https://github.com/kryota-dev/actions/compare/v0.2.7...v0.2.8) - 2026-11-23
+
+### Other Changes
+- chore(deps): update actions/checkout action to v7 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/130
+- chore(deps): update pnpm/action-setup action to v6.1.1 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/129
+- chore(deps): update dependency zizmorcore/zizmor to v1.33.1 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/128
+- chore(deps): update dependency aquaproj/aqua-registry to v4.591.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/127
+- chore(deps): update aquaproj/aqua-installer action to v4.1.2 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/126
+- chore(deps): update actions/cache action to v5.1.0 by @renovate[bot] in https://github.com/kryota-dev/actions/pull/125
+
 ## [v0.2.7](https://github.com/kryota-dev/actions/compare/v0.2.6...v0.2.7) - 2026-09-30
 
 ### Other Changes
