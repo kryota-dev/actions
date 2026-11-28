@@ -66,7 +66,7 @@ jobs:
 
       - uses: aquaproj/aqua-installer@b8be739961814ee66b9e0d505f4d5de0d2eff047 # v4.1.2
         with:
-          aqua_version: v2.56.6
+          aqua_version: v2.66.1
 
       - name: Setup lint tools via aqua
         run: |
