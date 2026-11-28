@@ -77,7 +77,7 @@ jobs:
           # renovate: datasource=github-releases depName=reviewdog/reviewdog
           REVIEWDOG_VERSION="v0.21.0"
           # renovate: datasource=github-releases depName=loeffel-io/ls-lint
-          LS_LINT_VERSION="v2.3.1"
+          LS_LINT_VERSION="v2.3.2"
           # renovate: datasource=github-releases depName=suzuki-shunsuke/ghalint
           GHALINT_VERSION="v1.5.6"
           # renovate: datasource=github-releases depName=zizmorcore/zizmor
